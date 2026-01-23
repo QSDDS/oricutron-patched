@@ -327,7 +327,7 @@ ifeq ($(PLATFORM),osx)
 ifneq (,$(CROSS_CFLAGS))
 CFLAGS += -D__OPENGL_AVAILABLE__ -D__CBCOPY__ -D__CBPASTE__ $(CROSS_CFLAGS)
 else
-CFLAGS += -D__OPENGL_AVAILABLE__ -D__CBCOPY__ -D__CBPASTE__ $(shell $(SDL_LIB)-config --cflags)
+CFLAGS += -D__OPENGL_AVAILABLE__ -D__CBCOPY__ -D__CBPASTE__ -DGL_SILENCE_DEPRECATION $(shell $(SDL_LIB)-config --cflags)
 endif
 ifneq (,$(CROSS_LFLAGS))
 LFLAGS += $(CROSS_LFLAGS)
