@@ -25,28 +25,28 @@
 #include "via.h"
 #include "msgbox.h"
 
-SDL_bool init_msgbox( struct machine *oric )
+SDL_bool init_msgbox(struct machine *oric)
 {
   return SDL_TRUE;
 }
 
-void shut_msgbox( struct machine *oric )
+void shut_msgbox(struct machine *oric)
 {
 }
 
-SDL_bool msgbox( struct machine *oric, int type, char *msg )
+SDL_bool msgbox(struct machine *oric, int type, char* msg)
 {
-  char *btns = "OK|Cancel";
+  char* btns = "OK|Cancel";
   struct EasyStruct myES =
-    {
+  {
     sizeof(struct EasyStruct),
-    0,
-    (UBYTE *) "Oricutron Request",
-    (UBYTE *) msg,
-    (UBYTE *) btns,
+      0,
+      (UBYTE *) "Oricutron Request",
+      (UBYTE *) msg,
+      (UBYTE *) btns,
     };
 
-  switch( type )
+  switch(type)
   {
     case MSGBOX_YES_NO:
       strcpy(btns, "Yes|No");

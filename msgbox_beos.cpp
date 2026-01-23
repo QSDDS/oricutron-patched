@@ -40,27 +40,27 @@ extern "C" {
 #include "msgbox.h"
 }
 
-SDL_bool init_msgbox( struct machine *oric )
+SDL_bool init_msgbox(struct machine *oric)
 {
   return SDL_TRUE;
 }
 
-void shut_msgbox( struct machine *oric )
+void shut_msgbox(struct machine *oric)
 {
 }
 
-SDL_bool msgbox( struct machine *oric, int type, char *msg )
+SDL_bool msgbox(struct machine *oric, int type, char* msg)
 {
-  switch( type )
+  switch(type)
   {
     case MSGBOX_YES_NO:
       return ((new BAlert("Oricutron Request", msg, "Yes", "No"))->Go() == 0) ? SDL_TRUE : SDL_FALSE;
-//      return (MessageBoxA( hwnd, msg, "Oriculator Request", MB_YESNO ) == IDYES);
+    //      return (MessageBoxA( hwnd, msg, "Oriculator Request", MB_YESNO ) == IDYES);
 
     case MSGBOX_OK_CANCEL:
       return ((new BAlert("Oricutron Request", msg, "Ok", "Cancel"))->Go() == 0) ? SDL_TRUE : SDL_FALSE;
-//      return (MessageBoxA( hwnd, msg, "Oriculator Request", MB_OKCANCEL ) == IDOK);
-    
+    //      return (MessageBoxA( hwnd, msg, "Oriculator Request", MB_OKCANCEL ) == IDOK);
+
     case MSGBOX_OK:
       (new BAlert("Oricutron Request", msg, "Ok"))->Go();
       return SDL_TRUE;

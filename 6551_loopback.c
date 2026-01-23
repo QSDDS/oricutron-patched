@@ -34,9 +34,9 @@ static Uint8 loopback_buf[LOOPBACK_BUF_SIZE];
 static int loopback_in = 0;
 static int loopback_out = 0;
 
-static void loopback_done( struct acia* acia )
+static void loopback_done(struct acia* acia)
 {
-  acia_init_none( acia );
+  acia_init_none(acia);
 }
 
 static Uint8 loopback_stat(Uint8 stat)
@@ -87,7 +87,7 @@ static SDL_bool loopback_put_byte(Uint8 data)
   return SDL_TRUE;
 }
 
-SDL_bool acia_init_loopback( struct acia* acia )
+SDL_bool acia_init_loopback(struct acia* acia)
 {
   loopback_in = 0;
   loopback_out = 0;
@@ -96,7 +96,7 @@ SDL_bool acia_init_loopback( struct acia* acia )
   acia->has_byte = loopback_has_byte;
   acia->get_byte = loopback_get_byte;
   acia->put_byte = loopback_put_byte;
-  
+
   acia->oric->aciabackend = ACIA_TYPE_LOOPBACK;
   return SDL_TRUE;
 }

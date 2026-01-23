@@ -144,12 +144,12 @@ struct wd17xx
   Uint8             c_sector;          // Currently selected sector ID
   Uint8             sectype;           // When reading a sector, this is used to remember if it was marked as deleted
   SDL_bool          last_step_in;      // Set to TRUE if the last seek operation stepped the head inwards
-  void            (*setintrq)(void *); // Function pointer called by the WD17xx core when INTRQ is set (used for microdisc/jasmin integration)
-  void            (*clrintrq)(void *); // Called when INTRQ is cleared
-  void             *intrqarg;          // Userdata passed to setintrq/clrintrq
-  void            (*setdrq)(void *);   // Called when DRQ is set
-  void            (*clrdrq)(void *);   // Called when DRQ is cleared
-  void             *drqarg;            // Userdata passed to setdrq/clrdrq
+  void (*setintrq)(void*);             // Function pointer called by the WD17xx core when INTRQ is set (used for microdisc/jasmin integration)
+  void (*clrintrq)(void*);             // Called when INTRQ is cleared
+  void*             intrqarg;          // Userdata passed to setintrq/clrintrq
+  void (*setdrq)(void*);               // Called when DRQ is set
+  void (*clrdrq)(void*);               // Called when DRQ is cleared
+  void*             drqarg;            // Userdata passed to setdrq/clrdrq
   struct diskimage *disk[MAX_DRIVES];  // Loaded disk images
   int               currentop;         // Current operation in progress
   struct mfmsector *currsector;        // Pointers to the current sector in the disk image being used by an active read or write operation
@@ -219,37 +219,37 @@ struct pravetz
   struct pravetz_drive drv[MAX_DRIVES];
 };
 
-void disk_eject( struct machine *oric, int drive );
+void disk_eject(struct machine *oric, int drive);
 
 // Functions to read/write diskimages
-SDL_bool diskimage_load( struct machine *oric, char *fname, int drive );
-SDL_bool diskimage_save( struct machine *oric, char *fname, int drive );
-void diskimage_cachetrack( struct diskimage *dimg, int track, int side );
-struct mfmsector *wd17xx_find_sector( struct wd17xx *wd, Uint8 secid );
+SDL_bool diskimage_load(struct machine *oric, char* fname, int drive);
+SDL_bool diskimage_save(struct machine *oric, char* fname, int drive);
+void diskimage_cachetrack(struct diskimage *dimg, int track, int side);
+struct mfmsector *wd17xx_find_sector(struct wd17xx *wd, Uint8 secid);
 
 // Call this to emulate some cycles of disk activity
-void wd17xx_ticktock( struct wd17xx *wd, int cycles );
+void wd17xx_ticktock(struct wd17xx *wd, int cycles);
 
 // Microdisc interface
-void microdisc_init( struct microdisc *md, struct wd17xx *wd, struct machine *oric );
-void microdisc_free( struct microdisc *md );
-unsigned char microdisc_read( struct microdisc *md, unsigned short addr );
-void microdisc_write( struct microdisc *md, unsigned short addr, unsigned char data );
+void microdisc_init(struct microdisc *md, struct wd17xx *wd, struct machine *oric);
+void microdisc_free(struct microdisc *md);
+unsigned char microdisc_read(struct microdisc *md, unsigned short addr);
+void microdisc_write(struct microdisc *md, unsigned short addr, unsigned char data);
 
 // Byte Drive 500 interface
-void bd500_init( struct bd500 *bd, struct wd17xx *wd, struct machine *oric );
-void bd500_free( struct bd500 *bd );
-unsigned char bd500_read( struct bd500 *bd, unsigned short addr );
-void bd500_write( struct bd500 *bd, unsigned short addr, unsigned char data );
+void bd500_init(struct bd500 *bd, struct wd17xx *wd, struct machine *oric);
+void bd500_free(struct bd500 *bd);
+unsigned char bd500_read(struct bd500 *bd, unsigned short addr);
+void bd500_write(struct bd500 *bd, unsigned short addr, unsigned char data);
 
 // Jasmin interface
-void jasmin_init( struct jasmin *j, struct wd17xx *wd, struct machine *oric );
-void jasmin_free( struct jasmin *j );
-unsigned char jasmin_read( struct jasmin *j, unsigned short addr );
-void jasmin_write( struct jasmin *j, unsigned short addr, unsigned char data );
+void jasmin_init(struct jasmin *j, struct wd17xx *wd, struct machine *oric);
+void jasmin_free(struct jasmin *j);
+unsigned char jasmin_read(struct jasmin *j, unsigned short addr);
+void jasmin_write(struct jasmin *j, unsigned short addr, unsigned char data);
 
 // Pravetz 8D disk interface
-void pravetz_init( struct pravetz *p, struct machine *oric );
-void pravetz_free( struct pravetz *p );
-unsigned char pravetz_read( struct pravetz *p, unsigned short addr );
-void pravetz_write( struct pravetz *p, unsigned short addr, unsigned char data );
+void pravetz_init(struct pravetz *p, struct machine *oric);
+void pravetz_free(struct pravetz *p);
+unsigned char pravetz_read(struct pravetz *p, unsigned short addr);
+void pravetz_write(struct pravetz *p, unsigned short addr, unsigned char data);

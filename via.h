@@ -36,7 +36,7 @@ struct via
   unsigned char t1l_h;
   unsigned short t1c;
   unsigned char t2l_l;
-  unsigned char t2l_h;  
+  unsigned char t2l_h;
   unsigned short t2c;
   unsigned char sr;
   unsigned char acr;
@@ -128,32 +128,32 @@ struct via
 #define VIRQB_T1 6
 #define VIRQF_T1 (1<<VIRQB_T1)
 
-void tape_eject( struct machine *oric );
-void tape_rewind( struct machine *oric );
-SDL_bool tape_load_tap( struct machine *oric, char *fname );
-void tape_ticktock( struct machine *oric, int cycles );
+void tape_eject(struct machine *oric);
+void tape_rewind(struct machine *oric);
+SDL_bool tape_load_tap(struct machine *oric, char* fname);
+void tape_ticktock(struct machine *oric, int cycles);
 
 // Init/Reset
-void via_init( struct via *v, struct machine *oric, int viatype );
+void via_init(struct via *v, struct machine *oric, int viatype);
 
 // Move timers on etc.
-void via_clock( struct via *v, unsigned int cycles );
+void via_clock(struct via *v, unsigned int cycles);
 
 // Write VIA from CPU
-void via_write( struct via *v, int offset, unsigned char data );
+void via_write(struct via *v, int offset, unsigned char data);
 
 // Read VIA from CPU
-unsigned char via_read( struct via *v, int offset );
+unsigned char via_read(struct via *v, int offset);
 
 // Write CA1,CA2,CB1,CB2 from external device
 // (data is treated as bool)
-void via_write_CA1( struct via *v, unsigned char data );
-void via_write_CA2( struct via *v, unsigned char data );
-void via_write_CB1( struct via *v, unsigned char data );
-void via_write_CB2( struct via *v, unsigned char data );
+void via_write_CA1(struct via *v, unsigned char data);
+void via_write_CA2(struct via *v, unsigned char data);
+void via_write_CB1(struct via *v, unsigned char data);
+void via_write_CB2(struct via *v, unsigned char data);
 
 // Write to IFR from the monitor
-void via_mon_write_ifr( struct via *v, unsigned char data );
+void via_mon_write_ifr(struct via *v, unsigned char data);
 
 // Read without side-effects for monitor
-unsigned char via_mon_read( struct via *v, int offset );
+unsigned char via_mon_read(struct via *v, int offset);

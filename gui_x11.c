@@ -63,54 +63,54 @@ static void Unlock_Display(void)
 static int clipboard_filter(const SDL_Event *event)
 {
   /* Post all non-window manager specific events */
-  if ( event->type == SDL_SYSWMEVENT && event->syswm.msg != NULL)
+  if(event->type == SDL_SYSWMEVENT && event->syswm.msg != NULL)
   {
     XEvent xevent = event->syswm.msg->event.xevent;
 
     /* Handle window-manager specific clipboard events */
-    switch (xevent.type)
+    switch(xevent.type)
     {
       /* Copy the selection from XA_CUT_BUFFER0 to the requested property */
       case SelectionRequest:
-      {
-        XEvent sevent;
-        XSelectionRequestEvent *req;
-        int seln_format;
-        unsigned long nbytes;
-        unsigned long overflow;
-        unsigned char *seln_data;
-
-        req = &xevent.xselectionrequest;
-        sevent.xselection.type = SelectionNotify;
-        sevent.xselection.display = req->display;
-        sevent.xselection.selection = req->selection;
-        sevent.xselection.target = None;
-        sevent.xselection.property = None;
-        sevent.xselection.requestor = req->requestor;
-        sevent.xselection.time = req->time;
-        if ( XGetWindowProperty(display, DefaultRootWindow(display),
-          XA_CUT_BUFFER0, 0, INT_MAX/4, False, req->target,
-          &sevent.xselection.target, &seln_format,
-          &nbytes, &overflow, &seln_data) == Success )
         {
-          if ( sevent.xselection.target == req->target )
+          XEvent sevent;
+          XSelectionRequestEvent *req;
+          int seln_format;
+          unsigned long nbytes;
+          unsigned long overflow;
+          unsigned char* seln_data;
+
+          req = &xevent.xselectionrequest;
+          sevent.xselection.type = SelectionNotify;
+          sevent.xselection.display = req->display;
+          sevent.xselection.selection = req->selection;
+          sevent.xselection.target = None;
+          sevent.xselection.property = None;
+          sevent.xselection.requestor = req->requestor;
+          sevent.xselection.time = req->time;
+          if(XGetWindowProperty(display, DefaultRootWindow(display),
+                                XA_CUT_BUFFER0, 0, INT_MAX/4, False, req->target,
+                                &sevent.xselection.target, &seln_format,
+                                &nbytes, &overflow, &seln_data) == Success)
           {
-            if ( sevent.xselection.target == XA_STRING )
+            if(sevent.xselection.target == req->target)
             {
-              if ( seln_data[nbytes-1] == '\0' )
-                --nbytes;
+              if(sevent.xselection.target == XA_STRING)
+              {
+                if(seln_data[nbytes-1] == '\0')
+                  --nbytes;
+              }
+              XChangeProperty(display, req->requestor, req->property,
+                              sevent.xselection.target, seln_format, PropModeReplace,
+                              seln_data, nbytes);
+              sevent.xselection.property = req->property;
             }
-            XChangeProperty(display, req->requestor, req->property,
-                            sevent.xselection.target, seln_format, PropModeReplace,
-                            seln_data, nbytes);
-            sevent.xselection.property = req->property;
+            XFree(seln_data);
           }
-          XFree(seln_data);
+          XSendEvent(display,req->requestor,False,0, &sevent);
+          XSync(display, False);
         }
-        XSendEvent(display,req->requestor,False,0,&sevent);
-        XSync(display, False);
-      }
-      break;
+        break;
     }
   }
 
@@ -126,17 +126,17 @@ static char* get_clipboard_text_x11(void)
   int seln_format;
   unsigned long nbytes;
   unsigned long overflow;
-  char *src;
-  char *text = NULL;
+  char* src;
+  char* text = NULL;
 
-  if (!initialized)
+  if(!initialized)
     return NULL;
 
   Lock_Display();
   owner = XGetSelectionOwner(display, XA_PRIMARY);
   Unlock_Display();
 
-  if (owner == None || owner == window)
+  if(owner == None || owner == window)
   {
     owner = DefaultRootWindow(display);
     selection = XA_CUT_BUFFER0;
@@ -153,25 +153,25 @@ static char* get_clipboard_text_x11(void)
     XConvertSelection(display, XA_PRIMARY, XA_STRING, selection, owner, CurrentTime);
     Unlock_Display();
 
-    while (!selection_response)
+    while(!selection_response)
     {
       SDL_WaitEvent(&event);
-      if (event.type == SDL_SYSWMEVENT && event.syswm.msg != NULL)
+      if(event.type == SDL_SYSWMEVENT && event.syswm.msg != NULL)
       {
         XEvent xevent = event.syswm.msg->event.xevent;
-        if ( (xevent.type == SelectionNotify) &&
-          (xevent.xselection.requestor == owner) )
+        if((xevent.type == SelectionNotify) &&
+            (xevent.xselection.requestor == owner))
           selection_response = 1;
       }
     }
   }
 
   Lock_Display();
-  if (XGetWindowProperty(display, owner, selection, 0,
-    INT_MAX/4, False, XA_STRING, &seln_type, &seln_format,
-    &nbytes, &overflow, (unsigned char **)&src) == Success)
+  if(XGetWindowProperty(display, owner, selection, 0,
+                        INT_MAX/4, False, XA_STRING, &seln_type, &seln_format,
+                        &nbytes, &overflow, (unsigned char**)&src) == Success)
   {
-    if (seln_type == XA_STRING)
+    if(seln_type == XA_STRING)
     {
       text = strdup(src);
     }
@@ -184,18 +184,18 @@ static char* get_clipboard_text_x11(void)
 
 static void set_clipboard_text_x11(const char* text)
 {
-    if (!initialized)
-        return;
+  if(!initialized)
+    return;
 
-    if ( text != NULL )
-    {
-        Lock_Display();
-        XChangeProperty(display, DefaultRootWindow(display),
-                        (Atom)XA_CUT_BUFFER0, XA_STRING, 8, PropModeReplace, (unsigned char*)text, strlen(text)+1);
-        if ( XGetSelectionOwner(display, XA_PRIMARY) != window )
-            XSetSelectionOwner(display, XA_PRIMARY, window, CurrentTime);
-        Unlock_Display();
-    }
+  if(text != NULL)
+  {
+    Lock_Display();
+    XChangeProperty(display, DefaultRootWindow(display),
+                    (Atom)XA_CUT_BUFFER0, XA_STRING, 8, PropModeReplace, (unsigned char*)text, strlen(text)+1);
+    if(XGetSelectionOwner(display, XA_PRIMARY) != window)
+      XSetSelectionOwner(display, XA_PRIMARY, window, CurrentTime);
+    Unlock_Display();
+  }
 }
 
 static void init_clipboard(void)
@@ -206,10 +206,10 @@ static void init_clipboard(void)
   /* Grab the window manager specific information */
   SDL_SysWMinfo info;
   SDL_VERSION(&info.version);
-  if (SDL_COMPAT_GetWMInfo(&info))
+  if(SDL_COMPAT_GetWMInfo(&info))
   {
     /* Save the information for later use */
-    if (info.subsystem == SDL_SYSWM_X11)
+    if(info.subsystem == SDL_SYSWM_X11)
     {
       display = info.info.x11.display;
       window = info.info.x11.window;
@@ -235,10 +235,10 @@ static void init_clipboard(void)
   /* Grab the window manager specific information */
   SDL_SysWMinfo info;
   SDL_VERSION(&info.version);
-  if (SDL_COMPAT_GetWMInfo(&info))
+  if(SDL_COMPAT_GetWMInfo(&info))
   {
     /* Save the information for later use */
-    if (info.subsystem == SDL_SYSWM_X11)
+    if(info.subsystem == SDL_SYSWM_X11)
     {
       display = info.info.x11.display;
       window = info.info.x11.window;
@@ -250,61 +250,66 @@ static void init_clipboard(void)
 
 #endif /* SDL_MAJOR_VERSION == 1 */
 
-SDL_bool init_gui_native( struct machine *oric )
+SDL_bool init_gui_native(struct machine *oric)
 {
   init_clipboard();
   return initialized;
 }
 
-void shut_gui_native( struct machine *oric )
+void shut_gui_native(struct machine *oric)
 {
   return;
 }
 
-void gui_open_url( const char *url )
+void gui_open_url(const char* url)
 {
   return;
 }
 
-SDL_bool clipboard_copy( struct machine *oric )
+SDL_bool clipboard_copy(struct machine *oric)
 {
-    // HIRES
-    if (oric->vid_addr != oric->vidbases[2])
-        return SDL_FALSE;
+  // HIRES
+  if(oric->vid_addr != oric->vidbases[2])
+    return SDL_FALSE;
 
-    int line, col, i;
-    char text[40 * 28 + 28 + 1];
-    unsigned char *vidmem = (&oric->mem[oric->vid_addr]);
+  int line, col, i;
+  char text[40 * 28 + 28 + 1];
+  unsigned char* vidmem = (&oric->mem[oric->vid_addr]);
 
-    for (i = 0, line = 0; line < 28; line++) {
-        for (col = 0; col < 40; col++) {
-            unsigned char c = vidmem[line * 40 + col];
+  for(i = 0, line = 0; line < 28; line++)
+  {
+    for(col = 0; col < 40; col++)
+    {
+      unsigned char c = vidmem[line * 40 + col];
 
-            if (c > 127) {
-                c -= 128;
-            }
+      if(c > 127)
+      {
+        c -= 128;
+      }
 
-            if (c < ' ' || c == 127) {
-                text[i++] = ' ';
-            } else
-                text[i++] = (char)c;
-        }
-        text[i++] = '\n';
+      if(c < ' ' || c == 127)
+      {
+        text[i++] = ' ';
+      }
+      else
+        text[i++] = (char)c;
     }
-    text[i++] = '\0';
-    //printf("%s\n", text);
+    text[i++] = '\n';
+  }
+  text[i++] = '\0';
+  //printf("%s\n", text);
 
 #if SDL_MAJOR_VERSION == 1
-    set_clipboard_text_x11(text);
+  set_clipboard_text_x11(text);
 #else
-    SDL_SetClipboardText(text);
+  SDL_SetClipboardText(text);
 #endif
-    return SDL_TRUE;
+  return SDL_TRUE;
 }
 
-SDL_bool clipboard_paste( struct machine *oric )
+SDL_bool clipboard_paste(struct machine *oric)
 {
-  char *text = NULL;
+  char* text = NULL;
 
 #if SDL_MAJOR_VERSION == 1
   text = get_clipboard_text_x11();
@@ -320,8 +325,12 @@ SDL_bool clipboard_paste( struct machine *oric )
     {
       switch(*p)
       {
-        case '\t': *p = ' '; break;
-        case '\n': *p = '\r'; break;
+        case '\t':
+          *p = ' ';
+          break;
+        case '\n':
+          *p = '\r';
+          break;
         default:
           *p = (*p < 0x20 || 128 <= *p)? ' ' : *p;
           break;

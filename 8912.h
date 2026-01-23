@@ -87,7 +87,7 @@ struct ay8912
   Sint32          ct[3], ctn, cte;
   Uint32          tonepos[3], tonestep[3];
   Sint32          sign[3], out[3], envpos;
-  unsigned char  *envtab;
+  unsigned char*  envtab;
   struct machine *oric;
   Uint32          currnoise, rndrack;
   Sint16          output;
@@ -103,22 +103,22 @@ struct ay8912
   struct tnchange tapelog[TAPELOG_SIZE];
 };
 
-void queuekeys( char *str );
+void queuekeys(char* str);
 
-SDL_bool ay_init( struct ay8912 *ay, struct machine *oric );
-void ay_callback( void *dummy, Sint8 *stream, int length );
-void ay_ticktock( struct ay8912 *ay, int cycles );
-void ay_update_keybits( struct ay8912 *ay );
-void ay_keypress( struct ay8912 *ay, SDL_COMPAT_KEY key, SDL_bool down );
+SDL_bool ay_init(struct ay8912 *ay, struct machine *oric);
+void ay_callback(void* dummy, Sint8 *stream, int length);
+void ay_ticktock(struct ay8912 *ay, int cycles);
+void ay_update_keybits(struct ay8912 *ay);
+void ay_keypress(struct ay8912 *ay, SDL_COMPAT_KEY key, SDL_bool down);
 
-void ay_set_bc1( struct ay8912 *ay, unsigned char state );
-void ay_set_bdir( struct ay8912 *ay, unsigned char state );
-void ay_set_bcmode( struct ay8912 *ay, unsigned char bc1, unsigned char bdir );
-void ay_modeset( struct ay8912 *ay );
+void ay_set_bc1(struct ay8912 *ay, unsigned char state);
+void ay_set_bdir(struct ay8912 *ay, unsigned char state);
+void ay_set_bcmode(struct ay8912 *ay, unsigned char bc1, unsigned char bdir);
+void ay_modeset(struct ay8912 *ay);
 
-void ay_lockaudio( struct ay8912 *ay );
-void ay_unlockaudio( struct ay8912 *ay );
-void ay_flushlog( struct ay8912 *ay );
+void ay_lockaudio(struct ay8912 *ay);
+void ay_unlockaudio(struct ay8912 *ay);
+void ay_flushlog(struct ay8912 *ay);
 
-void ay_soundloop( struct ay8912 *ay, unsigned char oldval, unsigned char newval);
+void ay_soundloop(struct ay8912 *ay, unsigned char oldval, unsigned char newval);
 

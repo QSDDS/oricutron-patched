@@ -97,7 +97,7 @@ static void FreeResources(void)
     g_glcontext = NULL;
   }
 
-  if (g_texture)
+  if(g_texture)
   {
     SDL_DestroyTexture(g_texture);
     g_texture = NULL;
@@ -144,9 +144,9 @@ int SDL_COMPAT_Init(Uint32 flags)
   fprintf(stderr,"\n");
 #endif
 
-  rc = SDL_Init( flags );
-  if( rc < 0 )
-    error_printf( "SDL init failed: %s", SDL_GetError() );
+  rc = SDL_Init(flags);
+  if(rc < 0)
+    error_printf("SDL init failed: %s", SDL_GetError());
 
   return rc;
 }
@@ -156,11 +156,11 @@ int SDL_COMPAT_GetWMInfo(SDL_SysWMinfo *info)
 {
   // NOTE: see above for SDL_GetWMInfo in macros
   // #if defined(__MORPHOS__)||defined(__APPLE__)
-  #if defined(__MORPHOS__)
+#if defined(__MORPHOS__)
   return 0;
-  #else
+#else
   return SDL_GetWMInfo(info);
-  #endif
+#endif
 }
 #else
 int SDL_COMPAT_GetWMInfo(SDL_SysWMinfo *info)
@@ -182,12 +182,12 @@ void SDL_COMPAT_WM_SetIcon(SDL_Surface *icon, Uint8 *mask)
 }
 
 #if SDL_MAJOR_VERSION == 1
-void SDL_COMPAT_WM_SetCaption(const char *title, const char *icon)
+void SDL_COMPAT_WM_SetCaption(const char* title, const char* icon)
 {
   SDL_WM_SetCaption(title, icon);
 }
 #else
-void SDL_COMPAT_WM_SetCaption(const char *title, const char *icon)
+void SDL_COMPAT_WM_SetCaption(const char* title, const char* icon)
 {
   if(g_window)
     SDL_SetWindowTitle(g_window, title);
@@ -203,7 +203,7 @@ SDL_bool SDL_COMPAT_IsAppActive(SDL_Event* event)
 }
 SDL_bool SDL_COMPAT_IsAppFocused(SDL_Event* event)
 {
-  switch( event->active.type )
+  switch(event->active.type)
   {
     case SDL_APPINPUTFOCUS:
     case SDL_APPACTIVE:
@@ -228,7 +228,7 @@ SDL_bool SDL_COMPAT_IsAppFocused(SDL_Event* event)
    *    case SDL_WINDOWEVENT_ENTER:
    *      return SDL_TRUE;
    *      break;
-} */
+  } */
   return SDL_FALSE;
 }
 #endif
@@ -276,10 +276,11 @@ SDL_COMPAT_KEY SDL_COMPAT_GetKeysymUnicode(SDL_COMPAT_KEYSYM keysym)
 {
   // FIXME
 #ifdef DEBUG_KEY_DUMP
-  char c = 0x7f & keysym.sym; c = (c < ' ')? ' ' : c;
+  char c = 0x7f & keysym.sym;
+  c = (c < ' ')? ' ' : c;
   key_dump("SDL : GetKeysymUnicode: "
-  "c=|%c| scancode=$%.4X, sym=$%.4X, mod=$%.4X, unicode=$%.4X -> unicode=$%.4X\n",
-  c, keysym.scancode, keysym.sym, keysym.mod, keysym.unicode, keysym.unicode);
+           "c=|%c| scancode=$%.4X, sym=$%.4X, mod=$%.4X, unicode=$%.4X -> unicode=$%.4X\n",
+           c, keysym.scancode, keysym.sym, keysym.mod, keysym.unicode, keysym.unicode);
 #endif
   // FIXME
 
@@ -289,10 +290,11 @@ SDL_COMPAT_KEY SDL_COMPAT_TranslateUnicode(SDL_COMPAT_KEYSYM keysym)
 {
   // FIXME
 #ifdef DEBUG_KEY_DUMP
-  char c = 0x7f & keysym.sym; c = (c < ' ')? ' ' : c;
+  char c = 0x7f & keysym.sym;
+  c = (c < ' ')? ' ' : c;
   key_dump("SDL : TranslateUnicode: "
-  "c=|%c| scancode=$%.4X, sym=$%.4X, mod=$%.4X, unicode=$%.4X -> unicode=$%.4X\n",
-  c, keysym.scancode, keysym.sym, keysym.mod, keysym.unicode, keysym.unicode);
+           "c=|%c| scancode=$%.4X, sym=$%.4X, mod=$%.4X, unicode=$%.4X -> unicode=$%.4X\n",
+           c, keysym.scancode, keysym.sym, keysym.mod, keysym.unicode, keysym.unicode);
 #endif
   // FIXME
   return keysym.unicode;
@@ -302,10 +304,11 @@ SDL_COMPAT_KEY SDL_COMPAT_GetKeysymUnicode(SDL_COMPAT_KEYSYM keysym)
 {
   // FIXME
 #ifdef DEBUG_KEY_DUMP
-  char c = 0x7f & keysym.sym; c = (c < ' ')? ' ' : c;
+  char c = 0x7f & keysym.sym;
+  c = (c < ' ')? ' ' : c;
   key_dump("SDL2: GetKeysymUnicode: "
-  "c=|%c| scancode=$%.4X, sym=$%.4X, mod=$%.4X, unicode=----- -> keysym.sym=$%.4X\n",
-  c, keysym.scancode, keysym.sym, keysym.mod, keysym.sym);
+           "c=|%c| scancode=$%.4X, sym=$%.4X, mod=$%.4X, unicode=----- -> keysym.sym=$%.4X\n",
+           c, keysym.scancode, keysym.sym, keysym.mod, keysym.sym);
 #endif
   // FIXME
   return keysym.sym;
@@ -322,27 +325,69 @@ SDL_COMPAT_KEY SDL_COMPAT_TranslateUnicode(SDL_COMPAT_KEYSYM keysym)
   {
     switch(keysym.sym)
     {
-      case '0'  : sym_out = ')'; break;
-      case '1'  : sym_out = '!'; break;
-      case '2'  : sym_out = '@'; break;
-      case '3'  : sym_out = '#'; break;
-      case '4'  : sym_out = '$'; break;
-      case '5'  : sym_out = '%'; break;
-      case '6'  : sym_out = '^'; break;
-      case '7'  : sym_out = '&'; break;
-      case '8'  : sym_out = '*'; break;
-      case '9'  : sym_out = '('; break;
-      case ';'  : sym_out = ':'; break;
-      case '\'' : sym_out = '"'; break;
-      case '\\' : sym_out = '|'; break;
-      case ','  : sym_out = '<'; break;
-      case '.'  : sym_out = '>'; break;
-      case '/'  : sym_out = '?'; break;
-      case '`'  : sym_out = '~'; break;
-      case '-'  : sym_out = '_'; break;
-      case '='  : sym_out = '+'; break;
-      case '['  : sym_out = '{'; break;
-      case ']'  : sym_out = '}'; break;
+      case '0'  :
+        sym_out = ')';
+        break;
+      case '1'  :
+        sym_out = '!';
+        break;
+      case '2'  :
+        sym_out = '@';
+        break;
+      case '3'  :
+        sym_out = '#';
+        break;
+      case '4'  :
+        sym_out = '$';
+        break;
+      case '5'  :
+        sym_out = '%';
+        break;
+      case '6'  :
+        sym_out = '^';
+        break;
+      case '7'  :
+        sym_out = '&';
+        break;
+      case '8'  :
+        sym_out = '*';
+        break;
+      case '9'  :
+        sym_out = '(';
+        break;
+      case ';'  :
+        sym_out = ':';
+        break;
+      case '\'' :
+        sym_out = '"';
+        break;
+      case '\\' :
+        sym_out = '|';
+        break;
+      case ','  :
+        sym_out = '<';
+        break;
+      case '.'  :
+        sym_out = '>';
+        break;
+      case '/'  :
+        sym_out = '?';
+        break;
+      case '`'  :
+        sym_out = '~';
+        break;
+      case '-'  :
+        sym_out = '_';
+        break;
+      case '='  :
+        sym_out = '+';
+        break;
+      case '['  :
+        sym_out = '{';
+        break;
+      case ']'  :
+        sym_out = '}';
+        break;
       default:
         sym_out = keysym.sym = toupper(keysym.sym);
         break;
@@ -350,10 +395,11 @@ SDL_COMPAT_KEY SDL_COMPAT_TranslateUnicode(SDL_COMPAT_KEYSYM keysym)
   }
   // FIXME
 #ifdef DEBUG_KEY_DUMP
-  char c = 0x7f & keysym.sym; c = (c < ' ')? ' ' : c;
+  char c = 0x7f & keysym.sym;
+  c = (c < ' ')? ' ' : c;
   key_dump("SDL2: TranslateUnicode: "
-  "c=|%c| scancode=$%.4X, sym=$%.4X, mod=$%.4X, unicode=----- -> keysym.sym=$%.4X\n",
-  c, keysym.scancode, sym_in, keysym.mod, sym_out);
+           "c=|%c| scancode=$%.4X, sym=$%.4X, mod=$%.4X, unicode=----- -> keysym.sym=$%.4X\n",
+           c, keysym.scancode, sym_in, keysym.mod, sym_out);
 #endif
   // FIXME
 
@@ -425,7 +471,7 @@ SDL_Surface* SDL_COMPAT_SetVideoMode(int width, int height, int bitsperpixel, Ui
   FreeResources();
 
   // NOTE: SDL_WM_SetIcon function must be called before the first call to SDL_SetVideoMode.
-  if (g_icon)
+  if(g_icon)
     SDL_WM_SetIcon(g_icon, NULL);
 
   return SDL_SetVideoMode(width, height, bitsperpixel, flags);
@@ -441,10 +487,10 @@ SDL_Surface* SDL_COMPAT_SetVideoMode(int width, int height, int bitsperpixel, Ui
 
   // When leaving fullscreen mode, X and Y coordinates
   // should be recentered relative to the display.
-  if ( !(flags & SDL_WINDOW_FULLSCREEN) )
+  if(!(flags & SDL_WINDOW_FULLSCREEN))
   {
-      g_lastx = SDL_WINDOWPOS_CENTERED;
-      g_lasty = SDL_WINDOWPOS_CENTERED;
+    g_lastx = SDL_WINDOWPOS_CENTERED;
+    g_lasty = SDL_WINDOWPOS_CENTERED;
   }
 
 #ifndef __ANDROID__
@@ -454,7 +500,7 @@ SDL_Surface* SDL_COMPAT_SetVideoMode(int width, int height, int bitsperpixel, Ui
   g_window = SDL_CreateWindow("oricutron", SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,
                               0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
 #endif
-  if (g_icon)
+  if(g_icon)
     SDL_SetWindowIcon(g_window, g_icon);
 
   if(flags & SDL_WINDOW_OPENGL)
@@ -512,7 +558,7 @@ void SDL_COMPAT_SetEventFilter(SDL_EventFilter filter)
 void SDL_COMPAT_Quit(SDL_bool freeall)
 {
   FreeResources();
-  if (g_icon && freeall)
+  if(g_icon && freeall)
   {
     // ...and the surface containing the icon pixel data is no longer required.
     SDL_FreeSurface(g_icon);
@@ -540,10 +586,10 @@ SDL_Surface * flipVert(SDL_Surface* sfc)
 {
   int line;
   SDL_Surface* result = SDL_CreateRGBSurface(sfc->flags, sfc->w, sfc->h,
-                                             sfc->format->BytesPerPixel * 8, sfc->format->Rmask, sfc->format->Gmask,
-                                             sfc->format->Bmask, sfc->format->Amask);
+                        sfc->format->BytesPerPixel * 8, sfc->format->Rmask, sfc->format->Gmask,
+                        sfc->format->Bmask, sfc->format->Amask);
 
-  if (result)
+  if(result)
   {
     Uint8* pixels = (Uint8*) sfc->pixels;
     Uint8* rpixels = (Uint8*) result->pixels;
@@ -561,7 +607,7 @@ SDL_Surface * flipVert(SDL_Surface* sfc)
   return result;
 }
 #if SDL_MAJOR_VERSION == 1
-void SDL_COMPAT_TakeScreenshot(char *fname)
+void SDL_COMPAT_TakeScreenshot(char* fname)
 {
   SDL_Surface *g_screen = SDL_GetVideoSurface();
 
@@ -590,7 +636,7 @@ void SDL_COMPAT_TakeScreenshot(char *fname)
     SDL_SaveBMP(g_screen, fname);
 }
 #else
-void SDL_COMPAT_TakeScreenshot(char *fname)
+void SDL_COMPAT_TakeScreenshot(char* fname)
 {
   // 24 Bits
   // SDL_Surface *surf = SDL_CreateRGBSurface(SDL_SWSURFACE, g_width, g_height, 24, RMASK, BMASK, GMASK, 0);
@@ -598,7 +644,7 @@ void SDL_COMPAT_TakeScreenshot(char *fname)
   // 32 Bits
   SDL_Surface *surf = SDL_CreateRGBSurface(SDL_SWSURFACE, g_width, g_height, g_bpp, RMASK, GMASK, BMASK, AMASK);
 
-  if (surf == NULL)
+  if(surf == NULL)
     return;
 
   // 24 Bits
@@ -616,12 +662,12 @@ void SDL_COMPAT_TakeScreenshot(char *fname)
 #endif
 #else
 #if SDL_MAJOR_VERSION == 1
-void SDL_COMPAT_TakeScreenshot(char *fname)
+void SDL_COMPAT_TakeScreenshot(char* fname)
 {
   SDL_SaveBMP(SDL_GetVideoSurface(), fname);
 }
 #else
-void SDL_COMPAT_TakeScreenshot(char *fname)
+void SDL_COMPAT_TakeScreenshot(char* fname)
 {
   SDL_SaveBMP(g_screen, fname);
 }

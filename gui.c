@@ -84,7 +84,7 @@ char mappingpath[4096], mappingfile[512];
 char filetmp[4096+512+4];
 
 SDL_bool refreshstatus = SDL_TRUE, refreshdisks = SDL_TRUE, refreshavi = SDL_TRUE, refreshtape = SDL_TRUE,
-    refreshkeyboard = SDL_TRUE;
+                                                                                   refreshkeyboard = SDL_TRUE;
 extern struct avi_handle *vidcap;
 
 extern SDL_bool need_sdl_quit;
@@ -98,25 +98,25 @@ extern Uint32 cyclespersample;
 
 // Images used in the GUI
 struct guiimg gimgs[NUM_GIMG]  = { { IMAGEPREFIX"statusbar.bmp",              640, 16, NULL },
-                                   { IMAGEPREFIX"disk_ejected.bmp",   GIMG_W_DISK, 16, NULL },
-                                   { IMAGEPREFIX"disk_idle.bmp",      GIMG_W_DISK, 16, NULL },
-                                   { IMAGEPREFIX"disk_active.bmp",    GIMG_W_DISK, 16, NULL },
-                                   { IMAGEPREFIX"disk_modified.bmp",  GIMG_W_DISK, 16, NULL },
-                                   { IMAGEPREFIX"disk_modactive.bmp", GIMG_W_DISK, 16, NULL },
-                                   { IMAGEPREFIX"tape_ejected.bmp",   GIMG_W_TAPE, 16, NULL },
-                                   { IMAGEPREFIX"tape_pause.bmp",     GIMG_W_TAPE, 16, NULL },
-                                   { IMAGEPREFIX"tape_play.bmp",      GIMG_W_TAPE, 16, NULL },
-                                   { IMAGEPREFIX"tape_stop.bmp",      GIMG_W_TAPE, 16, NULL },
-                                   { IMAGEPREFIX"tape_record.bmp",    GIMG_W_TAPE, 16, NULL },
-                                   { IMAGEPREFIX"avirec.bmp",         GIMG_W_AVIR, 16, NULL },
+  { IMAGEPREFIX"disk_ejected.bmp",   GIMG_W_DISK, 16, NULL },
+  { IMAGEPREFIX"disk_idle.bmp",      GIMG_W_DISK, 16, NULL },
+  { IMAGEPREFIX"disk_active.bmp",    GIMG_W_DISK, 16, NULL },
+  { IMAGEPREFIX"disk_modified.bmp",  GIMG_W_DISK, 16, NULL },
+  { IMAGEPREFIX"disk_modactive.bmp", GIMG_W_DISK, 16, NULL },
+  { IMAGEPREFIX"tape_ejected.bmp",   GIMG_W_TAPE, 16, NULL },
+  { IMAGEPREFIX"tape_pause.bmp",     GIMG_W_TAPE, 16, NULL },
+  { IMAGEPREFIX"tape_play.bmp",      GIMG_W_TAPE, 16, NULL },
+  { IMAGEPREFIX"tape_stop.bmp",      GIMG_W_TAPE, 16, NULL },
+  { IMAGEPREFIX"tape_record.bmp",    GIMG_W_TAPE, 16, NULL },
+  { IMAGEPREFIX"avirec.bmp",         GIMG_W_AVIR, 16, NULL },
 #ifndef WWW_NO_ORIC1
-                                   { IMAGEPREFIX"gfx_oric1kbd.bmp",   640, 240, NULL },
+  { IMAGEPREFIX"gfx_oric1kbd.bmp",   640, 240, NULL },
 #endif
-                                   { IMAGEPREFIX"gfx_atmoskbd.bmp",   640, 240, NULL },
+  { IMAGEPREFIX"gfx_atmoskbd.bmp",   640, 240, NULL },
 #ifndef WWW_NO_PRAVETZ
-                                   { IMAGEPREFIX"gfx_pravetzkbd.bmp", 640, 240, NULL }
+  { IMAGEPREFIX"gfx_pravetzkbd.bmp", 640, 240, NULL }
 #endif
-                                    };
+};
 
 SDL_bool soundavailable, soundon;
 #if defined(__linux__)
@@ -149,7 +149,7 @@ unsigned char sgpal[] = { 0x00, 0x00, 0x00,     // 0 = black
                           0xff, 0x33, 0x33,     // 13 = Telestrat sel
                           0x99, 0x99, 0x66,     // 14 = Pravetz bc
                           0xcc, 0xcc, 0x99      // 15 = Pravetz sel
-};
+                        };
 
 // Colors for the menu, see sgpal for color index
 // MACH_ORIC1 = 0, MACH_ORIC1_16K, MACH_ATMOS, MACH_TELESTRAT, MACH_PRAVETZ
@@ -179,8 +179,9 @@ SDL_bool warpspeed=SDL_FALSE;
 struct osdmenu *cmenu = NULL;
 int cmenuitem = 0;
 
-static char* aciabackends[ACIA_TYPE_LAST] = {
-       " Serial none          ",
+static char* aciabackends[ACIA_TYPE_LAST] =
+{
+  " Serial none          ",
   "\x0e""Serial loopback $xxxx",
   "\x0e""Serial modem    $xxxx",
   "\x0e""Serial com      $xxxx",
@@ -188,223 +189,240 @@ static char* aciabackends[ACIA_TYPE_LAST] = {
 
 static char aciabackendlabel[32];
 
-char menufc(SDL_bool bSelected) { return (bSelected ? g_foregroundcsel[g_menu_scheme] : g_foregroundc[g_menu_scheme]); }
-char menubc(SDL_bool bSelected) { return (bSelected ? g_backgroundcsel[g_menu_scheme] : g_backgroundc[g_menu_scheme]); }
+char menufc(SDL_bool bSelected)
+{
+  return (bSelected ? g_foregroundcsel[g_menu_scheme] : g_foregroundc[g_menu_scheme]);
+}
+char menubc(SDL_bool bSelected)
+{
+  return (bSelected ? g_backgroundcsel[g_menu_scheme] : g_backgroundc[g_menu_scheme]);
+}
 
 // Menufunctions
-void toggletapenoise( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void togglesound( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void inserttape( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void insertdisk( struct machine *oric, struct osdmenuitem *mitem, int drive );
-void resetoric( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void toggletapeturbo( struct machine *oric, struct osdmenuitem *mitem, int dummy );
+void toggletapenoise(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void togglesound(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void inserttape(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void insertdisk(struct machine *oric, struct osdmenuitem *mitem, int drive);
+void resetoric(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void toggletapeturbo(struct machine *oric, struct osdmenuitem *mitem, int dummy);
 void togglech376(struct machine *oric, struct osdmenuitem *mitem, int dummy);
 void toggletwilighte(struct machine *oric, struct osdmenuitem *mitem, int dummy);
-void toggleautowind( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void toggleautoinsrt( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void togglesymbolsauto( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void togglecasesyms( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void togglevsynchack( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void swap_render_mode( struct machine *oric, struct osdmenuitem *mitem, int newrendermode );
-void togglearatio( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void togglehstretch( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void togglepalghost( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void togglescanlines( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void togglelightpen( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void toggleaciabackend( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void setoverclock( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void savesnap( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void loadsnap( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void togglekeyboard( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void definemapping( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void togglestickykeys( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void savemapping( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void loadmapping( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void resetmapping( struct machine *oric, struct osdmenuitem *mitem, int dummy );
+void toggleautowind(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void toggleautoinsrt(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void togglesymbolsauto(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void togglecasesyms(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void togglevsynchack(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void swap_render_mode(struct machine *oric, struct osdmenuitem *mitem, int newrendermode);
+void togglearatio(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void togglehstretch(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void togglepalghost(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void togglescanlines(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void togglelightpen(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void toggleaciabackend(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void setoverclock(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void savesnap(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void loadsnap(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void togglekeyboard(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void definemapping(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void togglestickykeys(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void savemapping(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void loadmapping(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void resetmapping(struct machine *oric, struct osdmenuitem *mitem, int dummy);
 #ifdef __CBCOPY__
-void clipbd_copy_gui( struct machine *oric, struct osdmenuitem *mitem, int dummy );
+void clipbd_copy_gui(struct machine *oric, struct osdmenuitem *mitem, int dummy);
 #endif
 #ifdef __CBPASTE__
-void clipbd_paste_gui( struct machine *oric, struct osdmenuitem *mitem, int dummy );
+void clipbd_paste_gui(struct machine *oric, struct osdmenuitem *mitem, int dummy);
 #endif
 
 // Menu definitions. Name, key name, SDL key code, function, parameter
 // Keys that are also available while emulating should be marked with
 // square brackets
 struct osdmenuitem mainitems[] = { { "Insert tape...",         "T",    't',      inserttape,      0, 0 },
-                                   { "Save tape output...",    "[F9]", SDLK_F9,  toggletapecap,   0, 0 },
-                                   { "Insert disk 0...",       "0",    SDLK_0,   insertdisk,      0, 0 },
-                                   { "Insert disk 1...",       "1",    SDLK_1,   insertdisk,      1, 0 },
-                                   { "Insert disk 2...",       "2",    SDLK_2,   insertdisk,      2, 0 },
-                                   { "Insert disk 3...",       "3",    SDLK_3,   insertdisk,      3, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { "Save snapshot...",       NULL,   0,        savesnap,        0, 0 },
-                                   { "Load snapshot...",       NULL,   0,        loadsnap,        0, 0 },
+  { "Save tape output...",    "[F9]", SDLK_F9,  toggletapecap,   0, 0 },
+  { "Insert disk 0...",       "0",    SDLK_0,   insertdisk,      0, 0 },
+  { "Insert disk 1...",       "1",    SDLK_1,   insertdisk,      1, 0 },
+  { "Insert disk 2...",       "2",    SDLK_2,   insertdisk,      2, 0 },
+  { "Insert disk 3...",       "3",    SDLK_3,   insertdisk,      3, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { "Save snapshot...",       NULL,   0,        savesnap,        0, 0 },
+  { "Load snapshot...",       NULL,   0,        loadsnap,        0, 0 },
 #if defined(__CBCOPY__) || defined(__CBPASTE__)
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
 #endif
 #if defined(__CBCOPY__)
-                                   { "Copy to clipboard",      "[F11]",SDLK_F11, clipbd_copy_gui, 0, 0 },
+  { "Copy to clipboard",      "[F11]",SDLK_F11, clipbd_copy_gui, 0, 0 },
 #endif
 #if defined(__CBPASTE__)
-                                   { "Paste from clipboard",   "[F12]",SDLK_F12, clipbd_paste_gui,0, 0 },
+  { "Paste from clipboard",   "[F12]",SDLK_F12, clipbd_paste_gui,0, 0 },
 #endif
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { "Hardware options...",    "H",    'h',      gotomenu,        1, 0 },
-                                   { "Audio options...",       "A",    'a',      gotomenu,        2, 0 },
-                                   { "Video options...",       "V",    'v',      gotomenu,        4, 0 },
-                                   { "Keyboard options...",    "K",    'k',      gotomenu,        7, 0 },
-                                   { "Debug options...",       "D",    'd',      gotomenu,        3, 0 },
-                                   { "Overclock options...",   "C",    'c',      gotomenu,        6, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { "Hardware options...",    "H",    'h',      gotomenu,        1, 0 },
+  { "Audio options...",       "A",    'a',      gotomenu,        2, 0 },
+  { "Video options...",       "V",    'v',      gotomenu,        4, 0 },
+  { "Keyboard options...",    "K",    'k',      gotomenu,        7, 0 },
+  { "Debug options...",       "D",    'd',      gotomenu,        3, 0 },
+  { "Overclock options...",   "C",    'c',      gotomenu,        6, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
 #ifndef WWW_NO_MONITOR
-                                   { "Monitor",                "[F2]", SDLK_F2,  setemumode,      EM_DEBUG, 0 },
+  { "Monitor",                "[F2]", SDLK_F2,  setemumode,      EM_DEBUG, 0 },
 #endif
-                                   { "Reset Button NMI",       "[F3]", SDLK_F3,  softresetoric,       0, 0 },
-                                   { "Hard Reset",             "[F4]", SDLK_F4,  resetoric,       0, 0 },
-                                   { "Back",                   "\x17", SDLK_BACKSPACE,setemumode, EM_RUNNING, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { "About",                  NULL,   0,        gotomenu,        5, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { "Reset Button NMI",       "[F3]", SDLK_F3,  softresetoric,       0, 0 },
+  { "Hard Reset",             "[F4]", SDLK_F4,  resetoric,       0, 0 },
+  { "Back",                   "\x17", SDLK_BACKSPACE,setemumode, EM_RUNNING, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { "About",                  NULL,   0,        gotomenu,        5, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
 #ifndef WWW
-                                   { "Quit",                   NULL,   0,        setemumode,      EM_PLEASEQUIT, 0 },
+  { "Quit",                   NULL,   0,        setemumode,      EM_PLEASEQUIT, 0 },
 #endif
-                                   { NULL, } };
+  { NULL, }
+};
 
-struct osdmenuitem hwopitems[] = { { " Oric-1",                "1",    SDLK_1,   swapmach,        (0xffff<<16)|MACH_ORIC1, 0 },
-                                   { " Oric-1 16K",            "2",    SDLK_2,   swapmach,        (0xffff<<16)|MACH_ORIC1_16K, 0 },
-                                   { " Atmos",                 "3",    SDLK_3,   swapmach,        (0xffff<<16)|MACH_ATMOS, 0 },
-                                   { " Telestrat",             "4",    SDLK_4,   swapmach,        (DRV_NONE<<16)|MACH_TELESTRAT, 0 },
-                                   { " Pravetz 8D",            "5",    SDLK_5,   swapmach,        (0xffff<<16)|MACH_PRAVETZ, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { " No disk",               "X",    'x',      setdrivetype,    DRV_NONE, 0 },
-                                   { " Microdisc",             "M",    'm',      setdrivetype,    DRV_MICRODISC, 0 },
-                                   { " Jasmin",                "J",    'j',      setdrivetype,    DRV_JASMIN, 0 },
-                                   { " BD500",                 "B",    'b',      setdrivetype,    DRV_BD500, 0 },
-//                                   { " Cumana",                "C",    'c',      NULL,            0, 0 },
-                                   { " Pravetz 8D disk",       "P",    'p',      setdrivetype,    DRV_PRAVETZ, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { " Turbo tape",            NULL,   0,        toggletapeturbo, 0, 0 },
-                                   { " Autoinsert tape",       NULL,   0,        toggleautoinsrt, 0, 0 },
-                                   { " Autorewind tape",       NULL,   0,        toggleautowind,  0, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { " VSync hack",            NULL,   0,        togglevsynchack, 0, 0 },
-                                   { " Lightpen",              NULL,   0,        togglelightpen,  0, 0 },
-                                   { " Serial none          ", NULL,   0,        toggleaciabackend, 0, 0 },
-                                   { " CH376 (Telestrat)    ", NULL,   0,        togglech376, 0, 0 },
-                                   { " Twilighte board    ", NULL,   0,        toggletwilighte, 0, 0 },
-//                                   { " Mouse",                 NULL,   0,        NULL,            0, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
-                                   { NULL, } };
+struct osdmenuitem hwopitems[] = { { " Oric-1",                "1",    SDLK_1,   swapmach, (0xffff<<16)|MACH_ORIC1, 0 },
+  { " Oric-1 16K",            "2",    SDLK_2,   swapmach, (0xffff<<16)|MACH_ORIC1_16K, 0 },
+  { " Atmos",                 "3",    SDLK_3,   swapmach, (0xffff<<16)|MACH_ATMOS, 0 },
+  { " Telestrat",             "4",    SDLK_4,   swapmach, (DRV_NONE<<16)|MACH_TELESTRAT, 0 },
+  { " Pravetz 8D",            "5",    SDLK_5,   swapmach, (0xffff<<16)|MACH_PRAVETZ, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { " No disk",               "X",    'x',      setdrivetype,    DRV_NONE, 0 },
+  { " Microdisc",             "M",    'm',      setdrivetype,    DRV_MICRODISC, 0 },
+  { " Jasmin",                "J",    'j',      setdrivetype,    DRV_JASMIN, 0 },
+  { " BD500",                 "B",    'b',      setdrivetype,    DRV_BD500, 0 },
+  //                                   { " Cumana",                "C",    'c',      NULL,            0, 0 },
+  { " Pravetz 8D disk",       "P",    'p',      setdrivetype,    DRV_PRAVETZ, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { " Turbo tape",            NULL,   0,        toggletapeturbo, 0, 0 },
+  { " Autoinsert tape",       NULL,   0,        toggleautoinsrt, 0, 0 },
+  { " Autorewind tape",       NULL,   0,        toggleautowind,  0, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { " VSync hack",            NULL,   0,        togglevsynchack, 0, 0 },
+  { " Lightpen",              NULL,   0,        togglelightpen,  0, 0 },
+  { " Serial none          ", NULL,   0,        toggleaciabackend, 0, 0 },
+  { " CH376 (Telestrat)    ", NULL,   0,        togglech376, 0, 0 },
+  { " Twilighte board    ", NULL,   0,        toggletwilighte, 0, 0 },
+  //                                   { " Mouse",                 NULL,   0,        NULL,            0, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
+  { NULL, }
+};
 
 struct osdmenuitem auopitems[] = { { " Sound enabled",         NULL,   0,        togglesound,     0, 0 },
-                                   { " Tape noise",            NULL,   0,        toggletapenoise, 0, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
-                                   { NULL, } };
+  { " Tape noise",            NULL,   0,        toggletapenoise, 0, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
+  { NULL, }
+};
 
 struct osdmenuitem keopitems[] = { { " Show keyboard",         NULL,   0,        togglekeyboard,  0, 0 },
-                                   { " Sticky mod keys",       NULL,   0,        togglestickykeys,0, 0 },
-                                   { " Define mapping",        NULL,   0,        definemapping,   0, 0 },
-                                   { "Save mapping...",        NULL,   0,        savemapping,     0, 0 },
-                                   { "Load mapping...",        NULL,   0,        loadmapping,     0, 0 },
-                                   { "Reset mapping",          NULL,   0,        resetmapping,    0, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
-                                   { NULL, } };
+  { " Sticky mod keys",       NULL,   0,        togglestickykeys,0, 0 },
+  { " Define mapping",        NULL,   0,        definemapping,   0, 0 },
+  { "Save mapping...",        NULL,   0,        savemapping,     0, 0 },
+  { "Load mapping...",        NULL,   0,        loadmapping,     0, 0 },
+  { "Reset mapping",          NULL,   0,        resetmapping,    0, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
+  { NULL, }
+};
 
 
 
 struct osdmenuitem dbopitems[] = { { " Autoload symbols file", NULL,   0,        togglesymbolsauto, 0, 0 },
-                                   { " Case-sensitive symbols",NULL,   0,        togglecasesyms,  0, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
-                                   { NULL, } };
+  { " Case-sensitive symbols",NULL,   0,        togglecasesyms,  0, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
+  { NULL, }
+};
 
 #ifdef __OPENGL_AVAILABLE__
 struct osdmenuitem vdopitems[] = { { " OpenGL rendering",      "O",    'o',      swap_render_mode, RENDERMODE_GL, 0 },
-                                   { " Software rendering",    "S",    's',      swap_render_mode, RENDERMODE_SW, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { " Fullscreen",            "[F8]", SDLK_F8,  togglefullscreen, 0, 0 },
-                                   { " Scanlines",             "C",    'c',      togglescanlines, 0, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
-                                   { NULL, } };
+  { " Software rendering",    "S",    's',      swap_render_mode, RENDERMODE_SW, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { " Fullscreen",            "[F8]", SDLK_F8,  togglefullscreen, 0, 0 },
+  { " Scanlines",             "C",    'c',      togglescanlines, 0, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
+  { NULL, }
+};
 #else
 struct osdmenuitem vdopitems[] = { { " Fullscreen",            "F",    'f',      togglefullscreen, 0, 0 },
-                                   { " Scanlines",             "C",    'c',      togglescanlines, 0, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
-                                   { NULL, } };
+  { " Scanlines",             "C",    'c',      togglescanlines, 0, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
+  { NULL, }
+};
 #endif
 
 struct osdmenuitem glopitems[] = { { " OpenGL rendering",      "O",    'o',      swap_render_mode, RENDERMODE_GL, 0 },
-                                   { " Software rendering",    "S",    's',      swap_render_mode, RENDERMODE_SW, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { " Fullscreen",            "F",    'f',      togglefullscreen, 0, 0 },
-                                   { " 50Hz/60Hz aspect ratio", "R",   'r',      togglearatio,    0, 0 },
-                                   { " Horizontal stretch",    "H",    'h',      togglehstretch,  0, 0 },
-                                   { " Scanlines",             "C",    'c',      togglescanlines, 0, 0 },
-                                   { " PAL ghosting",          "P",    'p',      togglepalghost,  0, 0 },
-                                   { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
-                                   { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
-                                   { NULL, } };
+  { " Software rendering",    "S",    's',      swap_render_mode, RENDERMODE_SW, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { " Fullscreen",            "F",    'f',      togglefullscreen, 0, 0 },
+  { " 50Hz/60Hz aspect ratio", "R",   'r',      togglearatio,    0, 0 },
+  { " Horizontal stretch",    "H",    'h',      togglehstretch,  0, 0 },
+  { " Scanlines",             "C",    'c',      togglescanlines, 0, 0 },
+  { " PAL ghosting",          "P",    'p',      togglepalghost,  0, 0 },
+  { OSDMENUBAR,               NULL,   0,        NULL,            0, 0 },
+  { "Back",                   "\x17", SDLK_BACKSPACE,gotomenu,   0, 0 },
+  { NULL, }
+};
 
 struct osdmenuitem aboutitems[] = { { "",                                  NULL,   0, NULL, 0, 0 },
-                                    { APP_NAME_FULL,                       NULL,   0, NULL, 0, OMIF_BRIGHT|OMIF_CENTRED },
-                                    { "https://github.com/pete-gordon/oricutron",NULL,  0, gotosite, 0, OMIF_CENTRED },
-                                    { "",                                  NULL,   0, NULL, 0, 0 },
-                                    { "(C)" APP_YEAR " Peter Gordon",      NULL,   0, NULL, 0, OMIF_BRIGHT|OMIF_CENTRED },
-                                    { "http://www.petergordon.org.uk",     NULL,   0, gotosite, 0, OMIF_CENTRED },
-                                    { "",                                  NULL,   0, NULL, 0, 0 },
-                                    { "Additional programming",            NULL,   0, NULL, 0, OMIF_BRIGHT|OMIF_CENTRED },
-                                    { "Francois Revol",                    NULL,   0, NULL, 0, OMIF_CENTRED },
-                                    { "Stefan Haubenthal",                 NULL,   0, NULL, 0, OMIF_CENTRED },
-                                    { "Alexandre Devert",                  NULL,   0, NULL, 0, OMIF_CENTRED },
-                                    { "Ibisum",                            NULL,   0, NULL, 0, OMIF_CENTRED },
-                                    { "Kamel Biskri",                      NULL,   0, NULL, 0, OMIF_CENTRED },
-                                    { "Iss",                               NULL,   0, NULL, 0, OMIF_CENTRED },
-                                    { "Patrice Torguet",                   NULL,   0, NULL, 0, OMIF_CENTRED },
-                                    { "",                                  NULL,   0, NULL, 0, 0 },
-                                    { OSDMENUBAR,                          NULL,   0, NULL, 0, 0 },
-                                    { "Back", "\x17", SDLK_BACKSPACE, gotomenu, 0, 0 },
-                                    { NULL, } };
+  { APP_NAME_FULL,                       NULL,   0, NULL, 0, OMIF_BRIGHT|OMIF_CENTRED },
+  { "https://github.com/pete-gordon/oricutron",NULL,  0, gotosite, 0, OMIF_CENTRED },
+  { "",                                  NULL,   0, NULL, 0, 0 },
+  { "(C)" APP_YEAR " Peter Gordon",      NULL,   0, NULL, 0, OMIF_BRIGHT|OMIF_CENTRED },
+  { "http://www.petergordon.org.uk",     NULL,   0, gotosite, 0, OMIF_CENTRED },
+  { "",                                  NULL,   0, NULL, 0, 0 },
+  { "Additional programming",            NULL,   0, NULL, 0, OMIF_BRIGHT|OMIF_CENTRED },
+  { "Francois Revol",                    NULL,   0, NULL, 0, OMIF_CENTRED },
+  { "Stefan Haubenthal",                 NULL,   0, NULL, 0, OMIF_CENTRED },
+  { "Alexandre Devert",                  NULL,   0, NULL, 0, OMIF_CENTRED },
+  { "Ibisum",                            NULL,   0, NULL, 0, OMIF_CENTRED },
+  { "Kamel Biskri",                      NULL,   0, NULL, 0, OMIF_CENTRED },
+  { "Iss",                               NULL,   0, NULL, 0, OMIF_CENTRED },
+  { "Patrice Torguet",                   NULL,   0, NULL, 0, OMIF_CENTRED },
+  { "",                                  NULL,   0, NULL, 0, 0 },
+  { OSDMENUBAR,                          NULL,   0, NULL, 0, 0 },
+  { "Back", "\x17", SDLK_BACKSPACE, gotomenu, 0, 0 },
+  { NULL, }
+};
 
 struct osdmenuitem ovopitems[] = { { "  1mhz (None)", "1",    '1', setoverclock,  0, 0 },
-                                   { "  2mhz",        "2",    '2', setoverclock,  1, 0 },
-                                   { "  4mhz",        "3",    '3', setoverclock,  2, 0 },
-                                   { "  8mhz",        "4",    '4', setoverclock,  3, 0 },
-                                   { " 16mhz",        "5",    '5', setoverclock,  4, 0 },
-                                   { " 32mhz",        "6",    '6', setoverclock,  5, 0 },
-                                   { " 64mhz",        "7",    '7', setoverclock,  6, 0 },
-                                   { OSDMENUBAR,     NULL,      0, NULL,          0, 0 },
-                                   { "Back",         "\x17", SDLK_BACKSPACE,gotomenu,0, 0 },
-                                   { NULL, } };
+  { "  2mhz",        "2",    '2', setoverclock,  1, 0 },
+  { "  4mhz",        "3",    '3', setoverclock,  2, 0 },
+  { "  8mhz",        "4",    '4', setoverclock,  3, 0 },
+  { " 16mhz",        "5",    '5', setoverclock,  4, 0 },
+  { " 32mhz",        "6",    '6', setoverclock,  5, 0 },
+  { " 64mhz",        "7",    '7', setoverclock,  6, 0 },
+  { OSDMENUBAR,     NULL,      0, NULL,          0, 0 },
+  { "Back",         "\x17", SDLK_BACKSPACE,gotomenu,0, 0 },
+  { NULL, }
+};
 
 #define LAST_ITEM(x) ((sizeof(x)/sizeof(struct osdmenuitem))-2)
 
 struct osdmenu menus[] = { { "Main Menu",        LAST_ITEM(mainitems)-4, mainitems },
-                           { "Hardware options", LAST_ITEM(hwopitems),  hwopitems },
-                           { "Audio options",    LAST_ITEM(auopitems),  auopitems },
-                           { "Debug options",    LAST_ITEM(dbopitems),  dbopitems },
-                           { "Video options",    LAST_ITEM(vdopitems),  vdopitems },
-                           { "About Oricutron",  LAST_ITEM(aboutitems), aboutitems },
-                           { "Overclock",        LAST_ITEM(ovopitems),  ovopitems },
-                           { "Keyboard options", LAST_ITEM(keopitems),  keopitems }};
+  { "Hardware options", LAST_ITEM(hwopitems),  hwopitems },
+  { "Audio options",    LAST_ITEM(auopitems),  auopitems },
+  { "Debug options",    LAST_ITEM(dbopitems),  dbopitems },
+  { "Video options",    LAST_ITEM(vdopitems),  vdopitems },
+  { "About Oricutron",  LAST_ITEM(aboutitems), aboutitems },
+  { "Overclock",        LAST_ITEM(ovopitems),  ovopitems },
+  { "Keyboard options", LAST_ITEM(keopitems),  keopitems }
+};
 
 #define MKPATH_MAX (1024)
 
 // Prepend file prefix to filename
-static void mkpath( char buf[MKPATH_MAX], const char *filename )
+static void mkpath(char buf[MKPATH_MAX], const char* filename)
 {
-  strncpy( buf, get_fileprefix(), MKPATH_MAX-1 );
+  strncpy(buf, get_fileprefix(), MKPATH_MAX-1);
   buf[MKPATH_MAX-1] = 0;
-  strncat( buf, filename, MKPATH_MAX-strlen(buf)-1 );
+  strncat(buf, filename, MKPATH_MAX-strlen(buf)-1);
 }
 
 // Load a 24bit BMP for the GUI
-SDL_bool gimg_load( struct guiimg *gi )
+SDL_bool gimg_load(struct guiimg *gi)
 {
   SDL_RWops *f;
   Uint8 hdrbuf[640*3];
@@ -413,54 +431,54 @@ SDL_bool gimg_load( struct guiimg *gi )
   char path[MKPATH_MAX];
 
   // Get the file
-  mkpath( path, gi->filename );
-  f = SDL_RWFromFile( path, "rb" );
-  if( !f )
+  mkpath(path, gi->filename);
+  f = SDL_RWFromFile(path, "rb");
+  if(!f)
   {
-    error_printf( "Unable to open '%s' SDL_Error: %s\n", gi->filename, SDL_GetError() );
+    error_printf("Unable to open '%s' SDL_Error: %s\n", gi->filename, SDL_GetError());
 
     return SDL_FALSE;
   }
 
   // Read the header
-  if( SDL_RWread( f, hdrbuf, 54, 1 ) != 1 )
+  if(SDL_RWread(f, hdrbuf, 54, 1) != 1)
   {
-    error_printf( "Error reading '%s'\n", gi->filename );
-    SDL_RWclose( f );
+    error_printf("Error reading '%s'\n", gi->filename);
+    SDL_RWclose(f);
     return SDL_FALSE;
   }
 
   fileok = SDL_TRUE;
-  if( strncmp( (char *)hdrbuf, "BM", 2 ) != 0 ) fileok = SDL_FALSE;                                      // Must start with "BM"
-  if( ((hdrbuf[21]<<24)|(hdrbuf[20]<<16)|(hdrbuf[19]<<8)|hdrbuf[18]) != gi->w ) fileok = SDL_FALSE;      // Must be the correct width
-  if( ((hdrbuf[25]<<24)|(hdrbuf[24]<<16)|(hdrbuf[23]<<8)|hdrbuf[22]) != gi->h ) fileok = SDL_FALSE;      // Must be the correct height
-  if( ((hdrbuf[27]<<8)|hdrbuf[26]) != 1 ) fileok = SDL_FALSE;                                            // Must contain one plane
-  if( ((hdrbuf[29]<<8)|hdrbuf[28]) != 24 ) fileok = SDL_FALSE;                                           // Must be 24 bit
-  if( ((hdrbuf[33]<<24)|(hdrbuf[32]<<16)|(hdrbuf[31]<<8)|hdrbuf[30]) != 0 ) fileok = SDL_FALSE;          // Must not be compressed
+  if(strncmp((char*)hdrbuf, "BM", 2) != 0) fileok = SDL_FALSE;                                           // Must start with "BM"
+  if(((hdrbuf[21]<<24)|(hdrbuf[20]<<16)|(hdrbuf[19]<<8)|hdrbuf[18]) != gi->w) fileok = SDL_FALSE;        // Must be the correct width
+  if(((hdrbuf[25]<<24)|(hdrbuf[24]<<16)|(hdrbuf[23]<<8)|hdrbuf[22]) != gi->h) fileok = SDL_FALSE;        // Must be the correct height
+  if(((hdrbuf[27]<<8)|hdrbuf[26]) != 1) fileok = SDL_FALSE;                                              // Must contain one plane
+  if(((hdrbuf[29]<<8)|hdrbuf[28]) != 24) fileok = SDL_FALSE;                                             // Must be 24 bit
+  if(((hdrbuf[33]<<24)|(hdrbuf[32]<<16)|(hdrbuf[31]<<8)|hdrbuf[30]) != 0) fileok = SDL_FALSE;            // Must not be compressed
 
-  if( !fileok )
+  if(!fileok)
   {
-    error_printf( "'%s' needs to be a %dx%d, uncompressed, 24-bit BMP image\n", gi->filename, gi->w, gi->h );
-    SDL_RWclose( f );
+    error_printf("'%s' needs to be a %dx%d, uncompressed, 24-bit BMP image\n", gi->filename, gi->w, gi->h);
+    SDL_RWclose(f);
     return SDL_FALSE;
   }
 
   // Get some RAM!
-  if( !gi->buf )
-    gi->buf = malloc( gi->w * gi->h * 3 );
+  if(!gi->buf)
+    gi->buf = malloc(gi->w * gi->h * 3);
 
-  if( !gi->buf )
+  if(!gi->buf)
   {
-    error_printf( "Out of memory\n" );
-    SDL_RWclose( f );
+    error_printf("Out of memory\n");
+    SDL_RWclose(f);
     return SDL_FALSE;
   }
 
   // BMPs are upside down!
-  for( y=gi->h-1; y>=0; y-- )
+  for(y=gi->h-1; y>=0; y--)
   {
-    SDL_RWread( f, hdrbuf, ((gi->w*3)+3)&0xfffffffc, 1 );
-    for( x=0; x<gi->w; x++ )
+    SDL_RWread(f, hdrbuf, ((gi->w*3)+3)&0xfffffffc, 1);
+    for(x=0; x<gi->w; x++)
     {
       gi->buf[(y*gi->w+x)*3+0] = hdrbuf[x*3+2];
       gi->buf[(y*gi->w+x)*3+1] = hdrbuf[x*3+1];
@@ -468,198 +486,202 @@ SDL_bool gimg_load( struct guiimg *gi )
     }
   }
 
-  SDL_RWclose( f );
+  SDL_RWclose(f);
 
   return SDL_TRUE;
 }
 
 // Draw the statusbar at the bottom
-void draw_statusbar( struct machine *oric )
+void draw_statusbar(struct machine *oric)
 {
-   if (oric->statusbar_mode == STATUSBARMODE_NONE)
-     oric->render_clear_area( 0, GIMG_POS_SBARY, 640, 480-GIMG_POS_SBARY );
-   else
-     oric->render_gimg( GIMG_STATUSBAR, 0, GIMG_POS_SBARY );
+  if(oric->statusbar_mode == STATUSBARMODE_NONE)
+    oric->render_clear_area(0, GIMG_POS_SBARY, 640, 480-GIMG_POS_SBARY);
+  else
+    oric->render_gimg(GIMG_STATUSBAR, 0, GIMG_POS_SBARY);
 }
 
-void draw_keyboard( struct machine *oric ) {
-  if (oric->show_keyboard) {
-    switch( oric->type )
+void draw_keyboard(struct machine *oric)
+{
+  if(oric->show_keyboard)
+  {
+    switch(oric->type)
     {
 #ifndef WWW_NO_PRAVETZ
-       case MACH_PRAVETZ:
-            oric->render_gimg( GIMG_PRAVETZ_KEYBOARD, 0, 480);
-            break;
+      case MACH_PRAVETZ:
+        oric->render_gimg(GIMG_PRAVETZ_KEYBOARD, 0, 480);
+        break;
 #endif
 #ifndef WWW_NO_ORIC1
-       case MACH_ORIC1:
-       case MACH_ORIC1_16K:
-            oric->render_gimg( GIMG_ORIC1_KEYBOARD, 0, 480);
-            break;
+      case MACH_ORIC1:
+      case MACH_ORIC1_16K:
+        oric->render_gimg(GIMG_ORIC1_KEYBOARD, 0, 480);
+        break;
 #endif
-       default:
-           oric->render_gimg( GIMG_ATMOS_KEYBOARD, 0, 480);
-           break;
+      default:
+        oric->render_gimg(GIMG_ATMOS_KEYBOARD, 0, 480);
+        break;
     }
   }
 }
 
 // Overlay the disk icons onto the status bar
-void draw_disks( struct machine *oric )
+void draw_disks(struct machine *oric)
 {
   Sint32 i, j;
 
-  if( oric->statusbar_mode == STATUSBARMODE_NONE )
+  if(oric->statusbar_mode == STATUSBARMODE_NONE)
     return;
 
-  if( oric->drivetype == DRV_NONE )
+  if(oric->drivetype == DRV_NONE)
   {
-    oric->render_gimgpart( GIMG_STATUSBAR, GIMG_POS_DISKX, GIMG_POS_SBARY, GIMG_POS_DISKX, 0, 18*4, 16 );
+    oric->render_gimgpart(GIMG_STATUSBAR, GIMG_POS_DISKX, GIMG_POS_SBARY, GIMG_POS_DISKX, 0, 18*4, 16);
     return;
   }
 
-  for( i=0; i<4; i++ )
+  for(i=0; i<4; i++)
   {
     j = GIMG_DISK_EJECTED;
-    if( oric->wddisk.disk[i] )
+    if(oric->wddisk.disk[i])
     {
       j = ((oric->wddisk.c_drive==i)&&(oric->wddisk.currentop!=COP_NUFFINK)) ? GIMG_DISK_ACTIVE : GIMG_DISK_IDLE;
-      if( oric->wddisk.disk[i]->modified ) j+=2;
+      if(oric->wddisk.disk[i]->modified) j+=2;
     }
-    oric->render_gimg( j, GIMG_POS_DISKX+i*GIMG_W_DISK, GIMG_POS_SBARY );
+    oric->render_gimg(j, GIMG_POS_DISKX+i*GIMG_W_DISK, GIMG_POS_SBARY);
   }
 }
 
 // Overlay the AVI record icon onto the status bar
-void draw_avirec( struct machine *oric, SDL_bool recording )
+void draw_avirec(struct machine *oric, SDL_bool recording)
 {
-  if( oric->statusbar_mode == STATUSBARMODE_NONE)
+  if(oric->statusbar_mode == STATUSBARMODE_NONE)
     return;
 
-  if( recording )
+  if(recording)
   {
-    oric->render_gimg( GIMG_AVI_RECORD, GIMG_POS_AVIRECX, GIMG_POS_SBARY );
+    oric->render_gimg(GIMG_AVI_RECORD, GIMG_POS_AVIRECX, GIMG_POS_SBARY);
     return;
   }
 
-  oric->render_gimgpart( GIMG_STATUSBAR, GIMG_POS_AVIRECX, GIMG_POS_SBARY, GIMG_POS_AVIRECX, 0, 16, 16 );
+  oric->render_gimgpart(GIMG_STATUSBAR, GIMG_POS_AVIRECX, GIMG_POS_SBARY, GIMG_POS_AVIRECX, 0, 16, 16);
 }
 
 // Overlay the tape icon onto the status bar
-void draw_tape( struct machine *oric )
+void draw_tape(struct machine *oric)
 {
-  if( oric->statusbar_mode == STATUSBARMODE_NONE )
+  if(oric->statusbar_mode == STATUSBARMODE_NONE)
     return;
 
-  if( oric->tapecap )
+  if(oric->tapecap)
   {
-    oric->render_gimg( GIMG_TAPE_RECORD, GIMG_POS_TAPEX, GIMG_POS_SBARY );
+    oric->render_gimg(GIMG_TAPE_RECORD, GIMG_POS_TAPEX, GIMG_POS_SBARY);
     return;
   }
 
-  if( !oric->tapebuf )
+  if(!oric->tapebuf)
   {
-    oric->render_gimg( GIMG_TAPE_EJECTED, GIMG_POS_TAPEX, GIMG_POS_SBARY );
+    oric->render_gimg(GIMG_TAPE_EJECTED, GIMG_POS_TAPEX, GIMG_POS_SBARY);
     return;
   }
 
-  if( oric->tapemotor )
+  if(oric->tapemotor)
   {
-    oric->render_gimg( GIMG_TAPE_PLAY, GIMG_POS_TAPEX, GIMG_POS_SBARY );
+    oric->render_gimg(GIMG_TAPE_PLAY, GIMG_POS_TAPEX, GIMG_POS_SBARY);
     return;
   }
 
-  if( oric->tapeoffs >= oric->tapelen )
+  if(oric->tapeoffs >= oric->tapelen)
   {
-    oric->render_gimg( GIMG_TAPE_STOP, GIMG_POS_TAPEX, GIMG_POS_SBARY );
+    oric->render_gimg(GIMG_TAPE_STOP, GIMG_POS_TAPEX, GIMG_POS_SBARY);
     return;
   }
 
-  oric->render_gimg( GIMG_TAPE_PAUSE, GIMG_POS_TAPEX, GIMG_POS_SBARY );
+  oric->render_gimg(GIMG_TAPE_PAUSE, GIMG_POS_TAPEX, GIMG_POS_SBARY);
 }
 
 // Pop up some info!
-void do_popup( struct machine *oric, char *str )
+void do_popup(struct machine *oric, char* str)
 {
-  strncpy( oric->popupstr, str, 40 ); oric->popupstr[39] = 0;
+  strncpy(oric->popupstr, str, 40);
+  oric->popupstr[39] = 0;
   oric->newpopupstr = SDL_TRUE;
   oric->popuptime = 100;
 }
 
-void render_status( struct machine *oric )
+void render_status(struct machine *oric)
 {
-  if( refreshstatus )
-    draw_statusbar( oric );
+  if(refreshstatus)
+    draw_statusbar(oric);
 
-  if( refreshdisks || refreshstatus )
+  if(refreshdisks || refreshstatus)
   {
-    draw_disks( oric );
+    draw_disks(oric);
     refreshdisks = SDL_FALSE;
   }
 
-  if( refreshavi || refreshstatus )
+  if(refreshavi || refreshstatus)
   {
-    draw_avirec( oric, vidcap != NULL );
+    draw_avirec(oric, vidcap != NULL);
     refreshavi = SDL_FALSE;
   }
 
-  if( refreshtape || refreshstatus )
+  if(refreshtape || refreshstatus)
   {
-    draw_tape( oric );
+    draw_tape(oric);
     refreshtape = SDL_FALSE;
   }
 
-    if(refreshkeyboard  || refreshstatus) {
-        draw_keyboard( oric );
-        refreshkeyboard = SDL_FALSE;
-    }
+  if(refreshkeyboard  || refreshstatus)
+  {
+    draw_keyboard(oric);
+    refreshkeyboard = SDL_FALSE;
+  }
 
   refreshstatus = SDL_FALSE;
 }
 
 // Top-level rendering routine
-void render( struct machine *oric )
+void render(struct machine *oric)
 {
   int perc, fps; //, i;
 
 #ifndef WWW_NO_MONITOR
-  if( oric->emu_mode == EM_DEBUG )
-    mon_update( oric );
+  if(oric->emu_mode == EM_DEBUG)
+    mon_update(oric);
 #endif
 
-  oric->render_begin( oric );
+  oric->render_begin(oric);
 
-  switch( oric->emu_mode )
+  switch(oric->emu_mode)
   {
     case EM_MENU:
-      oric->render_video( oric, SDL_TRUE );
-      render_status( oric );
-      if( tz[TZ_MENU] ) oric->render_textzone( oric, TZ_MENU );
+      oric->render_video(oric, SDL_TRUE);
+      render_status(oric);
+      if(tz[TZ_MENU]) oric->render_textzone(oric, TZ_MENU);
       break;
 
     case EM_RUNNING:
-      oric->render_video( oric, SDL_TRUE );
-      render_status( oric );
-      if( oric->statusbar_mode == STATUSBARMODE_FULL )
+      oric->render_video(oric, SDL_TRUE);
+      render_status(oric);
+      if(oric->statusbar_mode == STATUSBARMODE_FULL)
       {
         fps = 100000/(frametimeave?frametimeave:1);
-        if( oric->vid_freq )
+        if(oric->vid_freq)
           perc = 200000/(frametimeave?frametimeave:1);
         else
           perc = 166667/(frametimeave?frametimeave:1);
 
 #ifdef DEBUG_VSYNC
-        sprintf( oric->statusstr, "%4d.%02d%% - %4dFPS  VSYNC:%3d", perc/100, perc%100, fps/100, oric->vid_offset );
+        sprintf(oric->statusstr, "%4d.%02d%% - %4dFPS  VSYNC:%3d", perc/100, perc%100, fps/100, oric->vid_offset);
 #else
-        sprintf( oric->statusstr, "%4d.%02d%% - %4dFPS", perc/100, perc%100, fps/100 );
+        sprintf(oric->statusstr, "%4d.%02d%% - %4dFPS", perc/100, perc%100, fps/100);
 #endif
 
         oric->newstatusstr = SDL_TRUE;
       }
-      if( oric->popuptime > 0 )
+      if(oric->popuptime > 0)
       {
         oric->popuptime--;
-        if( oric->popuptime == 0 )
+        if(oric->popuptime == 0)
         {
           oric->popupstr[0] = 0;
           oric->newpopupstr = SDL_TRUE;
@@ -669,26 +691,26 @@ void render( struct machine *oric )
 
 #ifndef WWW_NO_MONITOR
     case EM_DEBUG:
-      mon_render( oric );
+      mon_render(oric);
       break;
 #endif
   }
 
-  oric->render_end( oric );
+  oric->render_end(oric);
 }
 
 // Draws a box in a textzone (uses the box chars in the font)
 //   ptz     = target textzone
 //   x,y,w,h = location and dimensions
 //   fg,bg   = colours
-void makebox( struct textzone *ptz, int x, int y, int w, int h, int fg, int bg )
+void makebox(struct textzone *ptz, int x, int y, int w, int h, int fg, int bg)
 {
   int cx, cy, o, bo;
 
   o = y*ptz->w+x;
-  for( cy=0; cy<h; cy++ )
+  for(cy=0; cy<h; cy++)
   {
-    for( cx=0; cx<w; cx++ )
+    for(cx=0; cx<w; cx++)
     {
       ptz->tx[o  ] = ' ';
       ptz->fc[o  ] = fg;
@@ -702,7 +724,7 @@ void makebox( struct textzone *ptz, int x, int y, int w, int h, int fg, int bg )
 
   o = y*ptz->w+x;
   bo = o + (h-1)*ptz->w;
-  for( cx=0; cx<(w-1); cx++ )
+  for(cx=0; cx<(w-1); cx++)
   {
     ptz->tx[o++] = cx==0?1:2;
     ptz->tx[bo++] = cx==0?9:2;
@@ -714,14 +736,14 @@ void makebox( struct textzone *ptz, int x, int y, int w, int h, int fg, int bg )
 }
 
 // Write a string to a textzone
-void tzstr( struct textzone *ptz, char *text )
+void tzstr(struct textzone *ptz, char* text)
 {
   int i, o;
 
   o = ptz->py*ptz->w+ptz->px;
-  for( i=0; text && text[i]; i++ )
+  for(i=0; text && text[i]; i++)
   {
-    switch( text[i] )
+    switch(text[i])
     {
       case 10:
         ptz->px = 1;
@@ -737,7 +759,7 @@ void tzstr( struct textzone *ptz, char *text )
         ptz->fc[o  ] = ptz->cfc;
         ptz->bc[o++] = ptz->cbc;
         ptz->px++;
-        if( ptz->px >= ptz->w )
+        if(ptz->px >= ptz->w)
         {
           ptz->px = 1;
           ptz->py++;
@@ -750,78 +772,78 @@ void tzstr( struct textzone *ptz, char *text )
   ptz->modified = SDL_TRUE;
 }
 
-void tzputc( struct textzone *ptz, char c )
+void tzputc(struct textzone *ptz, char c)
 {
   char tmp[2];
   tmp[0] = c;
   tmp[1] = 0;
-  tzstr( ptz, tmp );
+  tzstr(ptz, tmp);
 }
 
 // Print a formatted string into a textzone
-void tzprintf( struct textzone *ptz, char *fmt, ... )
+void tzprintf(struct textzone *ptz, char* fmt, ...)
 {
   va_list ap;
-  va_start( ap, fmt );
-  if( vsnprintf( vsptmp, VSPTMPSIZE, fmt, ap ) != -1 )
+  va_start(ap, fmt);
+  if(vsnprintf(vsptmp, VSPTMPSIZE, fmt, ap) != -1)
   {
     vsptmp[VSPTMPSIZE-1] = 0;
-    tzstr( ptz, vsptmp );
+    tzstr(ptz, vsptmp);
   }
-  va_end( ap );
+  va_end(ap);
 }
 
 // Write a string to a textzone at a specific location
-void tzstrpos( struct textzone *ptz, int x, int y, char *text )
+void tzstrpos(struct textzone *ptz, int x, int y, char* text)
 {
   ptz->px = x;
   ptz->py = y;
-  tzstr( ptz, text );
+  tzstr(ptz, text);
 }
 
 // Print a formatted string into a textzone at a specific location
-void tzprintfpos( struct textzone *ptz, int x, int y, char *fmt, ... )
+void tzprintfpos(struct textzone *ptz, int x, int y, char* fmt, ...)
 {
   va_list ap;
-  va_start( ap, fmt );
-  if( vsnprintf( vsptmp, VSPTMPSIZE, fmt, ap ) != -1 )
+  va_start(ap, fmt);
+  if(vsnprintf(vsptmp, VSPTMPSIZE, fmt, ap) != -1)
   {
     vsptmp[VSPTMPSIZE-1] = 0;
-    tzstrpos( ptz, x, y, vsptmp );
+    tzstrpos(ptz, x, y, vsptmp);
   }
-  va_end( ap );
+  va_end(ap);
 }
 
 // Set the foreground and background colours for printing text into a textzone
-void tzsetcol( struct textzone *ptz, int fc, int bc )
+void tzsetcol(struct textzone *ptz, int fc, int bc)
 {
   ptz->cfc = fc;
   ptz->cbc = bc;
 }
 
 // Set the title of a textzone
-void tzsettitle( struct textzone *ptz, char *title )
+void tzsettitle(struct textzone *ptz, char* title)
 {
   int ox, oy;
-  makebox( ptz, 0, 0, ptz->w, ptz->h, menufc(SDL_FALSE), menubc(SDL_FALSE));
-  if( !title ) return;
+  makebox(ptz, 0, 0, ptz->w, ptz->h, menufc(SDL_FALSE), menubc(SDL_FALSE));
+  if(!title) return;
 
-  tzsetcol( ptz, menufc(SDL_FALSE), menubc(SDL_FALSE));
+  tzsetcol(ptz, menufc(SDL_FALSE), menubc(SDL_FALSE));
   ox = ptz->px;
   oy = ptz->py;
   ptz->px = 3;
   ptz->py = 0;
-  tzstr( ptz, "[ " );
-  tzstr( ptz, title );
-  tzstr( ptz, " ]" );
+  tzstr(ptz, "[ ");
+  tzstr(ptz, title);
+  tzstr(ptz, " ]");
   ptz->px = ox;
   ptz->py = oy;
 }
 
-SDL_bool in_textzone( struct textzone *tz_, int x, int y )
+SDL_bool in_textzone(struct textzone *tz_, int x, int y)
 {
-  if( ( x >= tz_->x ) && ( x < (tz_->x+tz_->w*8) ) &&
-      ( y >= tz_->y ) && ( y < (tz_->y+tz_->h*12) ) )
+  if((x >= tz_->x) && (x < (tz_->x+tz_->w*8)) &&
+      (y >= tz_->y) && (y < (tz_->y+tz_->h*12)))
   {
     return SDL_TRUE;
   }
@@ -830,23 +852,23 @@ SDL_bool in_textzone( struct textzone *tz_, int x, int y )
 }
 
 // Allocate a textzone structure
-SDL_bool alloc_textzone( struct machine *oric, int i, int x, int y, int w, int h, char *title )
+SDL_bool alloc_textzone(struct machine *oric, int i, int x, int y, int w, int h, char* title)
 {
   struct textzone *ntz;
 
-  ntz = malloc( sizeof( struct textzone ) + w*h*3 );
-  if( !ntz ) return SDL_FALSE;
+  ntz = malloc(sizeof(struct textzone) + w*h*3);
+  if(!ntz) return SDL_FALSE;
 
   ntz->x = x;
   ntz->y = y;
   ntz->w = w;
   ntz->h = h;
 
-  ntz->tx = (unsigned char *)(&ntz[1]);
+  ntz->tx = (unsigned char*)(&ntz[1]);
   ntz->fc = &ntz->tx[w*h];
   ntz->bc = &ntz->fc[w*h];
 
-  tzsettitle( ntz, title );
+  tzsettitle(ntz, title);
 
   ntz->px = 1;
   ntz->py = 1;
@@ -854,21 +876,21 @@ SDL_bool alloc_textzone( struct machine *oric, int i, int x, int y, int w, int h
   ntz->modified = SDL_TRUE;
 
   tz[i] = ntz;
-  oric->render_textzone_alloc( oric, i );
+  oric->render_textzone_alloc(oric, i);
 
   return SDL_TRUE;
 }
 
-void clear_textzone( struct machine *oric, int i )
+void clear_textzone(struct machine *oric, int i)
 {
   int x, y;
   struct textzone *ptz = tz[i];
 
-  if (!ptz) return;
+  if(!ptz) return;
 
-  for( y=1; y<(ptz->h-1); y++ )
+  for(y=1; y<(ptz->h-1); y++)
   {
-    for( x=1; x<(ptz->w-1); x++ )
+    for(x=1; x<(ptz->w-1); x++)
     {
       ptz->tx[y*ptz->w+x] = ' ';
       ptz->fc[y*ptz->w+x] = 2;
@@ -880,32 +902,32 @@ void clear_textzone( struct machine *oric, int i )
 }
 
 // Free a textzone structure
-void free_textzone( struct machine *oric, int i )
+void free_textzone(struct machine *oric, int i)
 {
-  oric->render_textzone_free( oric, i );
-  if( !tz[i] ) return;
-  free( tz[i] );
+  oric->render_textzone_free(oric, i);
+  if(!tz[i]) return;
+  free(tz[i]);
   tz[i] = NULL;
 }
 
 // Draw the current menu items into the menu textzone
-void drawitems( void )
+void drawitems(void)
 {
   int i, j, o;
 
   // No menu, or no textzone?
-  if( ( !cmenu ) || ( !tz[TZ_MENU] ) )
+  if((!cmenu) || (!tz[TZ_MENU]))
     return;
 
   // For each item...
-  for( i=0; cmenu->items[i].name; i++ )
+  for(i=0; cmenu->items[i].name; i++)
   {
     // Check if its a menu bar
-    if( cmenu->items[i].name == OSDMENUBAR )
+    if(cmenu->items[i].name == OSDMENUBAR)
     {
       // Fill it with the menu bar char
       o = tz[TZ_MENU]->w * (i+1) + 1;
-      for( j=1; j<tz[TZ_MENU]->w-1; j++, o++ )
+      for(j=1; j<tz[TZ_MENU]->w-1; j++, o++)
       {
         tz[TZ_MENU]->tx[o] = 12;
         tz[TZ_MENU]->fc[o] = menufc(SDL_FALSE);
@@ -915,75 +937,77 @@ void drawitems( void )
     }
 
     // Check if this is the highlighted item, and set the colours accordingly
-    if( i==cmenu->citem )
-      tzsetcol( tz[TZ_MENU], menufc(SDL_TRUE), menubc(SDL_TRUE));
+    if(i==cmenu->citem)
+      tzsetcol(tz[TZ_MENU], menufc(SDL_TRUE), menubc(SDL_TRUE));
     else
-      tzsetcol( tz[TZ_MENU], (cmenu->items[i].flags&OMIF_BRIGHT) ? 1 : menufc(SDL_FALSE), menubc(SDL_FALSE));
+      tzsetcol(tz[TZ_MENU], (cmenu->items[i].flags&OMIF_BRIGHT) ? 1 : menufc(SDL_FALSE), menubc(SDL_FALSE));
 
     // Calculate the position in the textzone
     o = tz[TZ_MENU]->w * (i+1) + 1;
 
     // Fill the background colour all the way along
-    for( j=1; j<tz[TZ_MENU]->w-1; j++, o++ )
+    for(j=1; j<tz[TZ_MENU]->w-1; j++, o++)
       tz[TZ_MENU]->bc[o] = tz[TZ_MENU]->cbc;
 
     // Write the text for the item
-    if( cmenu->items[i].flags & OMIF_CENTRED )
-      tzstrpos( tz[TZ_MENU], (tz[TZ_MENU]->w-(int)strlen(cmenu->items[i].name))/2, i+1, cmenu->items[i].name );
+    if(cmenu->items[i].flags & OMIF_CENTRED)
+      tzstrpos(tz[TZ_MENU], (tz[TZ_MENU]->w-(int)strlen(cmenu->items[i].name))/2, i+1, cmenu->items[i].name);
     else
-      tzstrpos( tz[TZ_MENU], 1, i+1, cmenu->items[i].name );
+      tzstrpos(tz[TZ_MENU], 1, i+1, cmenu->items[i].name);
 
     // And the key (if there is one)
-    if( cmenu->items[i].key )
-      tzstrpos( tz[TZ_MENU], tz[TZ_MENU]->w-(1+(int)strlen(cmenu->items[i].key)), i+1, cmenu->items[i].key );
+    if(cmenu->items[i].key)
+      tzstrpos(tz[TZ_MENU], tz[TZ_MENU]->w-(1+(int)strlen(cmenu->items[i].key)), i+1, cmenu->items[i].key);
   }
 }
 
 
 /***************** These functions can be used directly from the menu system ***************/
-void joinpath( char *path, char *file )
+void joinpath(char* path, char* file)
 {
 #if defined(__amigaos4__)
-  strcpy( filetmp, path );
-  IDOS->AddPart( filetmp, file, 4096 );
+  strcpy(filetmp, path);
+  IDOS->AddPart(filetmp, file, 4096);
 #elif defined(WIN32)
   int i;
-  strncpy( filetmp, path, 4096 ); filetmp[4095] = 0;
-  i = strlen( filetmp );
-  if( ( i > 0 ) && ( filetmp[i-1] != PATHSEP ) && ( filetmp[i-1] != ':' ) )
+  strncpy(filetmp, path, 4096);
+  filetmp[4095] = 0;
+  i = strlen(filetmp);
+  if((i > 0) && (filetmp[i-1] != PATHSEP) && (filetmp[i-1] != ':'))
   {
     filetmp[i++] = PATHSEP;
     filetmp[i++] = 0;
   }
-  strncat( filetmp, file, 4096+512 );
+  strncat(filetmp, file, 4096+512);
   filetmp[4096+511] = 0;
 #else
   int i;
-  strncpy( filetmp, path, 4096 ); filetmp[4095] = 0;
-  i = (int)strlen( filetmp );
-  if( ( i > 0 ) && ( filetmp[i-1] != PATHSEP ) )
+  strncpy(filetmp, path, 4096);
+  filetmp[4095] = 0;
+  i = (int)strlen(filetmp);
+  if((i > 0) && (filetmp[i-1] != PATHSEP))
   {
     filetmp[i++] = PATHSEP;
     filetmp[i++] = 0;
   }
-  strncat( filetmp, file, 4096+512 );
+  strncat(filetmp, file, 4096+512);
   filetmp[4096+511] = 0;
 #endif
 }
 
 // "insert" a tape into the virtual tape drive, via filerequester
-void inserttape( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void inserttape(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( !filerequester( oric, "Insert tape", tapepath, tapefile, FR_TAPELOAD ) ) return;
+  if(!filerequester(oric, "Insert tape", tapepath, tapefile, FR_TAPELOAD)) return;
   oric->lasttapefile[0] = 0;
-  joinpath( tapepath, tapefile );
+  joinpath(tapepath, tapefile);
 
-  switch (detect_image_type(filetmp))
+  switch(detect_image_type(filetmp))
   {
     case IMG_SNAPSHOT:
-      if (msgbox(oric, MSGBOX_YES_NO,
-        "The file you selected appears to be a snapshot file.\n"
-        "Would you like to load it? (All RAM and machine state will be lost)"))
+      if(msgbox(oric, MSGBOX_YES_NO,
+                "The file you selected appears to be a snapshot file.\n"
+                "Would you like to load it? (All RAM and machine state will be lost)"))
       {
         load_snapshot(oric, filetmp);
         return;
@@ -991,197 +1015,197 @@ void inserttape( struct machine *oric, struct osdmenuitem *mitem, int dummy )
       break;
 
     case IMG_ATMOS_MICRODISC:
-      if ((oric->type != MACH_ATMOS) &&
+      if((oric->type != MACH_ATMOS) &&
           (oric->type != MACH_ORIC1) &&
           (oric->type != MACH_PRAVETZ))
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be a disk for an Oric Atmos with Microdisc.\n"
-          "Would you like to switch to that configuration and insert it as a disk?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be a disk for an Oric Atmos with Microdisc.\n"
+                  "Would you like to switch to that configuration and insert it as a disk?"))
         {
-          swapmach( oric, NULL, (DRV_MICRODISC<<16)|MACH_ATMOS );
-          joinpath( tapepath, tapefile );
-          diskimage_load( oric, filetmp, 0 );
+          swapmach(oric, NULL, (DRV_MICRODISC<<16)|MACH_ATMOS);
+          joinpath(tapepath, tapefile);
+          diskimage_load(oric, filetmp, 0);
         }
-        setemumode( oric, NULL, EM_RUNNING );
+        setemumode(oric, NULL, EM_RUNNING);
         return;
       }
 
-      if (oric->drivetype != DRV_MICRODISC)
+      if(oric->drivetype != DRV_MICRODISC)
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be a disk for a use with the Microdisc controller.\n"
-          "Would you like to switch to that configuration and insert it as a disk?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be a disk for a use with the Microdisc controller.\n"
+                  "Would you like to switch to that configuration and insert it as a disk?"))
         {
-          swapmach( oric, NULL, (DRV_MICRODISC<<16)|oric->type );
-          joinpath( tapepath, tapefile );
-          diskimage_load( oric, filetmp, 0 );
+          swapmach(oric, NULL, (DRV_MICRODISC<<16)|oric->type);
+          joinpath(tapepath, tapefile);
+          diskimage_load(oric, filetmp, 0);
         }
-        setemumode( oric, NULL, EM_RUNNING );
+        setemumode(oric, NULL, EM_RUNNING);
         return;
       }
 
-      if (msgbox(oric, MSGBOX_YES_NO,
-        "The file you selected appears to be a disk.\n"
-        "Would you like to insert it in drive 0?"))
+      if(msgbox(oric, MSGBOX_YES_NO,
+                "The file you selected appears to be a disk.\n"
+                "Would you like to insert it in drive 0?"))
       {
-        joinpath( tapepath, tapefile );
-        diskimage_load( oric, filetmp, 0 );
+        joinpath(tapepath, tapefile);
+        diskimage_load(oric, filetmp, 0);
       }
-      setemumode( oric, NULL, EM_RUNNING );
+      setemumode(oric, NULL, EM_RUNNING);
       return;
 
     case IMG_ATMOS_JASMIN:
-      if ((oric->type != MACH_ATMOS) &&
+      if((oric->type != MACH_ATMOS) &&
           (oric->type != MACH_ORIC1) &&
           (oric->type != MACH_PRAVETZ))
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be a disk for an Oric Atmos with Jasmin.\n"
-          "Would you like to switch to that configuration and insert it as a disk?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be a disk for an Oric Atmos with Jasmin.\n"
+                  "Would you like to switch to that configuration and insert it as a disk?"))
         {
-          swapmach( oric, NULL, (DRV_JASMIN<<16)|MACH_ATMOS );
-          joinpath( tapepath, tapefile );
-          diskimage_load( oric, filetmp, 0 );
+          swapmach(oric, NULL, (DRV_JASMIN<<16)|MACH_ATMOS);
+          joinpath(tapepath, tapefile);
+          diskimage_load(oric, filetmp, 0);
           oric->auto_jasmin_reset = SDL_TRUE;
         }
-        setemumode( oric, NULL, EM_RUNNING );
+        setemumode(oric, NULL, EM_RUNNING);
         return;
       }
 
-      if (oric->drivetype != DRV_JASMIN)
+      if(oric->drivetype != DRV_JASMIN)
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be a disk for a use with the Jasmin controller.\n"
-          "Would you like to switch to that configuration and insert it as a disk?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be a disk for a use with the Jasmin controller.\n"
+                  "Would you like to switch to that configuration and insert it as a disk?"))
         {
-          swapmach( oric, NULL, (DRV_JASMIN<<16)|oric->type );
-          joinpath( tapepath, tapefile );
-          diskimage_load( oric, filetmp, 0 );
+          swapmach(oric, NULL, (DRV_JASMIN<<16)|oric->type);
+          joinpath(tapepath, tapefile);
+          diskimage_load(oric, filetmp, 0);
           oric->auto_jasmin_reset = SDL_TRUE;
         }
-        setemumode( oric, NULL, EM_RUNNING );
+        setemumode(oric, NULL, EM_RUNNING);
         return;
       }
 
-      if (msgbox(oric, MSGBOX_YES_NO,
-        "The file you selected appears to be a disk.\n"
-        "Would you like to insert it in drive 0?"))
+      if(msgbox(oric, MSGBOX_YES_NO,
+                "The file you selected appears to be a disk.\n"
+                "Would you like to insert it in drive 0?"))
       {
-        joinpath( tapepath, tapefile );
-        diskimage_load( oric, filetmp, 0 );
+        joinpath(tapepath, tapefile);
+        diskimage_load(oric, filetmp, 0);
       }
-      setemumode( oric, NULL, EM_RUNNING );
+      setemumode(oric, NULL, EM_RUNNING);
       return;
 
     case IMG_TELESTRAT_DISK:
-      if (oric->type != MACH_TELESTRAT)
+      if(oric->type != MACH_TELESTRAT)
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be a disk for the Telestrat.\n"
-          "Would you like to switch to that configuration and insert it as a disk?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be a disk for the Telestrat.\n"
+                  "Would you like to switch to that configuration and insert it as a disk?"))
         {
-          swapmach( oric, NULL, MACH_TELESTRAT );
-          joinpath( tapepath, tapefile );
-          diskimage_load( oric, filetmp, 0 );
+          swapmach(oric, NULL, MACH_TELESTRAT);
+          joinpath(tapepath, tapefile);
+          diskimage_load(oric, filetmp, 0);
         }
-        setemumode( oric, NULL, EM_RUNNING );
+        setemumode(oric, NULL, EM_RUNNING);
         return;
       }
 
-      if (msgbox(oric, MSGBOX_YES_NO,
-        "The file you selected appears to be a disk.\n"
-        "Would you like to insert it in drive 0?"))
+      if(msgbox(oric, MSGBOX_YES_NO,
+                "The file you selected appears to be a disk.\n"
+                "Would you like to insert it in drive 0?"))
       {
-        joinpath( tapepath, tapefile );
-        diskimage_load( oric, filetmp, 0 );
+        joinpath(tapepath, tapefile);
+        diskimage_load(oric, filetmp, 0);
       }
-      setemumode( oric, NULL, EM_RUNNING );
+      setemumode(oric, NULL, EM_RUNNING);
       return;
 
     case IMG_PRAVETZ_DISK:
-      if (oric->type != MACH_PRAVETZ)
+      if(oric->type != MACH_PRAVETZ)
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be a disk for the Pravetz 8D disk controller.\n"
-          "Would you like to switch to that configuration and insert it as a disk?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be a disk for the Pravetz 8D disk controller.\n"
+                  "Would you like to switch to that configuration and insert it as a disk?"))
         {
-          swapmach( oric, NULL, (DRV_PRAVETZ<<16)|MACH_PRAVETZ );
-          joinpath( tapepath, tapefile );
-          diskimage_load( oric, filetmp, 0 );
-          pravdiskboot( oric );
+          swapmach(oric, NULL, (DRV_PRAVETZ<<16)|MACH_PRAVETZ);
+          joinpath(tapepath, tapefile);
+          diskimage_load(oric, filetmp, 0);
+          pravdiskboot(oric);
         }
-        setemumode( oric, NULL, EM_RUNNING );
+        setemumode(oric, NULL, EM_RUNNING);
         return;
       }
 
-      if (oric->drivetype != DRV_PRAVETZ)
+      if(oric->drivetype != DRV_PRAVETZ)
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be a disk for the Pravetz disk controller.\n"
-          "Would you like to switch to that configuration and insert it as a disk?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be a disk for the Pravetz disk controller.\n"
+                  "Would you like to switch to that configuration and insert it as a disk?"))
         {
-          swapmach( oric, NULL, (DRV_PRAVETZ<<16)|MACH_PRAVETZ );
-          joinpath( tapepath, tapefile );
-          diskimage_load( oric, filetmp, 0 );
-          pravdiskboot( oric );
+          swapmach(oric, NULL, (DRV_PRAVETZ<<16)|MACH_PRAVETZ);
+          joinpath(tapepath, tapefile);
+          diskimage_load(oric, filetmp, 0);
+          pravdiskboot(oric);
         }
-        setemumode( oric, NULL, EM_RUNNING );
+        setemumode(oric, NULL, EM_RUNNING);
         return;
       }
 
-      if (msgbox(oric, MSGBOX_YES_NO,
-        "The file you selected appears to be a disk.\n"
-        "Would you like to insert it in drive 0?"))
+      if(msgbox(oric, MSGBOX_YES_NO,
+                "The file you selected appears to be a disk.\n"
+                "Would you like to insert it in drive 0?"))
       {
-        joinpath( tapepath, tapefile );
-        diskimage_load( oric, filetmp, 0 );
+        joinpath(tapepath, tapefile);
+        diskimage_load(oric, filetmp, 0);
       }
-      setemumode( oric, NULL, EM_RUNNING );
+      setemumode(oric, NULL, EM_RUNNING);
       return;
 
     case IMG_GUESS_MICRODISC:
-      if ((oric->drivetype == DRV_PRAVETZ) ||
+      if((oric->drivetype == DRV_PRAVETZ) ||
           (oric->drivetype == DRV_NONE))
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be a disk for a Microdisc or Jasmin system.\n"
-          "Would you like to switch to Microdisc and insert it as a disk?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be a disk for a Microdisc or Jasmin system.\n"
+                  "Would you like to switch to Microdisc and insert it as a disk?"))
         {
-          swapmach( oric, NULL, (DRV_MICRODISC<<16)|oric->type );
-          joinpath( tapepath, tapefile );
-          diskimage_load( oric, filetmp, 0 );
+          swapmach(oric, NULL, (DRV_MICRODISC<<16)|oric->type);
+          joinpath(tapepath, tapefile);
+          diskimage_load(oric, filetmp, 0);
         }
-        setemumode( oric, NULL, EM_RUNNING );
+        setemumode(oric, NULL, EM_RUNNING);
         return;
       }
 
-      if (msgbox(oric, MSGBOX_YES_NO,
-        "The file you selected appears to be a disk.\n"
-        "Would you like to insert it in drive 0?"))
+      if(msgbox(oric, MSGBOX_YES_NO,
+                "The file you selected appears to be a disk.\n"
+                "Would you like to insert it in drive 0?"))
       {
-        joinpath( tapepath, tapefile );
-        diskimage_load( oric, filetmp, 0 );
+        joinpath(tapepath, tapefile);
+        diskimage_load(oric, filetmp, 0);
       }
-      setemumode( oric, NULL, EM_RUNNING );
+      setemumode(oric, NULL, EM_RUNNING);
       return;
   }
 
-  tape_load_tap( oric, filetmp );
+  tape_load_tap(oric, filetmp);
 #ifndef WWW_NO_MONITOR
-  if( oric->symbolsautoload ) mon_new_symbols( &oric->usersyms, oric, "symbols", SYM_BESTGUESS, SDL_TRUE, SDL_TRUE );
+  if(oric->symbolsautoload) mon_new_symbols(&oric->usersyms, oric, "symbols", SYM_BESTGUESS, SDL_TRUE, SDL_TRUE);
 #endif
-  setemumode( oric, NULL, EM_RUNNING );
+  setemumode(oric, NULL, EM_RUNNING);
 }
 
 // "insert" a disk into the virtual disk drive, via filerequester
-void insertdisk( struct machine *oric, struct osdmenuitem *mitem, int drive )
+void insertdisk(struct machine *oric, struct osdmenuitem *mitem, int drive)
 {
-  char *dpath, *dfile;
+  char* dpath, *dfile;
 
-  if( oric->type != MACH_TELESTRAT )
+  if(oric->type != MACH_TELESTRAT)
   {
-    switch (oric->drivetype)
+    switch(oric->drivetype)
     {
       case DRV_PRAVETZ:
         dpath = pravdiskpath;
@@ -1193,20 +1217,22 @@ void insertdisk( struct machine *oric, struct osdmenuitem *mitem, int drive )
         dfile = diskfile;
         break;
     }
-  } else {
+  }
+  else
+  {
     dpath = telediskpath;
     dfile = telediskfile;
   }
 
-  if( !filerequester( oric, "Insert disk", dpath, dfile, FR_DISKLOAD ) ) return;
-  joinpath( dpath, dfile );
+  if(!filerequester(oric, "Insert disk", dpath, dfile, FR_DISKLOAD)) return;
+  joinpath(dpath, dfile);
 
-  switch (detect_image_type(filetmp))
+  switch(detect_image_type(filetmp))
   {
     case IMG_SNAPSHOT:
-      if (msgbox(oric, MSGBOX_YES_NO,
-        "The file you selected appears to be a snapshot file.\n"
-        "Would you like to load it? (All RAM and machine state will be lost)"))
+      if(msgbox(oric, MSGBOX_YES_NO,
+                "The file you selected appears to be a snapshot file.\n"
+                "Would you like to load it? (All RAM and machine state will be lost)"))
       {
         load_snapshot(oric, filetmp);
         return;
@@ -1214,61 +1240,61 @@ void insertdisk( struct machine *oric, struct osdmenuitem *mitem, int drive )
       break;
 
     case IMG_ATMOS_MICRODISC:
-      if ((oric->type != MACH_ATMOS) &&
+      if((oric->type != MACH_ATMOS) &&
           (oric->type != MACH_ORIC1) &&
           (oric->type != MACH_PRAVETZ))
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be for an Oric Atmos with Microdisc.\n"
-          "Would you like to switch to that configuration?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be for an Oric Atmos with Microdisc.\n"
+                  "Would you like to switch to that configuration?"))
         {
-          swapmach( oric, NULL, (DRV_MICRODISC<<16)|MACH_ATMOS );
+          swapmach(oric, NULL, (DRV_MICRODISC<<16)|MACH_ATMOS);
         }
         break;
       }
 
-      if ((oric->drivetype != DRV_MICRODISC) &&
+      if((oric->drivetype != DRV_MICRODISC) &&
           (oric->drivetype != DRV_NONE))
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be for a use with the Microdisc controller.\n"
-          "Would you like to switch to that configuration?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be for a use with the Microdisc controller.\n"
+                  "Would you like to switch to that configuration?"))
         {
-          swapmach( oric, NULL, (DRV_MICRODISC<<16)|oric->type );
+          swapmach(oric, NULL, (DRV_MICRODISC<<16)|oric->type);
         }
         break;
       }
       break;
 
     case IMG_ATMOS_JASMIN:
-      if ((oric->type != MACH_ATMOS) &&
+      if((oric->type != MACH_ATMOS) &&
           (oric->type != MACH_ORIC1) &&
           (oric->type != MACH_PRAVETZ))
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be for an Oric Atmos with Jasmin.\n"
-          "Would you like to switch to that configuration?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be for an Oric Atmos with Jasmin.\n"
+                  "Would you like to switch to that configuration?"))
         {
-          swapmach( oric, NULL, (DRV_JASMIN<<16)|MACH_ATMOS );
+          swapmach(oric, NULL, (DRV_JASMIN<<16)|MACH_ATMOS);
           oric->auto_jasmin_reset = SDL_TRUE;
         }
         break;
       }
 
-      if (oric->drivetype == DRV_NONE)
+      if(oric->drivetype == DRV_NONE)
       {
-        swapmach( oric, NULL, (DRV_JASMIN<<16)|oric->type);
+        swapmach(oric, NULL, (DRV_JASMIN<<16)|oric->type);
         oric->auto_jasmin_reset = SDL_TRUE;
         break;
       }
 
-      if (oric->drivetype != DRV_JASMIN)
+      if(oric->drivetype != DRV_JASMIN)
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be for a use with the Jasmin controller.\n"
-          "Would you like to switch to that configuration?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be for a use with the Jasmin controller.\n"
+                  "Would you like to switch to that configuration?"))
         {
-          swapmach( oric, NULL, (DRV_JASMIN<<16)|oric->type );
+          swapmach(oric, NULL, (DRV_JASMIN<<16)|oric->type);
           oric->auto_jasmin_reset = SDL_TRUE;
         }
         break;
@@ -1276,104 +1302,104 @@ void insertdisk( struct machine *oric, struct osdmenuitem *mitem, int drive )
       break;
 
     case IMG_TELESTRAT_DISK:
-      if (oric->type != MACH_TELESTRAT)
+      if(oric->type != MACH_TELESTRAT)
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be for a Telestrat.\n"
-          "Would you like to switch to that configuration?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be for a Telestrat.\n"
+                  "Would you like to switch to that configuration?"))
         {
-          swapmach( oric, NULL, MACH_TELESTRAT );
+          swapmach(oric, NULL, MACH_TELESTRAT);
         }
         break;
       }
       break;
 
     case IMG_PRAVETZ_DISK:
-      if (oric->type != MACH_PRAVETZ)
+      if(oric->type != MACH_PRAVETZ)
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be for a Pravetz 8D disk controller.\n"
-          "Would you like to switch to that configuration?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be for a Pravetz 8D disk controller.\n"
+                  "Would you like to switch to that configuration?"))
         {
-          swapmach( oric, NULL, (DRV_PRAVETZ<<16)|MACH_PRAVETZ );
-          pravdiskboot( oric );
+          swapmach(oric, NULL, (DRV_PRAVETZ<<16)|MACH_PRAVETZ);
+          pravdiskboot(oric);
         }
         break;
       }
 
-      if (oric->drivetype == DRV_NONE)
+      if(oric->drivetype == DRV_NONE)
       {
-        swapmach( oric, NULL, (DRV_PRAVETZ<<16)|MACH_PRAVETZ );
-        pravdiskboot( oric );
+        swapmach(oric, NULL, (DRV_PRAVETZ<<16)|MACH_PRAVETZ);
+        pravdiskboot(oric);
         break;
       }
 
-      if (oric->drivetype != DRV_PRAVETZ)
+      if(oric->drivetype != DRV_PRAVETZ)
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be for a use with the Pravetz disk controller.\n"
-          "Would you like to switch to that configuration?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be for a use with the Pravetz disk controller.\n"
+                  "Would you like to switch to that configuration?"))
         {
-          swapmach( oric, NULL, (DRV_PRAVETZ<<16)|MACH_PRAVETZ );
-          pravdiskboot( oric );
+          swapmach(oric, NULL, (DRV_PRAVETZ<<16)|MACH_PRAVETZ);
+          pravdiskboot(oric);
         }
         break;
       }
       break;
 
     case IMG_GUESS_MICRODISC:
-      if (oric->drivetype == DRV_PRAVETZ)
+      if(oric->drivetype == DRV_PRAVETZ)
       {
-        if (msgbox(oric, MSGBOX_YES_NO,
-          "The file you selected appears to be for a Microdisc or Jasmin system.\n"
-          "Would you like to switch to Microdisc?"))
+        if(msgbox(oric, MSGBOX_YES_NO,
+                  "The file you selected appears to be for a Microdisc or Jasmin system.\n"
+                  "Would you like to switch to Microdisc?"))
         {
-          swapmach( oric, NULL, (DRV_MICRODISC<<16)|oric->type );
+          swapmach(oric, NULL, (DRV_MICRODISC<<16)|oric->type);
         }
         break;
       }
       break;
 
     case IMG_TAPE:
-      if (msgbox(oric, MSGBOX_YES_NO,
-        "This appears to be a tape image...\n"
-        "Would you like to insert it as a tape?"))
+      if(msgbox(oric, MSGBOX_YES_NO,
+                "This appears to be a tape image...\n"
+                "Would you like to insert it as a tape?"))
       {
         oric->lasttapefile[0] = 0;
-        tape_load_tap( oric, filetmp );
+        tape_load_tap(oric, filetmp);
 #ifndef WWW_NO_MONITOR
-        if( oric->symbolsautoload ) mon_new_symbols( &oric->usersyms, oric, "symbols", SYM_BESTGUESS, SDL_TRUE, SDL_TRUE );
+        if(oric->symbolsautoload) mon_new_symbols(&oric->usersyms, oric, "symbols", SYM_BESTGUESS, SDL_TRUE, SDL_TRUE);
 #endif
       }
-      setemumode( oric, NULL, EM_RUNNING );
+      setemumode(oric, NULL, EM_RUNNING);
       return;
   }
 
-  joinpath( dpath, dfile );
-  diskimage_load( oric, filetmp, drive );
+  joinpath(dpath, dfile);
+  diskimage_load(oric, filetmp, drive);
 
-  if( oric->drivetype == DRV_NONE )
+  if(oric->drivetype == DRV_NONE)
   {
-    if (!oric->twilighteboard_activated)
-      swapmach( oric, NULL, (DRV_MICRODISC<<16)|oric->type );
-//    setemumode( oric, NULL, EM_DEBUG );
+    if(!oric->twilighteboard_activated)
+      swapmach(oric, NULL, (DRV_MICRODISC<<16)|oric->type);
+    //    setemumode( oric, NULL, EM_DEBUG );
     return;
   }
-  setemumode( oric, NULL, EM_RUNNING );
+  setemumode(oric, NULL, EM_RUNNING);
 }
 
-void savesnap( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void savesnap(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( !filerequester( oric, "Save Snapshot", snappath, snapfile, FR_SNAPSHOTSAVE ) ) return;
-  joinpath( snappath, snapfile );
-  save_snapshot( oric, filetmp );
+  if(!filerequester(oric, "Save Snapshot", snappath, snapfile, FR_SNAPSHOTSAVE)) return;
+  joinpath(snappath, snapfile);
+  save_snapshot(oric, filetmp);
 }
 
-void loadsnap( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void loadsnap(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( !filerequester( oric, "Load Snapshot", snappath, snapfile, FR_SNAPSHOTLOAD ) ) return;
-  joinpath( snappath, snapfile );
-  load_snapshot( oric, filetmp );
+  if(!filerequester(oric, "Load Snapshot", snappath, snapfile, FR_SNAPSHOTLOAD)) return;
+  joinpath(snappath, snapfile);
+  load_snapshot(oric, filetmp);
 }
 
 void softresetoric(struct machine *oric, struct osdmenuitem *mitem, int dummy)
@@ -1384,13 +1410,13 @@ void softresetoric(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 }
 
 // Reset the oric
-void resetoric( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void resetoric(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  switch( oric->drivetype )
+  switch(oric->drivetype)
   {
     case DRV_MICRODISC:
       oric->romdis = SDL_TRUE;
-      microdisc_init( &oric->md, &oric->wddisk, oric );
+      microdisc_init(&oric->md, &oric->wddisk, oric);
       break;
 
     case DRV_JASMIN:
@@ -1401,36 +1427,36 @@ void resetoric( struct machine *oric, struct osdmenuitem *mitem, int dummy )
       oric->romdis = SDL_FALSE;
       break;
   }
-  setromon( oric );
-  m6502_reset( &oric->cpu );
-  via_init( &oric->via, oric, VIA_MAIN );
-  via_init( &oric->tele_via, oric, VIA_TELESTRAT );
-  ay_init( &oric->ay, oric );
+  setromon(oric);
+  m6502_reset(&oric->cpu);
+  via_init(&oric->via, oric, VIA_MAIN);
+  via_init(&oric->tele_via, oric, VIA_TELESTRAT);
+  ay_init(&oric->ay, oric);
   oric->cpu.rastercycles = oric->cyclesperraster;
   oric->frames = 0;
-  if( oric->autorewind ) tape_rewind( oric );
-  setemumode( oric, NULL, EM_RUNNING );
+  if(oric->autorewind) tape_rewind(oric);
+  setemumode(oric, NULL, EM_RUNNING);
 }
 
-struct osdmenuitem *find_item_by_function(struct osdmenuitem *menu, void *function)
+struct osdmenuitem *find_item_by_function(struct osdmenuitem *menu, void* function)
 {
   int i;
   static struct osdmenuitem dummyitem; /* So we can always return non-NULL */
 
-  for (i=0; menu[i].name; i++)
-    if (menu[i].func == function)
+  for(i=0; menu[i].name; i++)
+    if(menu[i].func == function)
       return &menu[i];
 
   return &dummyitem;
 }
 
-struct osdmenuitem *find_item_by_function_and_arg(struct osdmenuitem *menu, void *function, int arg)
+struct osdmenuitem *find_item_by_function_and_arg(struct osdmenuitem *menu, void* function, int arg)
 {
   int i;
   static struct osdmenuitem dummyitem; /* So we can always return non-NULL */
 
-  for (i=0; menu[i].name; i++)
-    if ((menu[i].func == function) && (menu[i].arg == arg))
+  for(i=0; menu[i].name; i++)
+    if((menu[i].func == function) && (menu[i].arg == arg))
       return &menu[i];
 
   return &dummyitem;
@@ -1441,17 +1467,17 @@ struct osdmenuitem *find_item_by_key(struct osdmenuitem *menu, int sdlkey)
   int i;
   static struct osdmenuitem dummyitem; /* So we can always return non-NULL */
 
-  for (i=0; menu[i].name; i++)
-    if (menu[i].sdlkey == sdlkey)
+  for(i=0; menu[i].name; i++)
+    if(menu[i].sdlkey == sdlkey)
       return &menu[i];
 
   return &dummyitem;
 }
 
 // Turn tape noise on/off
-void toggletapenoise( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void toggletapenoise(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( oric->tapenoise )
+  if(oric->tapenoise)
   {
     oric->ay.tapeout = 0;
     oric->tapenoise = SDL_FALSE;
@@ -1464,29 +1490,29 @@ void toggletapenoise( struct machine *oric, struct osdmenuitem *mitem, int dummy
 }
 
 // Toggle sound on/off
-void togglesound( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void togglesound(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( ( soundon ) || (!soundavailable) )
+  if((soundon) || (!soundavailable))
   {
     soundon = SDL_FALSE;
     oric->ay.soundon = SDL_FALSE;
     mitem->name = " Sound enabled";
-    if( soundavailable ) SDL_PauseAudio( 1 );
+    if(soundavailable) SDL_PauseAudio(1);
     return;
   }
 
   soundon = SDL_TRUE;
   oric->ay.soundon = !warpspeed;
   mitem->name = "\x0e""Sound enabled";
-  if( oric->emu_mode == EM_RUNNING ) SDL_PauseAudio( !warpspeed );
+  if(oric->emu_mode == EM_RUNNING) SDL_PauseAudio(!warpspeed);
 }
 
 // Toggle turbotape on/off
-void toggletapeturbo( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void toggletapeturbo(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
   oric->tapeturbo_forceoff = SDL_FALSE;
 
-  if( oric->tapeturbo )
+  if(oric->tapeturbo)
   {
     oric->tapeturbo = SDL_FALSE;
     mitem->name = " Turbo tape";
@@ -1498,9 +1524,9 @@ void toggletapeturbo( struct machine *oric, struct osdmenuitem *mitem, int dummy
 }
 
 // Toggle VSync Hack
-void togglevsynchack( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void togglevsynchack(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( oric->vsynchack )
+  if(oric->vsynchack)
   {
     oric->vsynchack = SDL_FALSE;
     mitem->name = " VSync hack";
@@ -1512,9 +1538,9 @@ void togglevsynchack( struct machine *oric, struct osdmenuitem *mitem, int dummy
 }
 
 // Toggle lightpen
-void togglelightpen( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void togglelightpen(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( oric->lightpen )
+  if(oric->lightpen)
   {
     oric->lightpen = SDL_FALSE;
     oric->cpu.read = oric->read_not_lightpen;
@@ -1528,9 +1554,9 @@ void togglelightpen( struct machine *oric, struct osdmenuitem *mitem, int dummy 
 }
 
 // Toggle tele acia (Serial card)
-void toggleaciabackend( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void toggleaciabackend(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( oric->aciabackend )
+  if(oric->aciabackend)
   {
     oric->aciabackend = ACIA_TYPE_NONE;
     mitem->name = aciabackends[oric->aciabackend];
@@ -1541,44 +1567,44 @@ void toggleaciabackend( struct machine *oric, struct osdmenuitem *mitem, int dum
     mitem->name = aciabackendlabel;
   }
 
-  acia_init( &oric->tele_acia, oric );
+  acia_init(&oric->tele_acia, oric);
 }
 
 // Toggle ch376 on/off
 void togglech376(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
 
-	if (oric->ch376_activated)
-	{
-		oric->ch376_activated = SDL_FALSE;
-		mitem->name = " CH376 (Telestrat)";
-		return;
-	}
+  if(oric->ch376_activated)
+  {
+    oric->ch376_activated = SDL_FALSE;
+    mitem->name = " CH376 (Telestrat)";
+    return;
+  }
 
-	oric->ch376_activated = SDL_TRUE;
-	mitem->name = "\x0e""CH376 (Telestrat)";
-	oric->ch376 = ch376_oric_init();
-	if (oric->ch376 != NULL)
-		ch376_oric_config(oric->ch376);
+  oric->ch376_activated = SDL_TRUE;
+  mitem->name = "\x0e""CH376 (Telestrat)";
+  oric->ch376 = ch376_oric_init();
+  if(oric->ch376 != NULL)
+    ch376_oric_config(oric->ch376);
 }
 
 // Toggle twilighte on/off
 void toggletwilighte(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
 
-	if (oric->twilighteboard_activated)
-	{
-		oric->twilighteboard_activated = SDL_FALSE;
-		mitem->name = " Twilighte board";
-		return;
-	}
-
-	oric->twilighteboard_activated = SDL_TRUE;
-	mitem->name = "\x0e""Twilighte board";
-	oric->twilighte = twilighte_oric_init();
-	if (oric->twilighte == NULL)
+  if(oric->twilighteboard_activated)
   {
-     oric->twilighteboard_activated = SDL_FALSE; // Impossible to create struct, we did not activate twilighteboard
+    oric->twilighteboard_activated = SDL_FALSE;
+    mitem->name = " Twilighte board";
+    return;
+  }
+
+  oric->twilighteboard_activated = SDL_TRUE;
+  mitem->name = "\x0e""Twilighte board";
+  oric->twilighte = twilighte_oric_init();
+  if(oric->twilighte == NULL)
+  {
+    oric->twilighteboard_activated = SDL_FALSE; // Impossible to create struct, we did not activate twilighteboard
   }
   else
   {
@@ -1589,9 +1615,9 @@ void toggletwilighte(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 }
 
 // Toggle symbols autoload
-void togglesymbolsauto( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void togglesymbolsauto(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( oric->symbolsautoload )
+  if(oric->symbolsautoload)
   {
     oric->symbolsautoload = SDL_FALSE;
     mitem->name = " Autoload symbols file";
@@ -1603,9 +1629,9 @@ void togglesymbolsauto( struct machine *oric, struct osdmenuitem *mitem, int dum
 }
 
 // Toggle case sensitive symbols
-void togglecasesyms( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void togglecasesyms(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( oric->symbolscase )
+  if(oric->symbolscase)
   {
     oric->symbolscase = SDL_FALSE;
     mitem->name = " Case-sensitive symbols";
@@ -1617,9 +1643,9 @@ void togglecasesyms( struct machine *oric, struct osdmenuitem *mitem, int dummy 
 }
 
 // Toggle autorewind on/off
-void toggleautowind( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void toggleautowind(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( oric->autorewind )
+  if(oric->autorewind)
   {
     oric->autorewind = SDL_FALSE;
     mitem->name = " Autorewind tape";
@@ -1631,9 +1657,9 @@ void toggleautowind( struct machine *oric, struct osdmenuitem *mitem, int dummy 
 }
 
 // Toggle autoinsert on/off
-void toggleautoinsrt( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void toggleautoinsrt(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( oric->autoinsert )
+  if(oric->autoinsert)
   {
     oric->autoinsert = SDL_FALSE;
     mitem->name = " Autoinsert tape";
@@ -1645,11 +1671,11 @@ void toggleautoinsrt( struct machine *oric, struct osdmenuitem *mitem, int dummy
 }
 
 // Toggle fullscreen on/off
-void togglefullscreen( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void togglefullscreen(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( !oric->render_togglefullscreen( oric ) ) return; // Failed :-(
+  if(!oric->render_togglefullscreen(oric)) return;     // Failed :-(
 
-  if( fullscreen )
+  if(fullscreen)
   {
     find_item_by_function(vdopitems, togglefullscreen)->name = "\x0e""Fullscreen";
     find_item_by_function(glopitems, togglefullscreen)->name = "\x0e""Fullscreen";
@@ -1661,9 +1687,9 @@ void togglefullscreen( struct machine *oric, struct osdmenuitem *mitem, int dumm
 }
 
 // Toggle 50Hz/60Hz aspect ratio
-void togglearatio( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void togglearatio(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( oric->aratio )
+  if(oric->aratio)
   {
     oric->aratio = SDL_FALSE;
     mitem->name = " 50Hz/60Hz aspect ratio";
@@ -1675,9 +1701,9 @@ void togglearatio( struct machine *oric, struct osdmenuitem *mitem, int dummy )
 }
 
 // Toggle hstretch on/off
-void togglehstretch( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void togglehstretch(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( oric->hstretch )
+  if(oric->hstretch)
   {
     oric->hstretch = SDL_FALSE;
     mitem->name = " Horizontal stretch";
@@ -1689,9 +1715,9 @@ void togglehstretch( struct machine *oric, struct osdmenuitem *mitem, int dummy 
 }
 
 // Toggle PAL ghosting on/off
-void togglepalghost( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void togglepalghost(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( oric->palghost )
+  if(oric->palghost)
   {
     oric->palghost = SDL_FALSE;
     mitem->name = " PAL ghosting";
@@ -1703,9 +1729,9 @@ void togglepalghost( struct machine *oric, struct osdmenuitem *mitem, int dummy 
 }
 
 // Toggle scanlines on/off
-void togglescanlines( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void togglescanlines(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-  if( oric->scanlines )
+  if(oric->scanlines)
   {
     oric->scanlines = SDL_FALSE;
     find_item_by_function(vdopitems, togglescanlines)->name = " Scanlines";
@@ -1718,21 +1744,23 @@ void togglescanlines( struct machine *oric, struct osdmenuitem *mitem, int dummy
   find_item_by_function(glopitems, togglescanlines)->name = "\x0e""Scanlines";
 }
 
-void setoverclock( struct machine *oric, struct osdmenuitem *mitem, int value )
+void setoverclock(struct machine *oric, struct osdmenuitem *mitem, int value)
 {
   int i;
 
   /* Don't want to just modify name[0], since */
   /* string constants are supposed to be constant.. */
-  char *setnames[] = { "\x0e"" 1MHz (None)", "\x0e"" 2MHz", "\x0e"" 4MHz", "\x0e"" 8MHz",
-                       "\x0e""16MHz", "\x0e""32MHz", "\x0e""64MHz" };
-  char *unsetnames[] = { "  1MHz (None)", "  2MHz", "  4MHz", "  8MHz",
-                         " 16MHz", " 32MHz", " 64MHz" };
+  char* setnames[] = { "\x0e"" 1MHz (None)", "\x0e"" 2MHz", "\x0e"" 4MHz", "\x0e"" 8MHz",
+                       "\x0e""16MHz", "\x0e""32MHz", "\x0e""64MHz"
+                     };
+  char* unsetnames[] = { "  1MHz (None)", "  2MHz", "  4MHz", "  8MHz",
+                         " 16MHz", " 32MHz", " 64MHz"
+                       };
 
   oric->overclockmult  = 1<<value;
   oric->overclockshift = value;
 
-  for( i=0; i<7; i++ )
+  for(i=0; i<7; i++)
   {
     if(i == value)
       ovopitems[i].name = setnames[i];
@@ -1742,62 +1770,63 @@ void setoverclock( struct machine *oric, struct osdmenuitem *mitem, int value )
 }
 
 // Go to internet site
-void gotosite( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void gotosite(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-/* TODO: mode those to their own gui_*.c */
+  /* TODO: mode those to their own gui_*.c */
 #if defined(__MORPHOS__) || defined(__AROS__)
-  struct Library *OpenURLBase = OpenLibrary( "openurl.library", 0 );
+  struct Library *OpenURLBase = OpenLibrary("openurl.library", 0);
   static const struct TagItem URLTags[] = {{TAG_DONE, (ULONG) NULL}};
 
-  if( OpenURLBase )
+  if(OpenURLBase)
   {
     URL_OpenA(mitem->name, (struct TagItem*) URLTags);
-    CloseLibrary( OpenURLBase );
+    CloseLibrary(OpenURLBase);
   }
 
 #elif defined(__amigaos4__)
   char tmp[256];
   BPTR h;
-  sprintf( tmp, "URL:%s", mitem->name );
-  if( ( h = IDOS->Open( tmp, MODE_OLDFILE ) ) ) IDOS->Close( h );
+  sprintf(tmp, "URL:%s", mitem->name);
+  if((h = IDOS->Open(tmp, MODE_OLDFILE))) IDOS->Close(h);
 
 #elif defined(WIN32) || defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__)
-  gui_open_url( mitem->name );
+  gui_open_url(mitem->name);
 
 #else
-/* default: assume XDG-compliant desktop */
+  /* default: assume XDG-compliant desktop */
   char tmp[256];
-  sprintf( tmp, "xdg-open '%s'", mitem->name );
-  system( tmp );
+  sprintf(tmp, "xdg-open '%s'", mitem->name);
+  system(tmp);
 
 #endif
 }
 
 // Go to a different menu
-void gotomenu( struct machine *oric, struct osdmenuitem *mitem, int menunum )
+void gotomenu(struct machine *oric, struct osdmenuitem *mitem, int menunum)
 {
   int i, w, keyw;
 
-  if( tz[TZ_MENU] ) free_textzone( oric, TZ_MENU );
+  if(tz[TZ_MENU]) free_textzone(oric, TZ_MENU);
 
   cmenu = &menus[menunum];
-  w = (int)strlen( cmenu->title )+8;
+  w = (int)strlen(cmenu->title)+8;
   keyw = 0;
-  for( i=0; cmenu->items[i].name; i++ )
+  for(i=0; cmenu->items[i].name; i++)
   {
-    if( cmenu->items[i].name == OSDMENUBAR )
+    if(cmenu->items[i].name == OSDMENUBAR)
       continue;
-    if( strlen( cmenu->items[i].name ) > w )
-      w = (int)strlen( cmenu->items[i].name );
-    if( cmenu->items[i].key )
+    if(strlen(cmenu->items[i].name) > w)
+      w = (int)strlen(cmenu->items[i].name);
+    if(cmenu->items[i].key)
     {
-      if( (strlen( cmenu->items[i].key )+1) > keyw )
-        keyw = (int)strlen( cmenu->items[i].key )+1;
+      if((strlen(cmenu->items[i].key)+1) > keyw)
+        keyw = (int)strlen(cmenu->items[i].key)+1;
     }
   }
-  w+=keyw+2; i+=2;
+  w+=keyw+2;
+  i+=2;
 
-  if( !alloc_textzone( oric, TZ_MENU, 320-w*4, 240-i*6, w, i, cmenu->title ) )
+  if(!alloc_textzone(oric, TZ_MENU, 320-w*4, 240-i*6, w, i, cmenu->title))
   {
     cmenu = NULL;
     oric->emu_mode = EM_RUNNING;
@@ -1807,97 +1836,98 @@ void gotomenu( struct machine *oric, struct osdmenuitem *mitem, int menunum )
   drawitems();
 }
 
-void togglekeyboard( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void togglekeyboard(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-    if( oric->show_keyboard )
-    {
-        oric->show_keyboard = SDL_FALSE;
-        mitem->name = " Show keyboard";
-        oric->shut_render(oric);
-        oric->init_render(oric);
-        return;
-    }
-
-    oric->show_keyboard = SDL_TRUE;
-    mitem->name = "\x0e""Show keyboard";
+  if(oric->show_keyboard)
+  {
+    oric->show_keyboard = SDL_FALSE;
+    mitem->name = " Show keyboard";
     oric->shut_render(oric);
     oric->init_render(oric);
-    setemumode( oric, NULL, EM_RUNNING );
+    return;
+  }
+
+  oric->show_keyboard = SDL_TRUE;
+  mitem->name = "\x0e""Show keyboard";
+  oric->shut_render(oric);
+  oric->init_render(oric);
+  setemumode(oric, NULL, EM_RUNNING);
 }
 
-void definemapping( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void definemapping(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-    if( oric->define_mapping )
-    {
-        oric->define_mapping = SDL_FALSE;
-        mitem->name = " Define mapping";
-        return;
-    }
+  if(oric->define_mapping)
+  {
+    oric->define_mapping = SDL_FALSE;
+    mitem->name = " Define mapping";
+    return;
+  }
 
-    oric->define_mapping = SDL_TRUE;
-    mitem->name = "\x0e""Define mapping";
-    if(!oric->show_keyboard) {
-        find_item_by_function(keopitems, togglekeyboard)->name = "\x0e""Show keyboard";
-        oric->show_keyboard = SDL_TRUE;
-        oric->shut_render(oric);
-        oric->init_render(oric);
-    }
-    cmenu = NULL;
-    oric->emu_mode = EM_RUNNING;
-    do_popup( oric, "Click on an Oric key." );
-    setemumode( oric, NULL, EM_RUNNING );
+  oric->define_mapping = SDL_TRUE;
+  mitem->name = "\x0e""Define mapping";
+  if(!oric->show_keyboard)
+  {
+    find_item_by_function(keopitems, togglekeyboard)->name = "\x0e""Show keyboard";
+    oric->show_keyboard = SDL_TRUE;
+    oric->shut_render(oric);
+    oric->init_render(oric);
+  }
+  cmenu = NULL;
+  oric->emu_mode = EM_RUNNING;
+  do_popup(oric, "Click on an Oric key.");
+  setemumode(oric, NULL, EM_RUNNING);
 }
 
-void togglestickykeys( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void togglestickykeys(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-    if( oric->sticky_mod_keys )
-    {
-        oric->sticky_mod_keys = SDL_FALSE;
-        mitem->name = " Sticky mod keys";
-        release_sticky_keys();
-        return;
-    }
+  if(oric->sticky_mod_keys)
+  {
+    oric->sticky_mod_keys = SDL_FALSE;
+    mitem->name = " Sticky mod keys";
+    release_sticky_keys();
+    return;
+  }
 
-    oric->sticky_mod_keys = SDL_TRUE;
-    mitem->name = "\x0e""Sticky mod keys";
-    setemumode( oric, NULL, EM_RUNNING );
+  oric->sticky_mod_keys = SDL_TRUE;
+  mitem->name = "\x0e""Sticky mod keys";
+  setemumode(oric, NULL, EM_RUNNING);
 }
 
 
-void savemapping( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void savemapping(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-    if( !filerequester( oric, "Save Keyboard Mapping", mappingpath, mappingfile, FR_KEYMAPPINGSAVE ) ) return;
-    joinpath( mappingpath, mappingfile );
-    save_keyboard_mapping(oric, filetmp);
-    setemumode( oric, NULL, EM_RUNNING );
+  if(!filerequester(oric, "Save Keyboard Mapping", mappingpath, mappingfile, FR_KEYMAPPINGSAVE)) return;
+  joinpath(mappingpath, mappingfile);
+  save_keyboard_mapping(oric, filetmp);
+  setemumode(oric, NULL, EM_RUNNING);
 }
 
-void loadmapping( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void loadmapping(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-    if( !filerequester( oric, "Load Keyboard Mapping", mappingpath, mappingfile, FR_KEYMAPPINGLOAD ) ) return;
-    joinpath( mappingpath, mappingfile );
-    load_keyboard_mapping(oric, filetmp);
-    setemumode( oric, NULL, EM_RUNNING );
+  if(!filerequester(oric, "Load Keyboard Mapping", mappingpath, mappingfile, FR_KEYMAPPINGLOAD)) return;
+  joinpath(mappingpath, mappingfile);
+  load_keyboard_mapping(oric, filetmp);
+  setemumode(oric, NULL, EM_RUNNING);
 }
 
-void resetmapping( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void resetmapping(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-    reset_keyboard_mapping(&(oric->keyboard_mapping));
-    setemumode( oric, NULL, EM_RUNNING );
+  reset_keyboard_mapping(&(oric->keyboard_mapping));
+  setemumode(oric, NULL, EM_RUNNING);
 }
 
 #ifdef __CBCOPY__
-void clipbd_copy_gui( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void clipbd_copy_gui(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-    clipboard_copy(oric);
-    setemumode( oric, NULL, EM_RUNNING );
+  clipboard_copy(oric);
+  setemumode(oric, NULL, EM_RUNNING);
 }
 #endif
 #ifdef __CBPASTE__
-void clipbd_paste_gui( struct machine *oric, struct osdmenuitem *mitem, int dummy )
+void clipbd_paste_gui(struct machine *oric, struct osdmenuitem *mitem, int dummy)
 {
-    clipboard_paste(oric);
-    setemumode( oric, NULL, EM_RUNNING );
+  clipboard_paste(oric);
+  setemumode(oric, NULL, EM_RUNNING);
 }
 #endif
 
@@ -1905,16 +1935,16 @@ void clipbd_paste_gui( struct machine *oric, struct osdmenuitem *mitem, int dumm
 /************************* End of menu callable funcs *******************************/
 
 // This is the event handler for when you are in the menus
-SDL_bool menu_event( SDL_Event *ev, struct machine *oric, SDL_bool *needrender )
+SDL_bool menu_event(SDL_Event *ev, struct machine *oric, SDL_bool *needrender)
 {
   SDL_bool done = SDL_FALSE;
   int i, x, y;
   // Wot, no menu?!
-  if( ( !cmenu ) || ( !tz[TZ_MENU] ) )
+  if((!cmenu) || (!tz[TZ_MENU]))
     return done;
   x = -1;
   y = -1;
-  switch( ev->type )
+  switch(ev->type)
   {
     case SDL_MOUSEMOTION:
       x = (ev->motion.x - tz[TZ_MENU]->x)/8;
@@ -1922,7 +1952,7 @@ SDL_bool menu_event( SDL_Event *ev, struct machine *oric, SDL_bool *needrender )
       break;
 
     case SDL_MOUSEBUTTONDOWN:
-      if( ev->button.button == SDL_BUTTON_LEFT )
+      if(ev->button.button == SDL_BUTTON_LEFT)
       {
         x = (ev->button.x - tz[TZ_MENU]->x)/8;
         y = (ev->button.y - tz[TZ_MENU]->y)/12-1;
@@ -1930,11 +1960,12 @@ SDL_bool menu_event( SDL_Event *ev, struct machine *oric, SDL_bool *needrender )
       break;
   }
 
-  switch( ev->type )
+  switch(ev->type)
   {
     case SDL_COMPAT_ACTIVEEVENT:
-      if(SDL_COMPAT_IsAppFocused(ev)) {
-          *needrender = SDL_TRUE;
+      if(SDL_COMPAT_IsAppFocused(ev))
+      {
+        *needrender = SDL_TRUE;
       }
       break;
 
@@ -1943,56 +1974,56 @@ SDL_bool menu_event( SDL_Event *ev, struct machine *oric, SDL_bool *needrender )
       x = (ev->motion.x - tz[TZ_MENU]->x)/8;
       y = (ev->motion.y - tz[TZ_MENU]->y)/12-1;
 
-      if( ( x < 0 ) || ( y < 0 ) ||
-          ( x >= tz[TZ_MENU]->w ) )
+      if((x < 0) || (y < 0) ||
+          (x >= tz[TZ_MENU]->w))
         break;
 
-      for( i=0; i<y; i++ )
-        if( cmenu->items[i].name == NULL )
+      for(i=0; i<y; i++)
+        if(cmenu->items[i].name == NULL)
           break;
 
-      if( ( i != y ) || ( cmenu->items[y].name == OSDMENUBAR ) || ( cmenu->items[y].func == NULL ) )
+      if((i != y) || (cmenu->items[y].name == OSDMENUBAR) || (cmenu->items[y].func == NULL))
         break;
 
       cmenu->citem = y;
 
-      if( ( ev->type == SDL_MOUSEBUTTONDOWN ) &&
-          ( (ev->button.button==SDL_BUTTON_LEFT) ||
-            (ev->button.button==SDL_BUTTON_RIGHT) ) )
-        cmenu->items[cmenu->citem].func( oric, &cmenu->items[cmenu->citem], cmenu->items[cmenu->citem].arg );
+      if((ev->type == SDL_MOUSEBUTTONDOWN) &&
+          ((ev->button.button==SDL_BUTTON_LEFT) ||
+           (ev->button.button==SDL_BUTTON_RIGHT)))
+        cmenu->items[cmenu->citem].func(oric, &cmenu->items[cmenu->citem], cmenu->items[cmenu->citem].arg);
 
       drawitems();
       *needrender = SDL_TRUE;
       break;
 
     case SDL_KEYDOWN:
-      switch( ev->key.keysym.sym )
+      switch(ev->key.keysym.sym)
       {
         case SDLK_UP:
           // Find the next selectable item above this one
           i = cmenu->citem-1;
-          while( ( cmenu->items[i].name == OSDMENUBAR ) ||
-                 ( cmenu->items[i].func == NULL ) )
+          while((cmenu->items[i].name == OSDMENUBAR) ||
+                (cmenu->items[i].func == NULL))
           {
-            if( i < 0 ) break;
+            if(i < 0) break;
             i--;
           }
 
           // Hit the top?
-          if( ( i < 0 ) || ( cmenu->items[i].name == OSDMENUBAR ) )
+          if((i < 0) || (cmenu->items[i].name == OSDMENUBAR))
           {
             // Start the search again from the last item
-            for( i=0; cmenu->items[i].name; i++ ) ;
+            for(i=0; cmenu->items[i].name; i++) ;
             i--;
 
             // Find the first selectable item from here
-            while( ( cmenu->items[i].name == OSDMENUBAR ) ||
-                   ( cmenu->items[i].func == NULL ) )
+            while((cmenu->items[i].name == OSDMENUBAR) ||
+                  (cmenu->items[i].func == NULL))
             {
-              if( i < 0 ) break;
+              if(i < 0) break;
               i--;
             }
-            if( ( i < 0 ) || ( cmenu->items[i].name == OSDMENUBAR ) ) break;
+            if((i < 0) || (cmenu->items[i].name == OSDMENUBAR)) break;
           }
           cmenu->citem = i;
           drawitems();
@@ -2001,25 +2032,25 @@ SDL_bool menu_event( SDL_Event *ev, struct machine *oric, SDL_bool *needrender )
 
         case SDLK_DOWN:
           i = cmenu->citem+1;
-          while( ( cmenu->items[i].name == OSDMENUBAR ) ||
-                 ( cmenu->items[i].func == NULL ) )
+          while((cmenu->items[i].name == OSDMENUBAR) ||
+                (cmenu->items[i].func == NULL))
           {
-            if( cmenu->items[i].name == NULL ) break;
+            if(cmenu->items[i].name == NULL) break;
             i++;
           }
 
-          if( ( cmenu->items[i].name == NULL ) || ( cmenu->items[i].name == OSDMENUBAR ) )
+          if((cmenu->items[i].name == NULL) || (cmenu->items[i].name == OSDMENUBAR))
           {
             i=0;
 
-            while( ( cmenu->items[i].name == OSDMENUBAR ) ||
-                   ( cmenu->items[i].func == NULL ) )
+            while((cmenu->items[i].name == OSDMENUBAR) ||
+                  (cmenu->items[i].func == NULL))
             {
-              if( cmenu->items[i].name == NULL ) break;
+              if(cmenu->items[i].name == NULL) break;
               i++;
             }
 
-            if( ( cmenu->items[i].name == NULL ) || ( cmenu->items[i].name == OSDMENUBAR ) )
+            if((cmenu->items[i].name == NULL) || (cmenu->items[i].name == OSDMENUBAR))
               break;
           }
 
@@ -2034,20 +2065,20 @@ SDL_bool menu_event( SDL_Event *ev, struct machine *oric, SDL_bool *needrender )
       break;
 
     case SDL_KEYUP:
-      switch( ev->key.keysym.sym )
+      switch(ev->key.keysym.sym)
       {
         case SDLK_RETURN:
         case SDLK_KP_ENTER:
-          if( !cmenu->items[cmenu->citem].func ) break;
-          cmenu->items[cmenu->citem].func( oric, &cmenu->items[cmenu->citem], cmenu->items[cmenu->citem].arg );
+          if(!cmenu->items[cmenu->citem].func) break;
+          cmenu->items[cmenu->citem].func(oric, &cmenu->items[cmenu->citem], cmenu->items[cmenu->citem].arg);
           drawitems();
           *needrender = SDL_TRUE;
           break;
 
         case SDLK_ESCAPE:
-          setemumode( oric, NULL, EM_RUNNING );
+          setemumode(oric, NULL, EM_RUNNING);
 #ifdef WWW
-          if( oric->ay.soundon )
+          if(oric->ay.soundon)
           {
             SDL_PauseAudio(0);
           }
@@ -2056,17 +2087,17 @@ SDL_bool menu_event( SDL_Event *ev, struct machine *oric, SDL_bool *needrender )
           break;
 
         default:
-          for( i=0; cmenu->items[i].name; i++ )
+          for(i=0; cmenu->items[i].name; i++)
           {
-            if( ( cmenu->items[i].sdlkey ) &&
-                ( cmenu->items[i].sdlkey == ev->key.keysym.sym ) &&
-                ( cmenu->items[i].func ) )
+            if((cmenu->items[i].sdlkey) &&
+                (cmenu->items[i].sdlkey == ev->key.keysym.sym) &&
+                (cmenu->items[i].func))
               break;
           }
 
-          if( !cmenu->items[i].name ) break;
+          if(!cmenu->items[i].name) break;
 
-          cmenu->items[i].func( oric, &cmenu->items[i], cmenu->items[i].arg );
+          cmenu->items[i].func(oric, &cmenu->items[i], cmenu->items[i].arg);
           drawitems();
           *needrender = SDL_TRUE;
           break;
@@ -2074,17 +2105,17 @@ SDL_bool menu_event( SDL_Event *ev, struct machine *oric, SDL_bool *needrender )
       break;
   }
 
-  if (*needrender) ula_set_dirty(oric);
+  if(*needrender) ula_set_dirty(oric);
   return done;
 }
 
-void set_render_mode( struct machine *oric, int whichrendermode )
+void set_render_mode(struct machine *oric, int whichrendermode)
 {
   oric->rendermode = whichrendermode;
-  switch( whichrendermode )
+  switch(whichrendermode)
   {
     case RENDERMODE_SW:
-      if (oric->sw_depth == 8)
+      if(oric->sw_depth == 8)
       {
         oric->render_begin          = render_begin_sw8;
         oric->render_end            = render_end_sw8;
@@ -2180,107 +2211,107 @@ void set_render_mode( struct machine *oric, int whichrendermode )
   }
 }
 
-void swap_render_mode( struct machine *oric, struct osdmenuitem *mitem, int newrendermode )
+void swap_render_mode(struct machine *oric, struct osdmenuitem *mitem, int newrendermode)
 {
-  if( oric->rendermode == newrendermode ) return;
+  if(oric->rendermode == newrendermode) return;
 
-  shut_gui( oric );
-  shut_joy( oric );
-  SDL_COMPAT_Quit( SDL_FALSE );
+  shut_gui(oric);
+  shut_joy(oric);
+  SDL_COMPAT_Quit(SDL_FALSE);
   need_sdl_quit = SDL_FALSE;
 
   // Go SDL!
-  if( SDL_COMPAT_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0 )
+  if(SDL_COMPAT_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
   {
     oric->emu_mode = EM_PLEASEQUIT;
     return;
   }
   need_sdl_quit = SDL_TRUE;
 
-  if( !init_gui( oric, newrendermode ) )
+  if(!init_gui(oric, newrendermode))
   {
     oric->emu_mode = EM_PLEASEQUIT;
     return;
   }
 
-  if( !ay_init( &oric->ay, oric ) )
+  if(!ay_init(&oric->ay, oric))
   {
     oric->emu_mode = EM_PLEASEQUIT;
     return;
   }
 
-  if( !init_joy( oric ) )
+  if(!init_joy(oric))
   {
     oric->emu_mode = EM_PLEASEQUIT;
     return;
   }
 
-  if( !init_filerequester( oric ) )
+  if(!init_filerequester(oric))
   {
     oric->emu_mode = EM_PLEASEQUIT;
     return;
   }
 
-  if( !init_msgbox( oric ) )
+  if(!init_msgbox(oric))
   {
     oric->emu_mode = EM_PLEASEQUIT;
     return;
   }
 
-  joy_setup( oric );
+  joy_setup(oric);
 #ifdef WWW_MONITOR
-  mon_warminit( oric );
+  mon_warminit(oric);
 #endif
 
-  setemumode( oric, NULL, EM_RUNNING );
+  setemumode(oric, NULL, EM_RUNNING);
 }
 
 // Set things to default that can't fail
-void preinit_gui( struct machine *oric )
+void preinit_gui(struct machine *oric)
 {
   int i;
-  for( i=0; i<NUM_TZ; i++ ) tz[i] = NULL;
-  for( i=0; i<NUM_GIMG; i++ ) gimgs[i].buf = NULL;
-  mkpath( tapepath, "tapes" );
-  strcpy( tapefile, "" );
-  mkpath( diskpath, "disks" );
-  strcpy( diskfile, "" );
-  mkpath( telediskpath, "teledisks" );
-  strcpy( telediskfile, "" );
-  mkpath( pravdiskpath, "pravdisks" );
-  strcpy( pravdiskfile, "" );
-  mkpath( atmosromfile, ROMPREFIX"basic11b" );
-  mkpath( oric1romfile, ROMPREFIX"basic10" );
-  mkpath( mdiscromfile, ROMPREFIX"microdis" );
-  mkpath( bd500romfile, ROMPREFIX"bd500" );
-  mkpath( jasmnromfile, ROMPREFIX"jasmin" );
-  mkpath( pravetzromfile[0], ROMPREFIX"pravetzt" );
-  mkpath( pravetzromfile[1], ROMPREFIX"8dos2" );
+  for(i=0; i<NUM_TZ; i++) tz[i] = NULL;
+  for(i=0; i<NUM_GIMG; i++) gimgs[i].buf = NULL;
+  mkpath(tapepath, "tapes");
+  strcpy(tapefile, "");
+  mkpath(diskpath, "disks");
+  strcpy(diskfile, "");
+  mkpath(telediskpath, "teledisks");
+  strcpy(telediskfile, "");
+  mkpath(pravdiskpath, "pravdisks");
+  strcpy(pravdiskfile, "");
+  mkpath(atmosromfile, ROMPREFIX"basic11b");
+  mkpath(oric1romfile, ROMPREFIX"basic10");
+  mkpath(mdiscromfile, ROMPREFIX"microdis");
+  mkpath(bd500romfile, ROMPREFIX"bd500");
+  mkpath(jasmnromfile, ROMPREFIX"jasmin");
+  mkpath(pravetzromfile[0], ROMPREFIX"pravetzt");
+  mkpath(pravetzromfile[1], ROMPREFIX"8dos2");
   telebankfiles[0][0] = 0;
   telebankfiles[1][0] = 0;
   telebankfiles[2][0] = 0;
   telebankfiles[3][0] = 0;
   telebankfiles[4][0] = 0;
-  mkpath( telebankfiles[5], ROMPREFIX"teleass" );
-  mkpath( telebankfiles[6], ROMPREFIX"hyperbas" );
-  mkpath( telebankfiles[7], ROMPREFIX"telmon24" );
-  set_render_mode( oric, RENDERMODE_NULL );
-  mkpath( snappath, "snapshots" );
-  strcpy( snapfile, "" );
-  mkpath( mappingpath, "keymap" );
-  strcpy( mappingfile, "" );
+  mkpath(telebankfiles[5], ROMPREFIX"teleass");
+  mkpath(telebankfiles[6], ROMPREFIX"hyperbas");
+  mkpath(telebankfiles[7], ROMPREFIX"telmon24");
+  set_render_mode(oric, RENDERMODE_NULL);
+  mkpath(snappath, "snapshots");
+  strcpy(snapfile, "");
+  mkpath(mappingpath, "keymap");
+  strcpy(mappingfile, "");
 
 #ifndef __APPLE__
   char path[MKPATH_MAX];
-  mkpath( path, IMAGEPREFIX"winicon.bmp" );
-  SDL_COMPAT_WM_SetIcon( SDL_LoadBMP( path ), NULL );
+  mkpath(path, IMAGEPREFIX"winicon.bmp");
+  SDL_COMPAT_WM_SetIcon(SDL_LoadBMP(path), NULL);
 #endif
 }
 
 // Ensure the sanity of toggle menuitems
-void setmenutoggles( struct machine *oric )
+void setmenutoggles(struct machine *oric)
 {
-  switch (oric->drivetype)
+  switch(oric->drivetype)
   {
     case DRV_JASMIN:
     case DRV_MICRODISC:
@@ -2300,42 +2331,42 @@ void setmenutoggles( struct machine *oric )
       break;
   }
 
-  if( soundavailable && soundon )
+  if(soundavailable && soundon)
     find_item_by_function(auopitems, togglesound)->name = "\x0e""Sound enabled";
   else
     find_item_by_function(auopitems, togglesound)->name = " Sound enabled";
 
-  if( oric->tapenoise )
+  if(oric->tapenoise)
     find_item_by_function(auopitems, toggletapenoise)->name = "\x0e""Tape noise";
   else
     find_item_by_function(auopitems, toggletapenoise)->name = " Tape noise";
 
-  if( oric->tapeturbo )
+  if(oric->tapeturbo)
     find_item_by_function(hwopitems, toggletapeturbo)->name = "\x0e""Turbo tape";
   else
     find_item_by_function(hwopitems, toggletapeturbo)->name = " Turbo tape";
 
-  if( oric->autoinsert )
+  if(oric->autoinsert)
     find_item_by_function(hwopitems, toggleautoinsrt)->name = "\x0e""Autoinsert tape";
   else
     find_item_by_function(hwopitems, toggleautoinsrt)->name = " Autoinsert tape";
 
-  if( oric->autorewind )
+  if(oric->autorewind)
     find_item_by_function(hwopitems, toggleautowind)->name = "\x0e""Autorewind tape";
   else
     find_item_by_function(hwopitems, toggleautowind)->name = " Autorewind tape";
 
-  if( oric->vsynchack )
+  if(oric->vsynchack)
     find_item_by_function(hwopitems, togglevsynchack)->name = "\x0e""VSync hack";
   else
     find_item_by_function(hwopitems, togglevsynchack)->name = " VSync hack";
 
-  if( oric->lightpen )
+  if(oric->lightpen)
     find_item_by_function(hwopitems, togglelightpen)->name = "\x0e""Lightpen";
   else
     find_item_by_function(hwopitems, togglelightpen)->name = " Lightpen";
 
-  if( oric->aciabackend )
+  if(oric->aciabackend)
   {
     strcpy(aciabackendlabel, aciabackends[oric->aciabackend]);
     sprintf(aciabackendlabel+18, "%.4X", oric->aciaoffset);
@@ -2344,55 +2375,59 @@ void setmenutoggles( struct machine *oric )
   else
     find_item_by_function(hwopitems, toggleaciabackend)->name = aciabackends[oric->aciabackend];
 
-  if( oric->symbolsautoload )
+  if(oric->symbolsautoload)
     find_item_by_function(dbopitems, togglesymbolsauto)->name = "\x0e""Autoload symbols file";
   else
     find_item_by_function(dbopitems, togglesymbolsauto)->name = " Autoload symbols file";
 
-  if( oric->symbolscase )
+  if(oric->symbolscase)
     find_item_by_function(dbopitems, togglecasesyms)->name = "\x0e""Case-sensitive symbols";
   else
     find_item_by_function(dbopitems, togglecasesyms)->name = " Case-sensitive symbols";
 
-  if( fullscreen )
+  if(fullscreen)
   {
     find_item_by_function(vdopitems, togglefullscreen)->name = "\x0e""Fullscreen";
     find_item_by_function(glopitems, togglefullscreen)->name = "\x0e""Fullscreen";
-  } else {
+  }
+  else
+  {
     find_item_by_function(vdopitems, togglefullscreen)->name = " Fullscreen";
     find_item_by_function(glopitems, togglefullscreen)->name = " Fullscreen";
   }
 
-  if( oric->aratio )
+  if(oric->aratio)
     find_item_by_function(glopitems, togglearatio)->name = "\x0e""50Hz/60Hz aspect ratio";
   else
     find_item_by_function(glopitems, togglearatio)->name = " 50Hz/60Hz aspect ratio";
 
-  if( oric->hstretch )
+  if(oric->hstretch)
     find_item_by_function(glopitems, togglehstretch)->name = "\x0e""Horizontal stretch";
   else
     find_item_by_function(glopitems, togglehstretch)->name = " Horizontal stretch";
 
-  if( oric->scanlines )
+  if(oric->scanlines)
   {
     find_item_by_function(vdopitems, togglescanlines)->name = "\x0e""Scanlines";
     find_item_by_function(glopitems, togglescanlines)->name = "\x0e""Scanlines";
-  } else {
+  }
+  else
+  {
     find_item_by_function(vdopitems, togglescanlines)->name = " Scanlines";
     find_item_by_function(glopitems, togglescanlines)->name = " Scanlines";
   }
 
-  if( oric->palghost )
+  if(oric->palghost)
     find_item_by_function(glopitems, togglepalghost)->name = "\x0e""PAL ghosting";
   else
     find_item_by_function(glopitems, togglepalghost)->name = " PAL ghosting";
 
 
-  find_item_by_function_and_arg(hwopitems, swapmach, (0xffff<<16)|MACH_ORIC1      )->name = oric->type==MACH_ORIC1     ? "\x0e""Oric-1"     : " Oric-1";
-  find_item_by_function_and_arg(hwopitems, swapmach, (0xffff<<16)|MACH_ORIC1_16K  )->name = oric->type==MACH_ORIC1_16K ? "\x0e""Oric-1 16K" : " Oric-1 16K";
-  find_item_by_function_and_arg(hwopitems, swapmach, (0xffff<<16)|MACH_ATMOS      )->name = oric->type==MACH_ATMOS     ? "\x0e""Atmos"      : " Atmos";
+  find_item_by_function_and_arg(hwopitems, swapmach, (0xffff<<16)|MACH_ORIC1)->name = oric->type==MACH_ORIC1     ? "\x0e""Oric-1"     : " Oric-1";
+  find_item_by_function_and_arg(hwopitems, swapmach, (0xffff<<16)|MACH_ORIC1_16K)->name = oric->type==MACH_ORIC1_16K ? "\x0e""Oric-1 16K" : " Oric-1 16K";
+  find_item_by_function_and_arg(hwopitems, swapmach, (0xffff<<16)|MACH_ATMOS)->name = oric->type==MACH_ATMOS     ? "\x0e""Atmos"      : " Atmos";
   find_item_by_function_and_arg(hwopitems, swapmach, (DRV_NONE<<16)|MACH_TELESTRAT)->name = oric->type==MACH_TELESTRAT ? "\x0e""Telestrat"  : " Telestrat";
-  find_item_by_function_and_arg(hwopitems, swapmach, (0xffff<<16)|MACH_PRAVETZ    )->name = oric->type==MACH_PRAVETZ   ? "\x0e""Pravetz 8D" : " Pravetz 8D";
+  find_item_by_function_and_arg(hwopitems, swapmach, (0xffff<<16)|MACH_PRAVETZ)->name = oric->type==MACH_PRAVETZ   ? "\x0e""Pravetz 8D" : " Pravetz 8D";
 
   find_item_by_key(hwopitems, 'm')->func = microdiscrom_valid ? setdrivetype : NULL;
   find_item_by_key(hwopitems, 'j')->func = jasminrom_valid ? setdrivetype : NULL;
@@ -2405,14 +2440,14 @@ void setmenutoggles( struct machine *oric )
   find_item_by_key(hwopitems, 'p')->name = oric->drivetype==DRV_PRAVETZ   ? "\x0e""Pravetz 8D disk" : " Pravetz 8D disk";
 
   if(oric->show_keyboard)
-     find_item_by_function(keopitems, togglekeyboard)->name = "\x0e""Show keyboard";
+    find_item_by_function(keopitems, togglekeyboard)->name = "\x0e""Show keyboard";
   else
-     find_item_by_function(keopitems, togglekeyboard)->name = " Show keyboard";
+    find_item_by_function(keopitems, togglekeyboard)->name = " Show keyboard";
 
   if(oric->show_keyboard)
-     find_item_by_function(keopitems, togglestickykeys)->name = "\x0e""Sticky mod keys";
+    find_item_by_function(keopitems, togglestickykeys)->name = "\x0e""Sticky mod keys";
   else
-     find_item_by_function(keopitems, togglestickykeys)->name = " Sticky mod keys";
+    find_item_by_function(keopitems, togglestickykeys)->name = " Sticky mod keys";
 
   g_menu_scheme = oric->disable_menuscheme? 5 : oric->type;
 
@@ -2421,29 +2456,29 @@ void setmenutoggles( struct machine *oric )
 }
 
 // Initialise the GUI
-SDL_bool init_gui( struct machine *oric, Sint32 rendermode )
+SDL_bool init_gui(struct machine *oric, Sint32 rendermode)
 {
   int i;
   SDL_AudioSpec wanted;
 
-  for( i=0; i<NUM_GIMG; i++ )
+  for(i=0; i<NUM_GIMG; i++)
   {
-    if( !gimg_load( &gimgs[i] ) ) return SDL_FALSE;
+    if(!gimg_load(&gimgs[i])) return SDL_FALSE;
   }
 
-  set_render_mode( oric, rendermode );
-  if( !oric->init_render( oric ) ) return SDL_FALSE;
+  set_render_mode(oric, rendermode);
+  if(!oric->init_render(oric)) return SDL_FALSE;
 
   // Allocate all text zones
-  if( !alloc_textzone( oric, TZ_MONITOR,    0, 228, 50, 21, "Monitor"              ) ) return SDL_FALSE;
-  if( !alloc_textzone( oric, TZ_DEBUG,      0, 228, 50, 21, "Debug console"        ) ) return SDL_FALSE;
-  if( !alloc_textzone( oric, TZ_MEMWATCH,   0, 228, 50, 21, "Memory watch"         ) ) return SDL_FALSE;
-  if( !alloc_textzone( oric, TZ_REGS,     240,   0, 50, 19, "6502 Status"          ) ) return SDL_FALSE;
-  if( !alloc_textzone( oric, TZ_VIA,      400, 228, 30, 21, "VIA Status"           ) ) return SDL_FALSE;
-  if( !alloc_textzone( oric, TZ_VIA2,     400, 228, 30, 21, "Telestrat VIA Status" ) ) return SDL_FALSE;
-  if( !alloc_textzone( oric, TZ_AY,       400, 228, 30, 21, "AY Status"            ) ) return SDL_FALSE;
-  if( !alloc_textzone( oric, TZ_DISK,     400, 228, 30, 21, "Disk Status"          ) ) return SDL_FALSE;
-  if( !alloc_textzone( oric, TZ_TWIL,     400, 228, 30, 21, "Twilighte Status"     ) ) return SDL_FALSE;
+  if(!alloc_textzone(oric, TZ_MONITOR,    0, 228, 50, 21, "Monitor")) return SDL_FALSE;
+  if(!alloc_textzone(oric, TZ_DEBUG,      0, 228, 50, 21, "Debug console")) return SDL_FALSE;
+  if(!alloc_textzone(oric, TZ_MEMWATCH,   0, 228, 50, 21, "Memory watch")) return SDL_FALSE;
+  if(!alloc_textzone(oric, TZ_REGS,     240,   0, 50, 19, "6502 Status")) return SDL_FALSE;
+  if(!alloc_textzone(oric, TZ_VIA,      400, 228, 30, 21, "VIA Status")) return SDL_FALSE;
+  if(!alloc_textzone(oric, TZ_VIA2,     400, 228, 30, 21, "Telestrat VIA Status")) return SDL_FALSE;
+  if(!alloc_textzone(oric, TZ_AY,       400, 228, 30, 21, "AY Status")) return SDL_FALSE;
+  if(!alloc_textzone(oric, TZ_DISK,     400, 228, 30, 21, "Disk Status")) return SDL_FALSE;
+  if(!alloc_textzone(oric, TZ_TWIL,     400, 228, 30, 21, "Twilighte Status")) return SDL_FALSE;
 
   // Set up SDL audio
   wanted.freq     = AUDIO_FREQ;
@@ -2456,7 +2491,7 @@ SDL_bool init_gui( struct machine *oric, Sint32 rendermode )
 
   soundavailable = SDL_FALSE;
   soundon = SDL_FALSE;
-  if( SDL_OpenAudio( &wanted, &obtained ) >= 0 )
+  if(SDL_OpenAudio(&wanted, &obtained) >= 0)
   {
     soundon = SDL_TRUE;
     soundavailable = SDL_TRUE;
@@ -2464,45 +2499,45 @@ SDL_bool init_gui( struct machine *oric, Sint32 rendermode )
     cyclespersample = ((CYCLESPERSECOND<<FPBITS)/obtained.freq);
   }
 
-  setmenutoggles( oric );
+  setmenutoggles(oric);
 #if defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__)
-  init_gui_native( oric );
+  init_gui_native(oric);
 #elif defined(__WIN32__) || defined(__CYGWIN__)
-  init_gui_native( oric );
+  init_gui_native(oric);
 #elif defined(__linux__)
-  init_gui_native( oric );
+  init_gui_native(oric);
 #endif
   return SDL_TRUE;
 }
 
 // Bye bye.
-void shut_gui( struct machine *oric )
+void shut_gui(struct machine *oric)
 {
   int i;
-  for (i = 0; i<NUM_GIMG; i++)
+  for(i = 0; i<NUM_GIMG; i++)
   {
     free(gimgs[i].buf);
     gimgs[i].buf = 0;
   }
 
-  oric->shut_render( oric );
+  oric->shut_render(oric);
 
-  for( i=0; i<NUM_TZ; i++ )
-    free_textzone( oric, i );
+  for(i=0; i<NUM_TZ; i++)
+    free_textzone(oric, i);
 
 #if defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__)
-    shut_gui_native( oric );
+  shut_gui_native(oric);
 #elif defined(__WIN32__) || defined(__CYGWIN__)
-    shut_gui_native( oric );
+  shut_gui_native(oric);
 #elif defined(__linux__)
-    shut_gui_native( oric );
+  shut_gui_native(oric);
 #endif
 }
 
-void pravdiskboot( struct machine *oric )
+void pravdiskboot(struct machine *oric)
 {
-  if( oric->pravdiskautoboot )
+  if(oric->pravdiskautoboot)
   {
-    queuekeys( "CALL800\x0d" );
+    queuekeys("CALL800\x0d");
   }
 }

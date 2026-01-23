@@ -20,6 +20,6 @@
 **
 */
 
-SDL_bool save_snapshot(struct machine *oric, char *filename);
-SDL_bool load_snapshot(struct machine *oric, char *filename);
+SDL_bool save_snapshot(struct machine *oric, char* filename);
+SDL_bool load_snapshot(struct machine *oric, char* filename);
 

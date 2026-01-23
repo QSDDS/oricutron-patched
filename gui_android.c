@@ -35,7 +35,7 @@
 
 static SDL_bool initialized = SDL_FALSE;
 
-SDL_bool init_gui_native( struct machine *oric )
+SDL_bool init_gui_native(struct machine *oric)
 {
   if(!initialized)
     initialized = SDL_TRUE;
@@ -44,13 +44,13 @@ SDL_bool init_gui_native( struct machine *oric )
   return initialized;
 }
 
-void shut_gui_native( struct machine *oric )
+void shut_gui_native(struct machine *oric)
 {
   /* FIXME: ... */
   initialized = SDL_FALSE;
 }
 
-void gui_open_url( const char *url )
+void gui_open_url(const char* url)
 {
   /* FIXME: ... */
   return;

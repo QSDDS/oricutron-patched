@@ -40,15 +40,15 @@
 #include "filereq.h"
 
 extern SDL_bool fullscreen;
-void togglefullscreen( struct machine *oric, struct osdmenuitem *mitem, int dummy );
+void togglefullscreen(struct machine *oric, struct osdmenuitem *mitem, int dummy);
 
-SDL_bool init_filerequester( struct machine *oric )
+SDL_bool init_filerequester(struct machine *oric)
 {
   gtk_init(0, NULL);
   return SDL_TRUE;
 }
 
-void shut_filerequester( struct machine *oric )
+void shut_filerequester(struct machine *oric)
 {
 }
 
@@ -58,7 +58,7 @@ void shut_filerequester( struct machine *oric )
 //   fname = initial contents of the filename textbox
 // It returns true if the user selected a file, although the file is not
 // guaranteed to exist.
-SDL_bool filerequester( struct machine *oric, char *title, char *path, char *fname, int type )
+SDL_bool filerequester(struct machine *oric, char* title, char* path, char* fname, int type)
 {
   GtkWidget *dialog;
   SDL_bool result = SDL_FALSE;
@@ -66,13 +66,13 @@ SDL_bool filerequester( struct machine *oric, char *title, char *path, char *fna
   GtkFileFilter *filter = NULL, *allfilter = gtk_file_filter_new();
   SDL_bool was_fullscreen = fullscreen;
 
-  if (fullscreen)
+  if(fullscreen)
     togglefullscreen(oric, NULL, 0);
 
   gtk_file_filter_set_name(allfilter, "All files");
   gtk_file_filter_add_pattern(allfilter, "*");
 
-  switch( type )
+  switch(type)
   {
     case FR_DISKSAVE:
       action = GTK_FILE_CHOOSER_ACTION_SAVE;
@@ -119,7 +119,7 @@ SDL_bool filerequester( struct machine *oric, char *title, char *path, char *fna
       break;
 
     case FR_KEYMAPPINGSAVE:
-       action = GTK_FILE_CHOOSER_ACTION_SAVE;
+      action = GTK_FILE_CHOOSER_ACTION_SAVE;
     case FR_KEYMAPPINGLOAD:
       filter = gtk_file_filter_new();
       gtk_file_filter_set_name(filter, "Keyboard Mapping files");
@@ -143,36 +143,38 @@ SDL_bool filerequester( struct machine *oric, char *title, char *path, char *fna
                                        NULL);
 
   gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), path);
-  if (action == GTK_FILE_CHOOSER_ACTION_SAVE)
+  if(action == GTK_FILE_CHOOSER_ACTION_SAVE)
     gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), fname);
 
-  if (filter)
+  if(filter)
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), allfilter);
 
-  if (gtk_dialog_run(GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+  if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
   {
-    char *filename;
+    char* filename;
     int i;
-    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-    strncpy( path,  filename, 4096 ); path[4095] = 0;
+    filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+    strncpy(path,  filename, 4096);
+    path[4095] = 0;
     i = strlen(path)-1;
-    while (i >= 0)
+    while(i >= 0)
     {
-      if (path[i] == PATHSEP) break;
+      if(path[i] == PATHSEP) break;
       i--;
     }
-    strncpy( fname, &path[i+1], 512  ); fname[511]  = 0;
+    strncpy(fname, &path[i+1], 512);
+    fname[511]  = 0;
     path[i+1] = 0;
     g_free(filename);
     result = SDL_TRUE;
   }
 
   gtk_widget_destroy(dialog);
-  while (gtk_events_pending())
+  while(gtk_events_pending())
     gtk_main_iteration();
 
-  if (was_fullscreen)
+  if(was_fullscreen)
     togglefullscreen(oric, NULL, 0);
 
   return result;

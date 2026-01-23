@@ -28,12 +28,12 @@
 
 #define TIME_TO_BIT(t) ((t<TAPE_DECODE_1_MIN)?-1:((t<TAPE_DECODE_0_MIN)?1:0))
 
-void tape_eject( struct machine *oric );
-void tape_rewind( struct machine *oric );
-SDL_bool tape_load_tap( struct machine *oric, char *fname );
-void tape_ticktock( struct machine *oric, int cycles );
-void tape_setmotor( struct machine *oric, SDL_bool motoron );
-void tape_patches( struct machine *oric );
-void toggletapecap( struct machine *oric, struct osdmenuitem *mitem, int dummy );
+void tape_eject(struct machine *oric);
+void tape_rewind(struct machine *oric);
+SDL_bool tape_load_tap(struct machine *oric, char* fname);
+void tape_ticktock(struct machine *oric, int cycles);
+void tape_setmotor(struct machine *oric, SDL_bool motoron);
+void tape_patches(struct machine *oric);
+void toggletapecap(struct machine *oric, struct osdmenuitem *mitem, int dummy);
 void tape_orbchange(struct via *via);
-void tape_stop_savepatch( struct machine *oric );
+void tape_stop_savepatch(struct machine *oric);

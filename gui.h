@@ -57,8 +57,8 @@ struct textzone
 {
   int x, y, w, h;           // Dimensions
   int px, py, cfc, cbc;     // Current position and text colours
-  unsigned char *tx;        // Text buffer
-  unsigned char *fc, *bc;   // Colour buffers
+  unsigned char* tx;        // Text buffer
+  unsigned char* fc, *bc;   // Colour buffers
   SDL_bool modified;
 };
 
@@ -73,8 +73,8 @@ struct textzone
 
 struct osdmenuitem
 {
-  char *name;
-  char *key;
+  char* name;
+  char* key;
   int  sdlkey;
   void (*func)(struct machine *,struct osdmenuitem *,int);
   int arg;
@@ -83,7 +83,7 @@ struct osdmenuitem
 
 struct osdmenu
 {
-  char *title;
+  char* title;
   int citem;
   struct osdmenuitem *items;
 };
@@ -92,7 +92,7 @@ struct osdmenu
 
 struct guiimg
 {
-  char *filename;
+  char* filename;
   Uint16 w, h;
   Uint8 *buf;
 };
@@ -123,58 +123,58 @@ enum
 
 #define NUM_GUI_COLS 16
 
-SDL_bool alloc_textzone( struct machine *oric, int i, int x, int y, int w, int h, char *title );
-void free_textzone( struct machine *oric, int i );
-SDL_bool in_textzone( struct textzone *tz, int x, int y );
+SDL_bool alloc_textzone(struct machine *oric, int i, int x, int y, int w, int h, char* title);
+void free_textzone(struct machine *oric, int i);
+SDL_bool in_textzone(struct textzone *tz, int x, int y);
 
-void do_popup( struct machine *oric, char *str );
-void makebox( struct textzone *ptz, int x, int y, int w, int h, int fg, int bg );
-void tzsettitle( struct textzone *ptz, char *title );
-void tzstr( struct textzone *ptz, char *text );
-void tzputc( struct textzone *ptz, char c );
-void tzstrpos( struct textzone *ptz, int x, int y, char *text );
-void tzsetcol( struct textzone *ptz, int fc, int bc );
-void tzprintf( struct textzone *ptz, char *fmt, ... );
-void tzprintfpos( struct textzone *ptz, int x, int y, char *fmt, ... );
-void draw_textzone( struct textzone *ptz );
-void printstr( int x, int y, Uint32 fc, Uint32 bc, char *str );
-void gotosite( struct machine *oric, struct osdmenuitem *mitem, int dummy );
-void gotomenu( struct machine *oric, struct osdmenuitem *mitem, int menunum );
-SDL_bool menu_event( SDL_Event *ev, struct machine *oric, SDL_bool *needrender );
-void setmenutoggles( struct machine *oric );
-void set_render_mode( struct machine *oric, int whichrendermode );
+void do_popup(struct machine *oric, char* str);
+void makebox(struct textzone *ptz, int x, int y, int w, int h, int fg, int bg);
+void tzsettitle(struct textzone *ptz, char* title);
+void tzstr(struct textzone *ptz, char* text);
+void tzputc(struct textzone *ptz, char c);
+void tzstrpos(struct textzone *ptz, int x, int y, char* text);
+void tzsetcol(struct textzone *ptz, int fc, int bc);
+void tzprintf(struct textzone *ptz, char* fmt, ...);
+void tzprintfpos(struct textzone *ptz, int x, int y, char* fmt, ...);
+void draw_textzone(struct textzone *ptz);
+void printstr(int x, int y, Uint32 fc, Uint32 bc, char* str);
+void gotosite(struct machine *oric, struct osdmenuitem *mitem, int dummy);
+void gotomenu(struct machine *oric, struct osdmenuitem *mitem, int menunum);
+SDL_bool menu_event(SDL_Event *ev, struct machine *oric, SDL_bool *needrender);
+void setmenutoggles(struct machine *oric);
+void set_render_mode(struct machine *oric, int whichrendermode);
 
-void render( struct machine *oric );
-void preinit_gui( struct machine *oric );
-SDL_bool init_gui( struct machine *oric, Sint32 rendermode );
-void shut_gui( struct machine *oric );
+void render(struct machine *oric);
+void preinit_gui(struct machine *oric);
+SDL_bool init_gui(struct machine *oric, Sint32 rendermode);
+void shut_gui(struct machine *oric);
 
-void draw_statusbar( struct machine *oric );
-void draw_disks( struct machine *oric );
-void draw_avirec( struct machine *oric, SDL_bool recording );
-void draw_tape( struct machine *oric );
+void draw_statusbar(struct machine *oric);
+void draw_disks(struct machine *oric);
+void draw_avirec(struct machine *oric, SDL_bool recording);
+void draw_tape(struct machine *oric);
 
-void draw_keyboard( struct machine *oric );
+void draw_keyboard(struct machine *oric);
 
 
-void statusprintstr( int x, Uint32 fc, char *str );
-void joinpath( char *path, char *file );
+void statusprintstr(int x, Uint32 fc, char* str);
+void joinpath(char* path, char* file);
 
 /* implemented by OS-specific backends */
 
-SDL_bool init_gui_native( struct machine *oric );
-void shut_gui_native( struct machine *oric );
-void gui_open_url( const char *url );
-SDL_bool clipboard_copy( struct machine *oric );
-SDL_bool clipboard_paste( struct machine *oric );
+SDL_bool init_gui_native(struct machine *oric);
+void shut_gui_native(struct machine *oric);
+void gui_open_url(const char* url);
+SDL_bool clipboard_copy(struct machine *oric);
+SDL_bool clipboard_paste(struct machine *oric);
 
-void setoverclock( struct machine *oric, struct osdmenuitem *mitem, int value );
-void clear_textzone( struct machine *oric, int i );
+void setoverclock(struct machine *oric, struct osdmenuitem *mitem, int value);
+void clear_textzone(struct machine *oric, int i);
 
-struct osdmenuitem *find_item_by_function(struct osdmenuitem *menu, void *function);
+struct osdmenuitem *find_item_by_function(struct osdmenuitem *menu, void* function);
 
-void togglefullscreen( struct machine *oric, struct osdmenuitem *mitem, int dummy );
+void togglefullscreen(struct machine *oric, struct osdmenuitem *mitem, int dummy);
 
-void softresetoric( struct machine *oric, struct osdmenuitem *mitem, int dummy );
+void softresetoric(struct machine *oric, struct osdmenuitem *mitem, int dummy);
 
-void pravdiskboot( struct machine *oric );
+void pravdiskboot(struct machine *oric);

@@ -36,43 +36,43 @@
 #include "machine.h"
 #include "filereq.h"
 
-SDL_bool init_filerequester( struct machine *oric )
+SDL_bool init_filerequester(struct machine *oric)
 {
   return SDL_TRUE;
 }
 
-void shut_filerequester( struct machine *oric )
+void shut_filerequester(struct machine *oric)
 {
 }
 
-SDL_bool filerequester( struct machine *oric, char *title, char *path, char *fname, int type )
+SDL_bool filerequester(struct machine *oric, char* title, char* path, char* fname, int type)
 {
   SDL_SysWMinfo wmi;
   OPENFILENAME ofn;
   HWND hwnd;
   char tmp[4096];
   int i;
-  char *odir;
+  char* odir;
 
-  strcpy( tmp, fname );
+  strcpy(tmp, fname);
 
   hwnd = NULL;
   SDL_VERSION(&wmi.version);
-  if (SDL_COMPAT_GetWMInfo(&wmi))
+  if(SDL_COMPAT_GetWMInfo(&wmi))
 #if SDL_MAJOR_VERSION == 1
     hwnd = (HWND)wmi.window;
 #else
     hwnd = (HWND)wmi.info.win.window;
 #endif
 
-  ZeroMemory( &ofn, sizeof( ofn ) );
-  ofn.lStructSize = sizeof( ofn );
+  ZeroMemory(&ofn, sizeof(ofn));
+  ofn.lStructSize = sizeof(ofn);
   ofn.hwndOwner   = hwnd;
   ofn.lpstrFile   = fname;
   ofn.nMaxFile    = 4096;
 
   ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-  switch( type )
+  switch(type)
   {
     case FR_DISKSAVE:
       ofn.Flags = OFN_PATHMUSTEXIST;
@@ -80,7 +80,7 @@ SDL_bool filerequester( struct machine *oric, char *title, char *path, char *fna
       ofn.lpstrFilter = "All Files\0*.*\0Disk Images (*.dsk)\0*.DSK\0";
       ofn.nFilterIndex = 2;
       break;
-    
+
     case FR_TAPESAVETAP:
       ofn.Flags = OFN_PATHMUSTEXIST;
       ofn.lpstrFilter = "All Files\0*.*\0Tape Images (*.tap)\0*.TAP\0";
@@ -109,9 +109,9 @@ SDL_bool filerequester( struct machine *oric, char *title, char *path, char *fna
       ofn.lpstrFilter = "All Files\0*.*\0Snapshot files (*.sna)\0*.SNA\0";
       ofn.nFilterIndex = 2;
       break;
-      
+
     case FR_KEYMAPPINGSAVE:
-       ofn.Flags = OFN_PATHMUSTEXIST;
+      ofn.Flags = OFN_PATHMUSTEXIST;
     case FR_KEYMAPPINGLOAD:
       ofn.lpstrFilter = "All Files\0*.*\0Keyboard Mapping files (*.kma)\0*.KMA\0";
       ofn.nFilterIndex = 2;
@@ -127,52 +127,54 @@ SDL_bool filerequester( struct machine *oric, char *title, char *path, char *fna
   ofn.nMaxFileTitle = 0;
   ofn.lpstrInitialDir = path;
 
-  odir = getcwd( NULL, 0 );
+  odir = getcwd(NULL, 0);
 
-  switch( type )
+  switch(type)
   {
     case FR_SNAPSHOTSAVE:
     case FR_DISKSAVE:
-      if( !GetSaveFileName( &ofn ) )
+      if(!GetSaveFileName(&ofn))
       {
-        chdir( odir );
-        free( odir );
+        chdir(odir);
+        free(odir);
         return SDL_FALSE;
       }
       break;
-    
+
     default:
-      if( !GetOpenFileName( &ofn ) )
+      if(!GetOpenFileName(&ofn))
       {
-        chdir( odir );
-        free( odir );
+        chdir(odir);
+        free(odir);
         return SDL_FALSE;
       }
       break;
   }
 
-  chdir( odir );
-  free( odir );
+  chdir(odir);
+  free(odir);
 
-  i = strlen( ofn.lpstrFile );
-  if( !i ) return SDL_FALSE;
+  i = strlen(ofn.lpstrFile);
+  if(!i) return SDL_FALSE;
 
   i--;
-  while( ofn.lpstrFile[i] != PATHSEP )
+  while(ofn.lpstrFile[i] != PATHSEP)
   {
-    if( i == 0 ) break;
+    if(i == 0) break;
     i--;
   }
 
-  if( ( ofn.lpstrFile[i] == PATHSEP ) && ( i < (strlen(ofn.lpstrFile)-1) ) )
+  if((ofn.lpstrFile[i] == PATHSEP) && (i < (strlen(ofn.lpstrFile)-1)))
   {
     ofn.lpstrFile[i] = 0;
-    strcpy( path, ofn.lpstrFile );
-    strncpy( fname, &ofn.lpstrFile[i+1], 512 );
+    strcpy(path, ofn.lpstrFile);
+    strncpy(fname, &ofn.lpstrFile[i+1], 512);
     fname[511] = 0;
-  } else {
+  }
+  else
+  {
     path[0] = 0;
-    strncpy( fname, ofn.lpstrFile, 512 );
+    strncpy(fname, ofn.lpstrFile, 512);
     fname[511] = 0;
   }
 

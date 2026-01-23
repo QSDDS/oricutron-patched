@@ -37,7 +37,10 @@ typedef BOOL CH376_BOOL;
 typedef BPTR CH376_FILE;
 typedef BPTR CH376_LOCK;
 typedef struct FileInfoBlock * CH376_DIR;
-typedef struct { struct Library *DOSBase; } CH376_CONTEXT;
+typedef struct
+{
+  struct Library *DOSBase;
+} CH376_CONTEXT;
 
 #define CH376_TRUE  TRUE
 #define CH376_FALSE FALSE
@@ -60,10 +63,17 @@ typedef UINT64 CH376_U64;
 typedef INT64 CH376_S64;
 typedef BOOL CH376_BOOL;
 typedef HANDLE CH376_FILE;
-typedef struct _CH376_LOCK { TCHAR path[MAX_PATH]; HANDLE handle; } * CH376_LOCK;
+typedef struct _CH376_LOCK
+{
+  TCHAR path[MAX_PATH];
+  HANDLE handle;
+} * CH376_LOCK;
 typedef WIN32_FIND_DATA * CH376_DIR;
 
-typedef struct { void *dummy; } CH376_CONTEXT;
+typedef struct
+{
+  void* dummy;
+} CH376_CONTEXT;
 
 #define CH376_TRUE  TRUE
 #define CH376_FALSE FALSE
@@ -87,9 +97,16 @@ typedef uint64_t CH376_U64;
 typedef int64_t CH376_S64;
 typedef bool CH376_BOOL;
 typedef FILE * CH376_FILE;
-typedef char * CH376_LOCK;
-typedef struct _CH376_DIR { DIR *handle; struct dirent *entry; } * CH376_DIR;
-typedef struct { void *dummy; } CH376_CONTEXT;
+typedef char* CH376_LOCK;
+typedef struct _CH376_DIR
+{
+  DIR *handle;
+  struct dirent *entry;
+} * CH376_DIR;
+typedef struct
+{
+  void* dummy;
+} CH376_CONTEXT;
 
 #define CH376_TRUE  true
 #define CH376_FALSE false
@@ -109,15 +126,15 @@ typedef struct { void *dummy; } CH376_CONTEXT;
 struct ch376;
 
 // Initialization
-struct ch376 * ch376_create(void *user_data);
+struct ch376 * ch376_create(void* user_data);
 void ch376_destroy(struct ch376 *ch376);
 void ch376_reset(struct ch376 *ch376);
 
 // Configuration
-void ch376_set_sdcard_drive_path(struct ch376 *ch376, const char *path);
-void ch376_set_usb_drive_path(struct ch376 *ch376, const char *path);
-const char * ch376_get_sdcard_drive_path(struct ch376 *ch376);
-const char * ch376_get_usb_drive_path(struct ch376 *ch376);
+void ch376_set_sdcard_drive_path(struct ch376 *ch376, const char* path);
+void ch376_set_usb_drive_path(struct ch376 *ch376, const char* path);
+const char* ch376_get_sdcard_drive_path(struct ch376 *ch376);
+const char* ch376_get_usb_drive_path(struct ch376 *ch376);
 
 // Runtime
 void ch376_write_command_port(struct ch376 *ch376, CH376_U8 command);

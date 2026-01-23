@@ -68,7 +68,7 @@ static int sectordumpcount;
 void microdisc_setintrq(void* md);
 #endif
 
-static Uint16 calc_crc( Uint16 crc, Uint8 value)
+static Uint16 calc_crc(Uint16 crc, Uint8 value)
 {
   crc  = ((unsigned char)(crc >> 8)) | (crc << 8);
   crc ^= value;
@@ -79,30 +79,30 @@ static Uint16 calc_crc( Uint16 crc, Uint8 value)
 }
 
 // Pop up disk image information for a couple of seconds
-void disk_popup( struct machine *oric, int drive )
+void disk_popup(struct machine *oric, int drive)
 {
   char tmp[40];
-  if( !oric->diskname[drive][0] )
+  if(!oric->diskname[drive][0])
   {
-    do_popup( oric, "\x14\x15\x13" );
+    do_popup(oric, "\x14\x15\x13");
     return;
   }
 
-  sprintf( tmp, "\x14\x15""%d %-16s", drive, oric->diskname[drive] );
-  do_popup( oric, tmp );
+  sprintf(tmp, "\x14\x15""%d %-16s", drive, oric->diskname[drive]);
+  do_popup(oric, tmp);
 }
 
 // Free a disk image and clear the pointer to it
-static void diskimage_free( struct machine *oric, struct diskimage **dimg )
+static void diskimage_free(struct machine *oric, struct diskimage **dimg)
 {
-  char *dpath, *dfile;
+  char* dpath, *dfile;
 
   if(!dimg) return;
   if(!(*dimg)) return;
 
-  if( oric->type != MACH_TELESTRAT )
+  if(oric->type != MACH_TELESTRAT)
   {
-    switch (oric->drivetype)
+    switch(oric->drivetype)
     {
       case DRV_PRAVETZ:
         dpath = pravdiskpath;
@@ -124,14 +124,14 @@ static void diskimage_free( struct machine *oric, struct diskimage **dimg )
   if((*dimg)->modified)
   {
     char modmsg[128];
-    sprintf( modmsg, "The disk in drive %d is modified.\nWould you like to save the changes?", (*dimg)->drivenum );
-    if( msgbox( oric, MSGBOX_YES_NO, modmsg ) )
+    sprintf(modmsg, "The disk in drive %d is modified.\nWould you like to save the changes?", (*dimg)->drivenum);
+    if(msgbox(oric, MSGBOX_YES_NO, modmsg))
     {
-      sprintf( modmsg, "Save disk %d", (*dimg)->drivenum );
-      if( filerequester( oric, modmsg, dpath, dfile, FR_DISKSAVE ) )
+      sprintf(modmsg, "Save disk %d", (*dimg)->drivenum);
+      if(filerequester(oric, modmsg, dpath, dfile, FR_DISKSAVE))
       {
-        joinpath( dpath, dfile );
-        diskimage_save( oric, filetmp, (*dimg)->drivenum );
+        joinpath(dpath, dfile);
+        diskimage_save(oric, filetmp, (*dimg)->drivenum);
       }
     }
   }
@@ -187,7 +187,7 @@ static void diskimage_set_rawint(struct diskimage* dimg, Uint32 offset, Uint32 v
 // Allocate and initialise a disk image structure
 // If "rawimglen" isn't zero, it will also allocate
 // ram for a raw disk image
-static struct diskimage *diskimage_alloc( int drivetype, Uint32 rawimglen )
+static struct diskimage *diskimage_alloc(int drivetype, Uint32 rawimglen)
 {
   struct diskimage *dimg = NULL;
 
@@ -195,13 +195,13 @@ static struct diskimage *diskimage_alloc( int drivetype, Uint32 rawimglen )
   {
     Uint8 *buf = NULL;
 
-    if( DRV_PRAVETZ != drivetype )
+    if(DRV_PRAVETZ != drivetype)
       rawimglen = 256+2*128*6400;
 
     buf = malloc(rawimglen);
-    if( !buf ) return NULL;
+    if(!buf) return NULL;
 
-    dimg = malloc( sizeof( struct diskimage ) );
+    dimg = malloc(sizeof(struct diskimage));
     if(!dimg)
     {
       free(buf);
@@ -227,7 +227,7 @@ static struct diskimage *diskimage_alloc( int drivetype, Uint32 rawimglen )
   return dimg;
 }
 
-static void diskimage_set_modified( struct diskimage* dimg, uint8_t side, uint8_t track )
+static void diskimage_set_modified(struct diskimage* dimg, uint8_t side, uint8_t track)
 {
   if(dimg)
   {
@@ -243,7 +243,7 @@ static void diskimage_set_modified( struct diskimage* dimg, uint8_t side, uint8_
 }
 
 // Eject a disk from a drive
-void disk_eject( struct machine *oric, int drive )
+void disk_eject(struct machine *oric, int drive)
 {
   diskimage_free(oric, &oric->wddisk.disk[drive]);
   oric->wddisk.disk[drive] = NULL;
@@ -252,14 +252,14 @@ void disk_eject( struct machine *oric, int drive )
   oric->pravetz.drv[drive].dirty = SDL_FALSE;
   oric->pravetz.drv[drive].half_track = 0;
   oric->diskname[drive][0] = 0;
-  disk_popup( oric, drive );
+  disk_popup(oric, drive);
 }
 
 // Whenever a seek operation occurs, the track where the head ends up
 // is "cached". The track is located within the raw image file, and
 // all the sector address and data markers are found, and pointers
 // are remembered for each.
-void diskimage_cachetrack( struct diskimage *dimg, int track, int side )
+void diskimage_cachetrack(struct diskimage *dimg, int track, int side)
 {
   Uint8 *ptr, *eot;
   Uint32 sectorcount, n;
@@ -332,14 +332,14 @@ void diskimage_cachetrack( struct diskimage *dimg, int track, int side )
 // Since the disk image is always kept in standard format, there is
 // no processing of the image in this routine, it is just dumped from
 // memory back to disk.
-SDL_bool diskimage_save( struct machine *oric, char *fname, int drive )
+SDL_bool diskimage_save(struct machine *oric, char* fname, int drive)
 {
   struct diskimage* dimg = oric->wddisk.disk[drive];
 
   // Make sure there is a disk in the drive!
-  if( !dimg ) return SDL_FALSE;
+  if(!dimg) return SDL_FALSE;
 
-  if( oric->drivetype == DRV_PRAVETZ )
+  if(oric->drivetype == DRV_PRAVETZ)
   {
     disk_pravetz_write_image(&oric->pravetz.drv[drive]);
   }
@@ -350,7 +350,7 @@ SDL_bool diskimage_save( struct machine *oric, char *fname, int drive )
     FILE *f = fopen(fname, "wb");
     if(!f)
     {
-      do_popup( oric, "\x14\x15Save failed" );
+      do_popup(oric, "\x14\x15Save failed");
       return SDL_FALSE;
     }
 
@@ -368,7 +368,7 @@ SDL_bool diskimage_save( struct machine *oric, char *fname, int drive )
     if(fwrite(dimg->rawimage, 256+sidesize, 1, f) != 1)
     {
       fclose(f);
-      do_popup( oric, "\x14\x15Save failed" );
+      do_popup(oric, "\x14\x15Save failed");
       return SDL_FALSE;
     }
 
@@ -377,7 +377,7 @@ SDL_bool diskimage_save( struct machine *oric, char *fname, int drive )
       if(fwrite(dimg->rawimage+256+128*6400, sidesize, 1, f) != 1)
       {
         fclose(f);
-        do_popup( oric, "\x14\x15Save failed" );
+        do_popup(oric, "\x14\x15Save failed");
         return SDL_FALSE;
       }
     }
@@ -388,7 +388,7 @@ SDL_bool diskimage_save( struct machine *oric, char *fname, int drive )
     // If we are not just overwriting the original file, remember the new filename
     if(fname != dimg->filename)
     {
-      strncpy( dimg->filename, fname, 4096+512-1 );
+      strncpy(dimg->filename, fname, 4096+512-1);
       dimg->filename[4096+512-1] = 0;
     }
   }
@@ -398,12 +398,13 @@ SDL_bool diskimage_save( struct machine *oric, char *fname, int drive )
   dimg->modified_time = 0;
 
 #ifdef WWW
-    // sync from memory state to persisted
-    EM_ASM(
-        FS.syncfs(function (err) {
-          assert(!err);
-        });
-    );
+  // sync from memory state to persisted
+  EM_ASM(
+    FS.syncfs(function(err)
+  {
+    assert(!err);
+  });
+  );
 #endif
 
   // Remember to update the GUI
@@ -412,14 +413,14 @@ SDL_bool diskimage_save( struct machine *oric, char *fname, int drive )
 }
 
 // This routine "inserts" a disk image into a virtual drive
-SDL_bool diskimage_load( struct machine *oric, char *fname, int drive )
+SDL_bool diskimage_load(struct machine *oric, char* fname, int drive)
 {
   FILE *f;
   Uint32 len;
 
   // Open the file
   f = fopen(fname, "rb");
-  if( !f ) return SDL_FALSE;
+  if(!f) return SDL_FALSE;
 
   // The file exists, so eject any currently inserted disk
   disk_eject(oric, drive);
@@ -440,7 +441,7 @@ SDL_bool diskimage_load( struct machine *oric, char *fname, int drive )
   oric->wddisk.disk[drive] = diskimage_alloc(oric->drivetype, len);
   if(!oric->wddisk.disk[drive])
   {
-    do_popup( oric, "\x14\x15""Out of memory" );
+    do_popup(oric, "\x14\x15""Out of memory");
     fclose(f);
     return SDL_FALSE;
   }
@@ -450,13 +451,13 @@ SDL_bool diskimage_load( struct machine *oric, char *fname, int drive )
   {
     fclose(f);
     disk_eject(oric, drive);
-    do_popup( oric, "\x14\x15""Read error" );
+    do_popup(oric, "\x14\x15""Read error");
     return SDL_FALSE;
   }
 
   fclose(f);
 
-  if( oric->drivetype == DRV_PRAVETZ )
+  if(oric->drivetype == DRV_PRAVETZ)
   {
     Uint16  t_idx;
     Uint16  s_idx;
@@ -466,17 +467,17 @@ SDL_bool diskimage_load( struct machine *oric, char *fname, int drive )
     oric->wddisk.disk[drive]->drivenum = drive;
     oric->pravetz.drv[drive].pimg = oric->wddisk.disk[drive];
 
-    if( drive >= 2 )
+    if(drive >= 2)
     {
       disk_eject(oric, drive);
-      do_popup( oric, "\x14\x15""Invalid drive number" );
+      do_popup(oric, "\x14\x15""Invalid drive number");
       return SDL_FALSE;
     }
 
-    if( len != 143360 )
+    if(len != 143360)
     {
       disk_eject(oric, drive);
-      do_popup( oric, "\x14\x15""Invalid pravetz disk image" );
+      do_popup(oric, "\x14\x15""Invalid pravetz disk image");
       return SDL_FALSE;
     }
 
@@ -510,7 +511,7 @@ SDL_bool diskimage_load( struct machine *oric, char *fname, int drive )
     if(strncmp((char*)oric->wddisk.disk[drive]->rawimage, "MFM_DISK", 8) != 0)
     {
       disk_eject(oric, drive);
-      do_popup( oric, "\x14\x15""Invalid disk image" );
+      do_popup(oric, "\x14\x15""Invalid disk image");
       return SDL_FALSE;
     }
 
@@ -524,7 +525,7 @@ SDL_bool diskimage_load( struct machine *oric, char *fname, int drive )
     if(1 != oric->wddisk.disk[drive]->geometry)
     {
       disk_eject(oric, drive);
-      do_popup( oric, "\x14\x15""Unsupported disk image geometry" );
+      do_popup(oric, "\x14\x15""Unsupported disk image geometry");
       return SDL_FALSE;
     }
 
@@ -532,14 +533,14 @@ SDL_bool diskimage_load( struct machine *oric, char *fname, int drive )
         (oric->wddisk.disk[drive]->numsides_in > 2))
     {
       disk_eject(oric, drive);
-      do_popup( oric, "\x14\x15""Invalid disk image" );
+      do_popup(oric, "\x14\x15""Invalid disk image");
       return SDL_FALSE;
     }
 
     if(oric->wddisk.disk[drive]->numtracks_in > 128)
     {
       disk_eject(oric, drive);
-      do_popup( oric, "\x14\x15""Invalid disk image" );
+      do_popup(oric, "\x14\x15""Invalid disk image");
       return SDL_FALSE;
     }
 
@@ -567,21 +568,23 @@ SDL_bool diskimage_load( struct machine *oric, char *fname, int drive )
   oric->wddisk.disk[drive]->modified_time = 0;
 
   // Remember the filename of the image for this drive
-  strncpy( oric->wddisk.disk[drive]->filename, fname, 4096+512-1 );
+  strncpy(oric->wddisk.disk[drive]->filename, fname, 4096+512-1);
   oric->wddisk.disk[drive]->filename[4096+512-1] = 0;
 
   // Come up with a suitable short name for popups etc.
-  if( strlen( fname ) > 31 )
+  if(strlen(fname) > 31)
   {
-    strncpy( oric->diskname[drive], &fname[strlen(fname)-31], 32 );
+    strncpy(oric->diskname[drive], &fname[strlen(fname)-31], 32);
     oric->diskname[drive][0] = 22;
-  } else {
-    strncpy( oric->diskname[drive], fname, 32 );
+  }
+  else
+  {
+    strncpy(oric->diskname[drive], fname, 32);
   }
   oric->diskname[drive][31] = 0;
 
   // Do the popup
-  disk_popup( oric, drive );
+  disk_popup(oric, drive);
 
   // Mark the disk status icons as needing a refresh
   refreshdisks = SDL_TRUE;
@@ -595,7 +598,7 @@ void wd17xx_dummy(void* nothing)
 }
 
 // Initialise a WD17xx controller instance
-void wd17xx_init( struct wd17xx *wd )
+void wd17xx_init(struct wd17xx *wd)
 {
   wd->r_status = 0;
   wd->r_track  = 0;
@@ -621,7 +624,7 @@ void wd17xx_init( struct wd17xx *wd )
 }
 
 // This routine emulates some cycles of disk activity.
-void wd17xx_ticktock( struct wd17xx *wd, int cycles )
+void wd17xx_ticktock(struct wd17xx *wd, int cycles)
 {
 #ifdef MICRODISC_FUDGE
   if((wd->currentop == COP_READ_SECTORS_FUDGE) ||
@@ -639,7 +642,7 @@ void wd17xx_ticktock( struct wd17xx *wd, int cycles )
         wd->currentop = COP_NUFFINK;
         refreshdisks = SDL_TRUE;
 #if GENERAL_DISK_DEBUG
-        dbg_printf( "DISK: Sector %d not found.", wd->r_sector );
+        dbg_printf("DISK: Sector %d not found.", wd->r_sector);
 #endif
       }
       else
@@ -682,7 +685,7 @@ void wd17xx_ticktock( struct wd17xx *wd, int cycles )
       // Assert INTRQ (this function pointer is set up by the microdisc/jasmin/whatever controller)
       wd->setintrq(wd->intrqarg);
 #if GENERAL_DISK_DEBUG
-      dbg_printf( "DISK: Delayed INTRQ" );
+      dbg_printf("DISK: Delayed INTRQ");
 #endif
     }
   }
@@ -715,7 +718,7 @@ void wd17xx_ticktock( struct wd17xx *wd, int cycles )
 }
 
 // This routine seeks to the specified track. It is used by the SEEK and STEP commands.
-void wd17xx_seek_track( struct wd17xx *wd, Uint8 track, SDL_bool dofudge )
+void wd17xx_seek_track(struct wd17xx *wd, Uint8 track, SDL_bool dofudge)
 {
   // Is there a disk in the drive?
   if(wd->disk[wd->c_drive])
@@ -746,7 +749,7 @@ void wd17xx_seek_track( struct wd17xx *wd, Uint8 track, SDL_bool dofudge )
     wd->delayedint = 20;
     if(wd->c_track == 0) wd->distatus |= WSFI_TRK0;
 #if GENERAL_DISK_DEBUG
-    dbg_printf( "DISK: At track %u (%u sectors)", track, wd->disk[wd->c_drive]->numsectors );
+    dbg_printf("DISK: At track %u (%u sectors)", track, wd->disk[wd->c_drive]->numsectors);
 #endif
     return;
   }
@@ -757,7 +760,7 @@ void wd17xx_seek_track( struct wd17xx *wd, Uint8 track, SDL_bool dofudge )
   wd->r_track = 0;
 
 #if GENERAL_DISK_DEBUG
-  dbg_printf( "DISK: Seek fail" );
+  dbg_printf("DISK: Seek fail");
 #endif
 
 #ifdef MICRODISC_FUDGE
@@ -776,7 +779,7 @@ void wd17xx_seek_track( struct wd17xx *wd, Uint8 track, SDL_bool dofudge )
 // This routine looks for the sector with the specified ID in the current track.
 // It returns NULL if there is no such sector, or a structure with pointers to
 // the ID and data fields if the sector is found.
-struct mfmsector *wd17xx_find_sector( struct wd17xx *wd, Uint8 secid )
+struct mfmsector *wd17xx_find_sector(struct wd17xx *wd, Uint8 secid)
 {
   int revs=0;
   struct diskimage *dimg;
@@ -785,7 +788,7 @@ struct mfmsector *wd17xx_find_sector( struct wd17xx *wd, Uint8 secid )
   dimg = wd->disk[wd->c_drive];
 
   // No disk image? No sectors!
-  if( !dimg ) return NULL;
+  if(!dimg) return NULL;
 
   // Make sure the current track is cached
   diskimage_cachetrack(dimg, wd->c_track, wd->c_side);
@@ -816,21 +819,21 @@ struct mfmsector *wd17xx_find_sector( struct wd17xx *wd, Uint8 secid )
 
   // The search failed :-(
 #if GENERAL_DISK_DEBUG
-  dbg_printf( "Couldn't find sector %u", secid );
+  dbg_printf("Couldn't find sector %u", secid);
 #endif
   return NULL;
 }
 
 // This returns the first valid sector in the current track, or NULL if
 // there aren't any sectors.
-struct mfmsector *wd17xx_first_sector( struct wd17xx *wd )
+struct mfmsector *wd17xx_first_sector(struct wd17xx *wd)
 {
   struct diskimage *dimg;
 
   dimg = wd->disk[wd->c_drive];
 
   // No disk? no sector...
-  if( !dimg ) return NULL;
+  if(!dimg) return NULL;
 
   // Make sure the current track is cached
   diskimage_cachetrack(dimg, wd->c_track, wd->c_side);
@@ -848,14 +851,14 @@ struct mfmsector *wd17xx_first_sector( struct wd17xx *wd )
 }
 
 // Move on to the next sector
-struct mfmsector *wd17xx_next_sector( struct wd17xx *wd )
+struct mfmsector *wd17xx_next_sector(struct wd17xx *wd)
 {
   struct diskimage *dimg;
 
   dimg = wd->disk[wd->c_drive];
 
   // No disk? No sectors!
-  if( !dimg ) return NULL;
+  if(!dimg) return NULL;
 
   // Make sure the current track is cached
   diskimage_cachetrack(dimg, wd->c_track, wd->c_side);
@@ -875,7 +878,7 @@ struct mfmsector *wd17xx_next_sector( struct wd17xx *wd )
 }
 
 // Perform a read operation on a WD17xx register
-unsigned char wd17xx_read( struct wd17xx *wd, unsigned short addr )
+unsigned char wd17xx_read(struct wd17xx *wd, unsigned short addr)
 {
   // Which register?!
   switch(addr)
@@ -935,7 +938,7 @@ unsigned char wd17xx_read( struct wd17xx *wd, unsigned short addr )
             sectordumpstr[33] = '\'';
             sectordumpstr[50] = '\'';
             sectordumpstr[51] = 0;
-            dbg_printf( "%s", sectordumpstr );
+            dbg_printf("%s", sectordumpstr);
             sectordumpcount = 0;
           }
 #endif
@@ -952,7 +955,7 @@ unsigned char wd17xx_read( struct wd17xx *wd, unsigned short addr )
               sectordumpstr[35+sectordumpcount] = 0;
               for(sectordumpcount*=2; sectordumpcount<33; sectordumpcount++)
                 sectordumpstr[sectordumpcount*2] = ' ';
-              dbg_printf( "%s", sectordumpstr );
+              dbg_printf("%s", sectordumpstr);
               sectordumpcount = 0;
             }
 #endif
@@ -962,7 +965,7 @@ unsigned char wd17xx_read( struct wd17xx *wd, unsigned short addr )
             if(wd->currentop == COP_READ_SECTORS)
             {
 #if GENERAL_DISK_DEBUG
-              dbg_printf( "Next sector..." );
+              dbg_printf("Next sector...");
 #endif
               // Get the next sector, and carry on!
               wd->r_sector++;
@@ -997,7 +1000,9 @@ unsigned char wd17xx_read( struct wd17xx *wd, unsigned short addr )
             wd->r_status &= (~WSF_DRQ);    // Clear DRQ (no more data)
             wd->clrdrq(wd->drqarg);
             refreshdisks = SDL_TRUE;       // Turn off disk LED
-          } else {
+          }
+          else
+          {
             wd->delayeddrq = 32;           // More data ready. DRQ to let them know!
           }
           break;
@@ -1016,7 +1021,9 @@ unsigned char wd17xx_read( struct wd17xx *wd, unsigned short addr )
             wd->distatus   = 0;
             wd->currentop = COP_NUFFINK;
             refreshdisks = SDL_TRUE;
-          } else {
+          }
+          else
+          {
             wd->delayeddrq = 32;
           }
 
@@ -1041,7 +1048,9 @@ unsigned char wd17xx_read( struct wd17xx *wd, unsigned short addr )
             wd->distatus   = 0;
             wd->currentop = COP_NUFFINK;
             refreshdisks = SDL_TRUE;
-          } else {
+          }
+          else
+          {
             wd->delayeddrq = 32;
           }
           break;
@@ -1054,7 +1063,7 @@ unsigned char wd17xx_read( struct wd17xx *wd, unsigned short addr )
 }
 
 static SDL_bool last_step_in = SDL_FALSE;
-void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr, unsigned char data )
+void wd17xx_write(struct machine *oric, struct wd17xx *wd, unsigned short addr, unsigned char data)
 {
   switch(addr)
   {
@@ -1067,22 +1076,22 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
           {
             case 0x00:  // Restore (Type I)
 #if GENERAL_DISK_DEBUG
-              dbg_printf( "DISK: (%04X) Restore", oric->cpu.pc-1 );
+              dbg_printf("DISK: (%04X) Restore", oric->cpu.pc-1);
 #endif
               wd->r_status = WSF_BUSY;
               if(data & 8) wd->r_status |= WSFI_HEADL;
-              wd17xx_seek_track( wd, 0, oric->cpu.calcpc == 0xe3a1 );
+              wd17xx_seek_track(wd, 0, oric->cpu.calcpc == 0xe3a1);
               wd->currentop = COP_NUFFINK;
               refreshdisks = SDL_TRUE;
               break;
 
             case 0x10:  // Seek (Type I)
 #if GENERAL_DISK_DEBUG
-              dbg_printf( "DISK: (%04X) Seek", oric->cpu.pc-1 );
+              dbg_printf("DISK: (%04X) Seek", oric->cpu.pc-1);
 #endif
               wd->r_status = WSF_BUSY;
               if(data & 8) wd->r_status |= WSFI_HEADL;
-              wd17xx_seek_track( wd, wd->r_data, SDL_FALSE );
+              wd17xx_seek_track(wd, wd->r_data, SDL_FALSE);
               wd->currentop = COP_NUFFINK;
               refreshdisks = SDL_TRUE;
               break;
@@ -1091,25 +1100,25 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
 
         case 0x20:  // Step (Type I)
 #if GENERAL_DISK_DEBUG
-          dbg_printf( "DISK: (%04X) Step", oric->cpu.pc-1 );
+          dbg_printf("DISK: (%04X) Step", oric->cpu.pc-1);
 #endif
           wd->r_status = WSF_BUSY;
           if(data & 8) wd->r_status |= WSFI_HEADL;
           if(last_step_in)
-            wd17xx_seek_track( wd, wd->c_track+1, SDL_FALSE );
+            wd17xx_seek_track(wd, wd->c_track+1, SDL_FALSE);
           else
-            wd17xx_seek_track( wd, wd->c_track > 0 ? wd->c_track-1 : 0, SDL_FALSE );
+            wd17xx_seek_track(wd, wd->c_track > 0 ? wd->c_track-1 : 0, SDL_FALSE);
           wd->currentop = COP_NUFFINK;
           refreshdisks = SDL_TRUE;
           break;
 
         case 0x40:  // Step-in (Type I)
 #if GENERAL_DISK_DEBUG
-          dbg_printf( "DISK: (%04X) Step-In (%d,%d)", oric->cpu.pc-1, wd->c_track, wd->c_track+1 );
+          dbg_printf("DISK: (%04X) Step-In (%d,%d)", oric->cpu.pc-1, wd->c_track, wd->c_track+1);
 #endif
           wd->r_status = WSF_BUSY;
           if(data & 8) wd->r_status |= WSFI_HEADL;
-          wd17xx_seek_track( wd, wd->c_track+1, SDL_FALSE );
+          wd17xx_seek_track(wd, wd->c_track+1, SDL_FALSE);
           last_step_in = SDL_TRUE;
           wd->currentop = COP_NUFFINK;
           refreshdisks = SDL_TRUE;
@@ -1117,12 +1126,12 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
 
         case 0x60:  // Step-out (Type I)
 #if GENERAL_DISK_DEBUG
-          dbg_printf( "DISK: Step-Out" );
+          dbg_printf("DISK: Step-Out");
 #endif
           wd->r_status = WSF_BUSY;
           if(data & 8) wd->r_status |= WSFI_HEADL;
           if(wd->c_track > 0)
-            wd17xx_seek_track( wd, wd->c_track-1, SDL_FALSE );
+            wd17xx_seek_track(wd, wd->c_track-1, SDL_FALSE);
           last_step_in = SDL_FALSE;
           wd->currentop = COP_NUFFINK;
           refreshdisks = SDL_TRUE;
@@ -1133,11 +1142,11 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
           switch(oric->drivetype)
           {
             case DRV_MICRODISC:
-              dbg_printf( "DISK: (%04X) Read sector %u (CODE=%02X,ROM=%s,EPROM=%s)", oric->cpu.pc-1, wd->r_sector, data, oric->romdis?"OFF":"ON", oric->md.diskrom?"ON":"OFF" );
+              dbg_printf("DISK: (%04X) Read sector %u (CODE=%02X,ROM=%s,EPROM=%s)", oric->cpu.pc-1, wd->r_sector, data, oric->romdis?"OFF":"ON", oric->md.diskrom?"ON":"OFF");
               break;
 
             default:
-              dbg_printf( "DISK: (%04X) Read sector %u (CODE=%02X)", oric->cpu.pc-1, wd->r_sector, data );
+              dbg_printf("DISK: (%04X) Read sector %u (CODE=%02X)", oric->cpu.pc-1, wd->r_sector, data);
               break;
           }
 #endif
@@ -1159,9 +1168,9 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
             wd->currentop = COP_NUFFINK;
             refreshdisks = SDL_TRUE;
 #if GENERAL_DISK_DEBUG
-            dbg_printf( "DISK: Sector %d not found.", wd->r_sector );
+            dbg_printf("DISK: Sector %d not found.", wd->r_sector);
 #endif
-//            setemumode( oric, NULL, EM_DEBUG );
+            //            setemumode( oric, NULL, EM_DEBUG );
             break;
           }
 
@@ -1182,11 +1191,11 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
           switch(oric->drivetype)
           {
             case DRV_MICRODISC:
-              dbg_printf( "DISK: (%04X) Write sector %u (CODE=%02X,ROM=%s,EPROM=%s)", oric->cpu.pc-1, wd->r_sector, data, oric->romdis?"OFF":"ON", oric->md.diskrom?"ON":"OFF" );
+              dbg_printf("DISK: (%04X) Write sector %u (CODE=%02X,ROM=%s,EPROM=%s)", oric->cpu.pc-1, wd->r_sector, data, oric->romdis?"OFF":"ON", oric->md.diskrom?"ON":"OFF");
               break;
 
             default:
-              dbg_printf( "DISK: (%04X) Write sector %u (CODE=%02X)", oric->cpu.pc-1, wd->r_sector, data );
+              dbg_printf("DISK: (%04X) Write sector %u (CODE=%02X)", oric->cpu.pc-1, wd->r_sector, data);
               break;
           }
 #endif
@@ -1200,9 +1209,9 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
             wd->currentop = COP_NUFFINK;
             refreshdisks = SDL_TRUE;
 #if GENERAL_DISK_DEBUG
-            dbg_printf( "DISK: Sector %d not found.", wd->r_sector );
+            dbg_printf("DISK: Sector %d not found.", wd->r_sector);
 #endif
-//            setemumode( oric, NULL, EM_DEBUG );
+            //            setemumode( oric, NULL, EM_DEBUG );
             break;
           }
 
@@ -1219,7 +1228,7 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
           {
             case 0x00: // Read address (Type III)
 #if GENERAL_DISK_DEBUG
-              dbg_printf( "DISK: (%04X) Read address", oric->cpu.pc-1 );
+              dbg_printf("DISK: (%04X) Read address", oric->cpu.pc-1);
 #endif
               wd->curroffs = 0;
               if(!wd->currsector)
@@ -1235,19 +1244,19 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
                 wd->setintrq(wd->intrqarg);
                 refreshdisks = SDL_TRUE;
 #if GENERAL_DISK_DEBUG
-                dbg_printf( "DISK: No sectors on this track?" );
+                dbg_printf("DISK: No sectors on this track?");
 #endif
                 break;
               }
 
 #if GENERAL_DISK_DEBUG
-              dbg_printf( "DISK: %02X,%02X,%02X,%02X,%02X,%02X",
-                            wd->currsector->id_ptr[1],
-                            wd->currsector->id_ptr[2],
-                            wd->currsector->id_ptr[3],
-                            wd->currsector->id_ptr[4],
-                            wd->currsector->id_ptr[5],
-                            wd->currsector->id_ptr[6]);
+              dbg_printf("DISK: %02X,%02X,%02X,%02X,%02X,%02X",
+                         wd->currsector->id_ptr[1],
+                         wd->currsector->id_ptr[2],
+                         wd->currsector->id_ptr[3],
+                         wd->currsector->id_ptr[4],
+                         wd->currsector->id_ptr[5],
+                         wd->currsector->id_ptr[6]);
 #endif
               wd->r_status = WSF_NOTREADY|WSF_BUSY|WSF_DRQ;
               wd->setdrq(wd->drqarg);
@@ -1257,7 +1266,7 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
 
             case 0x10: // Force Interrupt (Type IV)
 #if GENERAL_DISK_DEBUG
-              dbg_printf( "DISK: (%04X) Force int", oric->cpu.pc-1 );
+              dbg_printf("DISK: (%04X) Force int", oric->cpu.pc-1);
 #endif
               wd->r_status = 0;
               wd->clrdrq(wd->drqarg);
@@ -1275,7 +1284,7 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
           {
             case 0x00: // Read track (Type III)
 #if GENERAL_DISK_DEBUG
-              dbg_printf( "DISK: (%04X) Read track", oric->cpu.pc-1 );
+              dbg_printf("DISK: (%04X) Read track", oric->cpu.pc-1);
 #endif
               wd->curroffs = 0;
               wd->r_status   = WSF_BUSY|WSF_NOTREADY;
@@ -1287,7 +1296,7 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
 
             case 0x10: // Write track (Type III)
 #if GENERAL_DISK_DEBUG
-              dbg_printf( "DISK: (%04X) Write track", oric->cpu.pc-1 );
+              dbg_printf("DISK: (%04X) Write track", oric->cpu.pc-1);
 #endif
               wd->curroffs = 0;
               wd->r_status = WSF_NOTREADY|WSF_BUSY;
@@ -1331,7 +1340,7 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
           if(wd->curroffs == 0) wd->currsector->data_ptr[wd->curroffs++]=0xfb;
           wd->currsector->data_ptr[wd->curroffs++] = wd->r_data;
           wd->crc = calc_crc(wd->crc, wd->r_data);
-          if( !wd->disk[wd->c_drive]->modified ) refreshdisks = SDL_TRUE;
+          if(!wd->disk[wd->c_drive]->modified) refreshdisks = SDL_TRUE;
           diskimage_set_modified(wd->disk[wd->c_drive], wd->c_side, wd->c_track);
           wd->r_status &= ~WSF_DRQ;
           wd->clrdrq(wd->drqarg);
@@ -1343,7 +1352,7 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
             if(wd->currentop == COP_WRITE_SECTORS)
             {
 #if GENERAL_DISK_DEBUG
-              dbg_printf( "Next sector..." );
+              dbg_printf("Next sector...");
 #endif
               // Get the next sector, and carry on!
               wd->r_sector++;
@@ -1371,7 +1380,9 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
             wd->r_status &= (~WSF_DRQ);
             wd->clrdrq(wd->drqarg);
             refreshdisks = SDL_TRUE;
-          } else {
+          }
+          else
+          {
             wd->delayeddrq = 32;
           }
           break;
@@ -1384,7 +1395,7 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
               // MFM: Initialize CRC generator
               // FM : Not allowed
 #if GENERAL_DISK_DEBUG
-              dbg_printf( "\tCOP_WRITE_TRACK: %02X -> SYNC (clear crc) -> 0xA1", wd->r_data);
+              dbg_printf("\tCOP_WRITE_TRACK: %02X -> SYNC (clear crc) -> 0xA1", wd->r_data);
 #endif
               wd->crc = 0x968b;
               wd->r_data = 0xa1;
@@ -1395,7 +1406,7 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
             case 0xf6:
               // FM : Not allowed
 #if GENERAL_DISK_DEBUG
-              dbg_printf( "\tCOP_WRITE_TRACK: %02X -> SYNC -> 0xC2", wd->r_data);
+              dbg_printf("\tCOP_WRITE_TRACK: %02X -> SYNC -> 0xC2", wd->r_data);
 #endif
               wd->r_data = 0xc2;
               wd->crc = calc_crc(wd->crc, wd->r_data);
@@ -1403,7 +1414,7 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
 
             case 0xf7:
 #if GENERAL_DISK_DEBUG
-              dbg_printf( "\tCOP_WRITE_TRACK: %02X -> CRC -> %04X", wd->r_data, wd->crc);
+              dbg_printf("\tCOP_WRITE_TRACK: %02X -> CRC -> %04X", wd->r_data, wd->crc);
 #endif
               wd->disk[wd->c_drive]->rawimage[(wd->c_side*wd->disk[wd->c_drive]->numtracks + wd->c_track)*6400+256 + wd->curroffs] = wd->crc >> 8;
               wd->curroffs++;
@@ -1414,45 +1425,45 @@ void wd17xx_write( struct machine *oric, struct wd17xx *wd, unsigned short addr,
             // MFM: 0xf8 -> 0xff: write control byte
             // FM : 0xf8 -> 0xfe: Initialize CRC generator
             case 0xf8:
-              dbg_printf( "\tCOP_WRITE_TRACK: %02X -> Data Address Mark (deleted)", wd->r_data);
+              dbg_printf("\tCOP_WRITE_TRACK: %02X -> Data Address Mark (deleted)", wd->r_data);
               wd->crc = calc_crc(wd->crc, wd->r_data);
               // next bytes: data, <CRC>;
               break;
 
             case 0xf9:
-              dbg_printf( "\tCOP_WRITE_TRACK: %02X -> Data Mark", wd->r_data);
+              dbg_printf("\tCOP_WRITE_TRACK: %02X -> Data Mark", wd->r_data);
               wd->crc = calc_crc(wd->crc, wd->r_data);
               break;
 
             case 0xfa:
-              dbg_printf( "\tCOP_WRITE_TRACK: %02X -> Data Mark", wd->r_data);
+              dbg_printf("\tCOP_WRITE_TRACK: %02X -> Data Mark", wd->r_data);
               wd->crc = calc_crc(wd->crc, wd->r_data);
               break;
 
             case 0xfb:
-              dbg_printf( "\tCOP_WRITE_TRACK: %02X -> Data Address Mark (normal)", wd->r_data);
+              dbg_printf("\tCOP_WRITE_TRACK: %02X -> Data Address Mark (normal)", wd->r_data);
               wd->crc = calc_crc(wd->crc, wd->r_data);
               // next bytes: data, <CRC>;
               break;
 
             case 0xfc:
-              dbg_printf( "\tCOP_WRITE_TRACK: %02X -> Data Mark", wd->r_data);
+              dbg_printf("\tCOP_WRITE_TRACK: %02X -> Data Mark", wd->r_data);
               wd->crc = calc_crc(wd->crc, wd->r_data);
               break;
 
             case 0xfd:
-              dbg_printf( "\tCOP_WRITE_TRACK: %02X -> Data Mark", wd->r_data);
+              dbg_printf("\tCOP_WRITE_TRACK: %02X -> Data Mark", wd->r_data);
               wd->crc = calc_crc(wd->crc, wd->r_data);
               break;
 
             case 0xfe:
-              dbg_printf( "\tCOP_WRITE_TRACK: %02X -> Index Address Mark", wd->r_data);
+              dbg_printf("\tCOP_WRITE_TRACK: %02X -> Index Address Mark", wd->r_data);
               wd->crc = calc_crc(wd->crc, wd->r_data);
               // next 6 bytes: track, side, sector, size, <CRC>;
               break;
 
             case 0xff:
-              dbg_printf( "\tCOP_WRITE_TRACK: %02X -> ???", wd->r_data);
+              dbg_printf("\tCOP_WRITE_TRACK: %02X -> ???", wd->r_data);
               wd->crc = calc_crc(wd->crc, wd->r_data);
               break;
 #endif
@@ -1526,7 +1537,7 @@ void microdisc_clrintrq(void* md)
   mdp->oric->cpu.irq &= ~IRQF_DISK;
 }
 
-void microdisc_init( struct microdisc *md, struct wd17xx *wd, struct machine *oric )
+void microdisc_init(struct microdisc *md, struct wd17xx *wd, struct machine *oric)
 {
   wd17xx_init(wd);
   wd->setintrq = microdisc_setintrq;
@@ -1544,16 +1555,16 @@ void microdisc_init( struct microdisc *md, struct wd17xx *wd, struct machine *or
   md->diskrom = SDL_TRUE;
 }
 
-void microdisc_free( struct microdisc *md )
+void microdisc_free(struct microdisc *md)
 {
   int i;
   for(i=0; i<MAX_DRIVES; i++)
     disk_eject(md->oric, i);
 }
 
-unsigned char microdisc_read( struct microdisc *md, unsigned short addr )
+unsigned char microdisc_read(struct microdisc *md, unsigned short addr)
 {
-//  dbg_printf( "DISK: (%04X) Read from %04X", md->oric->cpu.pc-1, addr );
+  //  dbg_printf( "DISK: (%04X) Read from %04X", md->oric->cpu.pc-1, addr );
   if((addr >= 0x310) && (addr < 0x314))
     return wd17xx_read(md->wd, addr&3);
 
@@ -1572,9 +1583,9 @@ unsigned char microdisc_read( struct microdisc *md, unsigned short addr )
   return via_read(&md->oric->via, addr);
 }
 
-void microdisc_write( struct microdisc *md, unsigned short addr, unsigned char data )
+void microdisc_write(struct microdisc *md, unsigned short addr, unsigned char data)
 {
-//  dbg_printf( "DISK: (%04X) Write %02X to %04X", md->oric->cpu.pc-1, data, addr );
+  //  dbg_printf( "DISK: (%04X) Write %02X to %04X", md->oric->cpu.pc-1, data, addr );
   if((addr >= 0x310) && (addr < 0x314))
   {
     wd17xx_write(md->oric, md->wd, addr&3, data);
@@ -1590,7 +1601,9 @@ void microdisc_write( struct microdisc *md, unsigned short addr, unsigned char d
       if((data&MDSF_INTENA) && (md->intrq == 0))
       {
         md->oric->cpu.irq |= IRQF_DISK;
-      } else {
+      }
+      else
+      {
         md->oric->cpu.irq &= ~IRQF_DISK;
       }
 
@@ -1674,7 +1687,7 @@ void bd500_clrintrq(void* bd)
   bdp->intrq = 0;
 }
 
-void bd500_init( struct bd500 *bd, struct wd17xx *wd, struct machine *oric )
+void bd500_init(struct bd500 *bd, struct wd17xx *wd, struct machine *oric)
 {
   wd17xx_init(wd);
   wd->setintrq = bd500_setintrq;
@@ -1693,18 +1706,18 @@ void bd500_init( struct bd500 *bd, struct wd17xx *wd, struct machine *oric )
   bd->motor   = SDL_FALSE;
 }
 
-void bd500_free( struct bd500 *bd )
+void bd500_free(struct bd500 *bd)
 {
   int i;
   for(i=0; i<MAX_DRIVES; i++)
     disk_eject(bd->oric, i);
 }
 
-unsigned char bd500_read( struct bd500 *bd, unsigned short addr )
+unsigned char bd500_read(struct bd500 *bd, unsigned short addr)
 {
   unsigned char ret = 0xff;
 
-//  dbg_printf( "DISK: (%04X) Read from %04X", bd->oric->cpu.pc-1, addr );
+  //  dbg_printf( "DISK: (%04X) Read from %04X", bd->oric->cpu.pc-1, addr );
 
   if((addr >= 0x320) && (addr < 0x324))
     return wd17xx_read(bd->wd, addr&3);
@@ -1768,9 +1781,9 @@ unsigned char bd500_read( struct bd500 *bd, unsigned short addr )
   return ret;
 }
 
-void bd500_write( struct bd500 *bd, unsigned short addr, unsigned char data )
+void bd500_write(struct bd500 *bd, unsigned short addr, unsigned char data)
 {
-//  dbg_printf( "DISK: (%04X) Write %02X to %04X", bd->oric->cpu.pc-1, data, addr );
+  //  dbg_printf( "DISK: (%04X) Write %02X to %04X", bd->oric->cpu.pc-1, data, addr );
 
   if((addr >= 0x320) && (addr < 0x324))
   {
@@ -1831,7 +1844,7 @@ void jasmin_clrintrq(void* j)
 {
 }
 
-void jasmin_init( struct jasmin *j, struct wd17xx *wd, struct machine *oric )
+void jasmin_init(struct jasmin *j, struct wd17xx *wd, struct machine *oric)
 {
   wd17xx_init(wd);
   wd->setintrq = jasmin_setintrq;
@@ -1847,16 +1860,16 @@ void jasmin_init( struct jasmin *j, struct wd17xx *wd, struct machine *oric )
   j->oric     = oric;
 }
 
-void jasmin_free( struct jasmin *j )
+void jasmin_free(struct jasmin *j)
 {
   int i;
   for(i=0; i<MAX_DRIVES; i++)
     disk_eject(j->oric, i);
 }
 
-unsigned char jasmin_read( struct jasmin *j, unsigned short addr )
+unsigned char jasmin_read(struct jasmin *j, unsigned short addr)
 {
-//  dbg_printf( "DISK: (%04X) Read from %04X", md->oric->cpu.pc-1, addr );
+  //  dbg_printf( "DISK: (%04X) Read from %04X", md->oric->cpu.pc-1, addr );
   if((addr >= 0x3f4) && (addr < 0x3f8))
     return wd17xx_read(j->wd, addr&3);
 
@@ -1885,7 +1898,7 @@ unsigned char jasmin_read( struct jasmin *j, unsigned short addr )
   return via_read(&j->oric->via, addr);
 }
 
-void jasmin_write( struct jasmin *j, unsigned short addr, unsigned char data )
+void jasmin_write(struct jasmin *j, unsigned short addr, unsigned char data)
 {
   if((addr >= 0x3f4) && (addr < 0x3f8))
   {
@@ -1926,7 +1939,7 @@ void jasmin_write( struct jasmin *j, unsigned short addr, unsigned char data )
 }
 
 // Pravetz
-void pravetz_init( struct pravetz *p, struct machine *oric )
+void pravetz_init(struct pravetz *p, struct machine *oric)
 {
   int i;
 
@@ -1941,28 +1954,28 @@ void pravetz_init( struct pravetz *p, struct machine *oric )
     p->drv[i].volume      = 254;
     p->drv[i].select      = 0;
     p->drv[i].motor_on    = 0;
-      p->drv[i].pimg        = NULL;
+    p->drv[i].pimg        = NULL;
   }
 }
 
-void pravetz_free( struct pravetz *p )
+void pravetz_free(struct pravetz *p)
 {
   int i;
   for(i=0; i<MAX_DRIVES; i++)
     disk_eject(p->oric, i);
 }
 
-unsigned char pravetz_read( struct pravetz *p, unsigned short addr )
+unsigned char pravetz_read(struct pravetz *p, unsigned short addr)
 {
   unsigned char data = 0;
-  data = disk_pravetz_read( p->oric, addr );
+  data = disk_pravetz_read(p->oric, addr);
   p->oric->wddisk.currentop = p->drv[p->oric->wddisk.c_drive].motor_on ? COP_READ_SECTOR : COP_NUFFINK;
   return data;
 }
 
-void pravetz_write( struct pravetz *p, unsigned short addr, unsigned char data )
+void pravetz_write(struct pravetz *p, unsigned short addr, unsigned char data)
 {
-  disk_pravetz_write( p->oric, addr, data );
+  disk_pravetz_write(p->oric, addr, data);
   p->oric->wddisk.currentop = p->drv[p->oric->wddisk.c_drive].motor_on ? COP_WRITE_SECTOR : COP_NUFFINK;
 }
 

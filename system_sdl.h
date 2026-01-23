@@ -133,7 +133,7 @@ int SDL_COMPAT_GetWMInfo(SDL_SysWMinfo *info);
 
 int SDL_COMPAT_Init(Uint32 flags);
 void SDL_COMPAT_WM_SetIcon(SDL_Surface *icon, Uint8 *mask);
-void SDL_COMPAT_WM_SetCaption(const char *title, const char *icon);
+void SDL_COMPAT_WM_SetCaption(const char* title, const char* icon);
 SDL_bool SDL_COMPAT_IsAppActive(SDL_Event* event);
 SDL_bool SDL_COMPAT_IsAppFocused(SDL_Event* event);
 int SDL_COMPAT_EnableKeyRepeat(int delay, int interval);
@@ -147,7 +147,7 @@ SDL_Surface* SDL_COMPAT_SetVideoMode(int width, int height, int bitsperpixel, Ui
 int SDL_COMPAT_SetPalette(SDL_Surface *surface, int flags, SDL_Color *colors, int firstcolor, int ncolors);
 void SDL_COMPAT_SetEventFilter(SDL_EventFilter filter);
 void SDL_COMPAT_Quit(SDL_bool freeall);
-void SDL_COMPAT_TakeScreenshot(char *fname);
+void SDL_COMPAT_TakeScreenshot(char* fname);
 const char* SDL_COMPAT_JoystickName(SDL_Joystick *joystick);
 
 #ifdef __OPENGL_AVAILABLE__
@@ -162,7 +162,7 @@ void SDL_COMPAT_GL_SwapBuffers(void);
 #define  error_printf(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #else
 #define  debug_printf(...)  fprintf(stdout,__VA_ARGS__)
-void error_printf( char *fmt, ... );
+void error_printf(char* fmt, ...);
 #endif
 
 #endif /* ORICUTRON_SYSTEM_SDL_H */

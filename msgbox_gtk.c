@@ -40,19 +40,19 @@
 #include "msgbox.h"
 
 extern SDL_bool fullscreen;
-void togglefullscreen( struct machine *oric, struct osdmenuitem *mitem, int dummy );
+void togglefullscreen(struct machine *oric, struct osdmenuitem *mitem, int dummy);
 
-SDL_bool init_msgbox( struct machine *oric )
+SDL_bool init_msgbox(struct machine *oric)
 {
   // We rely on init_filerequester to call gtk_init()
   return SDL_TRUE;
 }
 
-void shut_msgbox( struct machine *oric )
+void shut_msgbox(struct machine *oric)
 {
 }
 
-SDL_bool msgbox( struct machine *oric, int type, char *msg )
+SDL_bool msgbox(struct machine *oric, int type, char* msg)
 {
   GtkWidget *dialog = NULL;
   GtkButtonsType btns = GTK_BUTTONS_OK;
@@ -61,10 +61,10 @@ SDL_bool msgbox( struct machine *oric, int type, char *msg )
   gint res;
   SDL_bool was_fullscreen = fullscreen;
 
-  if (fullscreen)
+  if(fullscreen)
     togglefullscreen(oric, NULL, 0);
 
-  switch( type )
+  switch(type)
   {
     case MSGBOX_YES_NO:
       btns = GTK_BUTTONS_YES_NO;
@@ -80,15 +80,15 @@ SDL_bool msgbox( struct machine *oric, int type, char *msg )
   }
 
   dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, mtyp, btns, "%s", msg);
-  res = gtk_dialog_run(GTK_DIALOG (dialog));
-  if ((res == GTK_RESPONSE_OK) || (res == GTK_RESPONSE_YES) || (res == GTK_RESPONSE_ACCEPT))
+  res = gtk_dialog_run(GTK_DIALOG(dialog));
+  if((res == GTK_RESPONSE_OK) || (res == GTK_RESPONSE_YES) || (res == GTK_RESPONSE_ACCEPT))
     result = SDL_TRUE;
-  
+
   gtk_widget_destroy(dialog);
-  while (gtk_events_pending())
+  while(gtk_events_pending())
     gtk_main_iteration();
 
-  if (was_fullscreen)
+  if(was_fullscreen)
     togglefullscreen(oric, NULL, 0);
 
   return result;

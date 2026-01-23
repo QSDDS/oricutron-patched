@@ -49,11 +49,11 @@ static void init_clipboard(void)
 {
   if(initialized)
     return;
-  
+
   /* Grab the window manager specific information */
   SDL_SysWMinfo info;
   SDL_VERSION(&info.version);
-  if (SDL_COMPAT_GetWMInfo(&info))
+  if(SDL_COMPAT_GetWMInfo(&info))
   {
     /* Save the information for later use */
 #if SDL_MAJOR_VERSION == 1
@@ -62,21 +62,21 @@ static void init_clipboard(void)
     g_SDL_Window = info.info.win.window;
 #endif
     initialized = SDL_TRUE;
-    }
+  }
 }
 
 char* get_clipboard_text_win(void)
 {
-  if (!initialized)
+  if(!initialized)
     return NULL;
-  
-  if (IsClipboardFormatAvailable(CF_TEXT) && OpenClipboard(g_SDL_Window))
+
+  if(IsClipboardFormatAvailable(CF_TEXT) && OpenClipboard(g_SDL_Window))
   {
     const HANDLE hMem = GetClipboardData(CF_TEXT);
-    if (hMem)
+    if(hMem)
     {
-      char *src = (char*)GlobalLock(hMem);
-      if (src)
+      char* src = (char*)GlobalLock(hMem);
+      if(src)
       {
         free(text);
         text = strdup(src);
@@ -85,40 +85,40 @@ char* get_clipboard_text_win(void)
     }
     CloseClipboard();
   }
-  
+
   return text;
 }
 
 static void set_clipboard_text_win(const char* text_)
 {
-    if (!initialized)
-        return;
-    
-    if ( text_ != NULL )
+  if(!initialized)
+    return;
+
+  if(text_ != NULL)
+  {
+    if(OpenClipboard(g_SDL_Window))
     {
-        if ( OpenClipboard(g_SDL_Window) )
-        {
-            HANDLE hMem = GlobalAlloc((GMEM_MOVEABLE|GMEM_DDESHARE), strlen(text_)+1);
-            if ( hMem != NULL )
-            {
-                char* dst = (char*)GlobalLock(hMem);
-                memcpy(dst, text_, strlen(text_)+1);
-                GlobalUnlock(hMem);
-                EmptyClipboard();
-                SetClipboardData(CF_TEXT, hMem);
-            }
-            CloseClipboard();
-        }
+      HANDLE hMem = GlobalAlloc((GMEM_MOVEABLE|GMEM_DDESHARE), strlen(text_)+1);
+      if(hMem != NULL)
+      {
+        char* dst = (char*)GlobalLock(hMem);
+        memcpy(dst, text_, strlen(text_)+1);
+        GlobalUnlock(hMem);
+        EmptyClipboard();
+        SetClipboardData(CF_TEXT, hMem);
+      }
+      CloseClipboard();
     }
+  }
 }
 
-SDL_bool init_gui_native( struct machine *oric )
+SDL_bool init_gui_native(struct machine *oric)
 {
   init_clipboard();
   return initialized;
 }
 
-void shut_gui_native( struct machine *oric )
+void shut_gui_native(struct machine *oric)
 {
   if(text)
   {
@@ -127,46 +127,51 @@ void shut_gui_native( struct machine *oric )
   }
 }
 
-void gui_open_url( const char *url )
+void gui_open_url(const char* url)
 {
   ShellExecute(NULL, "open", url,
-    NULL, NULL, SW_SHOWNORMAL);
+               NULL, NULL, SW_SHOWNORMAL);
   return;
 }
 
-SDL_bool clipboard_copy( struct machine *oric )
+SDL_bool clipboard_copy(struct machine *oric)
 {
-    // HIRES
-    if (oric->vid_addr != oric->vidbases[2])
-        return SDL_FALSE;
-        
-    int line, col, i;
-    char text_[40 * 28 + 28 + 1];
-    unsigned char *vidmem = (&oric->mem[oric->vid_addr]);
+  // HIRES
+  if(oric->vid_addr != oric->vidbases[2])
+    return SDL_FALSE;
 
-    for (i = 0, line = 0; line < 28; line++) {
-        for (col = 0; col < 40; col++) {
-            unsigned char c = vidmem[line * 40 + col];
-            
-            if (c > 127) {
-                c -= 128;
-            }
-            
-            if (c < ' ' || c == 127) {
-                text_[i++] = ' ';
-            } else
-                text_[i++] = (char)c;
-        }
-        text_[i++] = '\n';
+  int line, col, i;
+  char text_[40 * 28 + 28 + 1];
+  unsigned char* vidmem = (&oric->mem[oric->vid_addr]);
+
+  for(i = 0, line = 0; line < 28; line++)
+  {
+    for(col = 0; col < 40; col++)
+    {
+      unsigned char c = vidmem[line * 40 + col];
+
+      if(c > 127)
+      {
+        c -= 128;
+      }
+
+      if(c < ' ' || c == 127)
+      {
+        text_[i++] = ' ';
+      }
+      else
+        text_[i++] = (char)c;
     }
-    text_[i++] = '\0';
-    //printf("%s\n", text_);
-    
-    set_clipboard_text_win(text_);
-    return SDL_TRUE;
+    text_[i++] = '\n';
+  }
+  text_[i++] = '\0';
+  //printf("%s\n", text_);
+
+  set_clipboard_text_win(text_);
+  return SDL_TRUE;
 }
 
-SDL_bool clipboard_paste( struct machine *oric )
+SDL_bool clipboard_paste(struct machine *oric)
 {
   if(get_clipboard_text_win())
   {
@@ -175,8 +180,12 @@ SDL_bool clipboard_paste( struct machine *oric )
     {
       switch(*p)
       {
-        case '\t': *p = ' '; break;
-        case '\n': *p = '\r'; break;
+        case '\t':
+          *p = ' ';
+          break;
+        case '\n':
+          *p = '\r';
+          break;
         default:
           *p = (*p < 0x20 || 127 < *p)? ' ' : *p;
           break;

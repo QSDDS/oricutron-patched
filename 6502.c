@@ -28,7 +28,7 @@
 
 #define ILLEGALS
 
-void dbg_printf( char *fmt, ... );
+void dbg_printf(char* fmt, ...);
 
 #if defined(DEBUG_CPU_TRACE) && DEBUG_CPU_TRACE > 0
 void mon_traceinst(struct m6502 *cpu);
@@ -38,11 +38,11 @@ void mon_traceinst(struct m6502 *cpu);
 // You need to overwrite these with your own ones if you want
 // the CPU to do anything other than constantly execute brk
 // instructions :-)
-static void nullwrite( struct m6502 *cpu, unsigned short addr, unsigned char data )
+static void nullwrite(struct m6502 *cpu, unsigned short addr, unsigned char data)
 {
 }
 
-static unsigned char nullread( struct m6502 *cpu, unsigned short addr )
+static unsigned char nullread(struct m6502 *cpu, unsigned short addr)
 {
   return 0;
 }
@@ -52,7 +52,7 @@ static unsigned char nullread( struct m6502 *cpu, unsigned short addr )
 ** The userdata param is just used to fill in the
 ** cpu->userdata field.
 */
-void m6502_init( struct m6502 *cpu, void *userdata, SDL_bool nukebreakpoints )
+void m6502_init(struct m6502 *cpu, void* userdata, SDL_bool nukebreakpoints)
 {
   int i;
   cpu->rastercycles = 0;
@@ -61,9 +61,9 @@ void m6502_init( struct m6502 *cpu, void *userdata, SDL_bool nukebreakpoints )
   cpu->write = nullwrite;
   cpu->read  = nullread;
 
-  if( nukebreakpoints )
+  if(nukebreakpoints)
   {
-    for( i=0; i<16; i++ )
+    for(i=0; i<16; i++)
     {
       cpu->breakpoints[i] = -1;
       cpu->membreakpoints[i].flags = 0;
@@ -76,7 +76,7 @@ void m6502_init( struct m6502 *cpu, void *userdata, SDL_bool nukebreakpoints )
 
 /*
 ** Resets the 6502 cpu to powerup state */
-void m6502_reset( struct m6502 *cpu )
+void m6502_reset(struct m6502 *cpu)
 {
   cpu->a = cpu->x = cpu->y = 0;
   cpu->sp = 0xff;
@@ -87,7 +87,7 @@ void m6502_reset( struct m6502 *cpu )
   cpu->f_b = 0;
   cpu->f_v = 0;
   cpu->f_n = 0;
-  cpu->pc = (cpu->read( cpu, 0xfffd )<<8) | cpu->read( cpu, 0xfffc );
+  cpu->pc = (cpu->read(cpu, 0xfffd)<<8) | cpu->read(cpu, 0xfffc);
   cpu->lastpc = 0;
   cpu->nmi = SDL_FALSE;
   cpu->irq = 0;
@@ -281,27 +281,29 @@ void m6502_reset( struct m6502 *cpu )
 
 // Get the number of cycles the NEXT cpu instruction will take
 // Returns TRUE if we've hit some kind of breakpoint
-SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
+SDL_bool m6502_set_icycles(struct m6502 *cpu, SDL_bool dobp, char* bpmsg)
 {
   unsigned short baddr;
   unsigned int extra = 0;
   int i;
 
-  if( cpu->nmicount > 0 )
+  if(cpu->nmicount > 0)
   {
     cpu->nmicount--;
-    if( !cpu->nmicount )
+    if(!cpu->nmicount)
       cpu->nmi = SDL_FALSE;
   }
 
-  if( cpu->nmi )
+  if(cpu->nmi)
   {
     extra = 7;
-    cpu->calcpc = (cpu->read( cpu, 0xfffb )<<8)|cpu->read( cpu, 0xfffa );
+    cpu->calcpc = (cpu->read(cpu, 0xfffb)<<8)|cpu->read(cpu, 0xfffa);
     cpu->calcint = 2;
-  } else if( ( cpu->irq ) && ( cpu->f_i == 0 ) ) {
+  }
+  else if((cpu->irq) && (cpu->f_i == 0))
+  {
     extra = 7;
-    cpu->calcpc = (cpu->read( cpu, 0xffff )<<8)|cpu->read( cpu, 0xfffe );
+    cpu->calcpc = (cpu->read(cpu, 0xffff)<<8)|cpu->read(cpu, 0xfffe);
     cpu->calcint = 1;
   }
   else
@@ -310,28 +312,28 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
     cpu->calcint = 0;
   }
 
-  cpu->calcop = cpu->read( cpu, cpu->calcpc );
-  if( dobp )
+  cpu->calcop = cpu->read(cpu, cpu->calcpc);
+  if(dobp)
   {
-    if( cpu->anybp )
+    if(cpu->anybp)
     {
-      for( i=0; i<16; i++ )
+      for(i=0; i<16; i++)
       {
-        if( ( cpu->breakpoints[i] != -1 ) && ( cpu->calcpc == cpu->breakpoints[i] ) )
+        if((cpu->breakpoints[i] != -1) && (cpu->calcpc == cpu->breakpoints[i]))
         {
-          if( (cpu->breakpoint_flags[i] & MBPF_RESETCYCLESPRINT) ==  MBPF_RESETCYCLESPRINT )
+          if((cpu->breakpoint_flags[i] & MBPF_RESETCYCLESPRINT) ==  MBPF_RESETCYCLESPRINT)
             printf("%.4X: %d\n", cpu->breakpoints[i], cpu->cycles);
 
-          if( (cpu->breakpoint_flags[i] & MBPF_RESETCYCLES) ==  MBPF_RESETCYCLES )
+          if((cpu->breakpoint_flags[i] & MBPF_RESETCYCLES) ==  MBPF_RESETCYCLES)
             cpu->cycles = 0;
 
-          if( (cpu->breakpoint_flags[i] & MBPF_RESETCYCLESCONTINUE) !=  MBPF_RESETCYCLESCONTINUE )
+          if((cpu->breakpoint_flags[i] & MBPF_RESETCYCLESCONTINUE) !=  MBPF_RESETCYCLESCONTINUE)
             return SDL_TRUE;
         }
       }
     }
 
-    if( cpu->anymbp )
+    if(cpu->anymbp)
     {
       unsigned short waddr, raddr, wlen, rlen;
 
@@ -339,7 +341,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
       wlen = rlen = 0;
 
       // Going to read or write?
-      switch( cpu->calcop )
+      switch(cpu->calcop)
       {
         case 0x00: // { "BRK", AM_IMP },  // 00
           waddr = (cpu->sp+0x100)-3;
@@ -387,7 +389,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
         case 0x07: // { "SLO", AM_ZP  },  // 07 (illegal)
         case 0x47: // { "SRE", AM_ZP  },  // 47 (illegal)
 #endif
-		  RW_BADDR_ZP;
+          RW_BADDR_ZP;
           break;
 
         case 0x0E: // { "ASL", AM_ABS },  // 0E
@@ -404,7 +406,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
         case 0x0F: // { "SLO", AM_ABS },  // 0F (illegal)
         case 0x4F: // { "SRE", AM_ABS },  // 4F (illegal)
 #endif
-		  RW_BADDR_ABS;
+          RW_BADDR_ABS;
           break;
 
         case 0x1E: // { "ASL", AM_ABX },  // 1E
@@ -421,7 +423,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
         case 0x1F: // { "SLO", AM_ABX },  // 1F (illegal)
         case 0x5F: // { "SRE", AM_ABX },  // 5F (illegal)
 #endif
-		  RW_BADDR_ABX;
+          RW_BADDR_ABX;
           break;
 
         case 0x16: // { "ASL", AM_ZPX },  // 16
@@ -438,7 +440,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
         case 0x17: // { "SLO", AM_ZPX },  // 17 (illegal)
         case 0x57: // { "SRE", AM_ZPX },  // 57 (illegal)
 #endif
-		  RW_BADDR_ZPX;
+          RW_BADDR_ZPX;
           break;
 
 #ifdef ILLEGALS
@@ -480,7 +482,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
 #ifdef ILLEGALS
         case 0xA3: // { "LAX", AM_ZIX },  // A3 (illegal)
 #endif
-		  R_BADDR_ZIX;
+          R_BADDR_ZIX;
           break;
 
         case 0x11: // { "ORA", AM_ZIY },  // 11
@@ -494,7 +496,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
 #ifdef ILLEGALS
         case 0xB3: // { "LAX", AM_ZIY },  // B3 (illegal)
 #endif
-		  R_BADDR_ZIY;
+          R_BADDR_ZIY;
           break;
 
         case 0x05: // { "ORA", AM_ZP  },  // 05
@@ -512,7 +514,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
 #ifdef ILLEGALS
         case 0xA7: // { "LAX", AM_ZP  },  // A7 (illegal)
 #endif
-		  R_BADDR_ZP;
+          R_BADDR_ZP;
           break;
 
         case 0x0D: // { "ORA", AM_ABS },  // 0D
@@ -530,7 +532,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
 #ifdef ILLEGALS
         case 0xAF: // { "LAX", AM_ABS },  // AF (illegal)
 #endif
-		  R_BADDR_ABS;
+          R_BADDR_ABS;
           break;
 
         case 0x15: // { "ORA", AM_ZPX },  // 15
@@ -555,7 +557,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
 #ifdef ILLEGALS
         case 0xBF: // { "LAX", AM_ABY },  // BF (illegal)
 #endif
-		  R_BADDR_ABY;
+          R_BADDR_ABY;
           break;
 
         case 0x1D: // { "ORA", AM_ABX },  // 1D
@@ -571,13 +573,13 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
 
         case 0xB6: // { "LDX", AM_ZPY },  // B6
 #ifdef ILLEGALS
-		case 0xB7: // { "LAX", AM_ZPY },  // B7 (illegal)
+        case 0xB7: // { "LAX", AM_ZPY },  // B7 (illegal)
 #endif
-		  R_BADDR_ZPY;
+          R_BADDR_ZPY;
           break;
 
         case 0x6C: // { "JMP", AM_IND },  // 6C
-          raddr = (cpu->read( cpu, cpu->calcpc+2 )<<8)|cpu->read( cpu, cpu->calcpc+1 );
+          raddr = (cpu->read(cpu, cpu->calcpc+2)<<8)|cpu->read(cpu, cpu->calcpc+1);
           rlen = 2;
           break;
 
@@ -585,7 +587,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
 #ifdef ILLEGALS
         case 0x83: // { "SAX", AM_ZIX },  // 83 (illegal)
 #endif
-		  W_BADDR_ZIX;
+          W_BADDR_ZIX;
           break;
 
         case 0x84: // { "STY", AM_ZP  },  // 84
@@ -594,7 +596,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
 #ifdef ILLEGALS
         case 0x87: // { "SAX", AM_ZP  },  // 87 (illegal)
 #endif
-		  W_BADDR_ZP;
+          W_BADDR_ZP;
           break;
 
         case 0x8C: // { "STY", AM_ABS },  // 8C
@@ -603,7 +605,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
 #ifdef ILLEGALS
         case 0x8F: // { "SAX", AM_ABS },  // 8F (illegal)
 #endif
-		  W_BADDR_ABS;
+          W_BADDR_ABS;
           break;
 
         case 0x91: // { "STA", AM_ZIY },  // 91
@@ -619,7 +621,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
 #ifdef ILLEGALS
         case 0x97: // { "SAX", AM_ZPY },  // 97 (illegal)
 #endif
-		  W_BADDR_ZPY;
+          W_BADDR_ZPY;
           break;
 
         case 0x99: // { "STA", AM_ABY },  // 99
@@ -627,7 +629,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
         case 0x9F: // { "AHX", AM_ABY },  // 9F (illegal, unstable)
         case 0x9B: // { "TAS", AM_ABY },  // 9B (illegal, unstable)
 #endif
-		  W_BADDR_ABY;
+          W_BADDR_ABY;
           break;
 
         case 0x9D: // { "STA", AM_ABX },  // 9D
@@ -635,34 +637,34 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
           break;
       }
 
-      for( i=0; i<16; i++ )
+      for(i=0; i<16; i++)
       {
-        if( ( wlen != 0 ) && ( cpu->membreakpoints[i].flags & MBPF_WRITE ) )
+        if((wlen != 0) && (cpu->membreakpoints[i].flags & MBPF_WRITE))
         {
-          if( ( cpu->membreakpoints[i].addr >= waddr ) &&
-              ( cpu->membreakpoints[i].addr < (waddr+wlen) ) )
+          if((cpu->membreakpoints[i].addr >= waddr) &&
+              (cpu->membreakpoints[i].addr < (waddr+wlen)))
           {
-            sprintf( bpmsg, "Break on WRITE to $%04X", cpu->membreakpoints[i].addr );
+            sprintf(bpmsg, "Break on WRITE to $%04X", cpu->membreakpoints[i].addr);
             return SDL_TRUE;
           }
         }
 
-        if( ( rlen != 0 ) && ( cpu->membreakpoints[i].flags & MBPF_READ ) )
+        if((rlen != 0) && (cpu->membreakpoints[i].flags & MBPF_READ))
         {
-          if( ( cpu->membreakpoints[i].addr >= raddr ) &&
-              ( cpu->membreakpoints[i].addr < (raddr+rlen) ) )
+          if((cpu->membreakpoints[i].addr >= raddr) &&
+              (cpu->membreakpoints[i].addr < (raddr+rlen)))
           {
-            sprintf( bpmsg, "Break on READ from $%04X", cpu->membreakpoints[i].addr );
+            sprintf(bpmsg, "Break on READ from $%04X", cpu->membreakpoints[i].addr);
             return SDL_TRUE;
           }
         }
 
-        if( cpu->membreakpoints[i].flags & MBPF_CHANGE )
+        if(cpu->membreakpoints[i].flags & MBPF_CHANGE)
         {
-          if( cpu->membreakpoints[i].lastval != cpu->read( cpu, cpu->membreakpoints[i].addr ) )
+          if(cpu->membreakpoints[i].lastval != cpu->read(cpu, cpu->membreakpoints[i].addr))
           {
-            cpu->membreakpoints[i].lastval = cpu->read( cpu, cpu->membreakpoints[i].addr );
-            sprintf( bpmsg, "Break after $%04X changed", cpu->membreakpoints[i].addr );
+            cpu->membreakpoints[i].lastval = cpu->read(cpu, cpu->membreakpoints[i].addr);
+            sprintf(bpmsg, "Break after $%04X changed", cpu->membreakpoints[i].addr);
             return SDL_TRUE;
           }
         }
@@ -671,7 +673,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
   }
 
 
-  switch( cpu->calcop )
+  switch(cpu->calcop)
   {
     case 0x00: // { "BRK", AM_IMP },  // 00
     case 0x1E: // { "ASL", AM_ABX },  // 1E
@@ -892,7 +894,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
       break;
 
     case 0x10: // { "BPL", AM_REL },  // 10
-      IBRANCH( !cpu->f_n );
+      IBRANCH(!cpu->f_n);
       break;
 
     case 0x11: // { "ORA", AM_ZIY },  // 11
@@ -903,19 +905,19 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
     case 0xD1: // { "CMP", AM_ZIY },  // D1
     case 0xF1: // { "SBC", AM_ZIY },  // F1
     case 0xB3: // { "LAX", AM_ZIY },  // B3 (illegal)
-      baddr = cpu->read( cpu, cpu->calcpc+1 );
-      baddr = ((cpu->read( cpu, baddr+1 )<<8) | cpu->read( cpu, baddr ));
+      baddr = cpu->read(cpu, cpu->calcpc+1);
+      baddr = ((cpu->read(cpu, baddr+1)<<8) | cpu->read(cpu, baddr));
       cpu->icycles = 5;
       cpu->baddr = baddr+cpu->y;
-      if( CPAGECHECK ) cpu->icycles++;
+      if(CPAGECHECK) cpu->icycles++;
       break;
 
     case 0xBB: // { "LAS", AM_ZIY },  // BB
-      baddr = cpu->read( cpu, cpu->calcpc+1 );
-      baddr = ((cpu->read( cpu, baddr+1 )<<8) | cpu->read( cpu, baddr ));
+      baddr = cpu->read(cpu, cpu->calcpc+1);
+      baddr = ((cpu->read(cpu, baddr+1)<<8) | cpu->read(cpu, baddr));
       cpu->icycles = 4;
       cpu->baddr = baddr+cpu->y;
-      if( CPAGECHECK ) cpu->icycles++;
+      if(CPAGECHECK) cpu->icycles++;
       break;
 
     case 0x19: // { "ORA", AM_ABY },  // 19
@@ -930,7 +932,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
       NBADDR_ABS;
       cpu->icycles = 4;
       cpu->baddr = baddr+cpu->y;
-      if( CPAGECHECK ) cpu->icycles++;
+      if(CPAGECHECK) cpu->icycles++;
       break;
 
     case 0x1D: // { "ORA", AM_ABX },  // 1D
@@ -950,35 +952,35 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
       NBADDR_ABS;
       cpu->icycles = 4;
       cpu->baddr = baddr+cpu->x;
-      if( CPAGECHECK ) cpu->icycles++;
+      if(CPAGECHECK) cpu->icycles++;
       break;
 
     case 0x30: // { "BMI", AM_REL },  // 30
-      IBRANCH( cpu->f_n );
+      IBRANCH(cpu->f_n);
       break;
 
     case 0x50: // { "BVC", AM_REL },  // 50
-      IBRANCH( !cpu->f_v );
+      IBRANCH(!cpu->f_v);
       break;
 
     case 0x70: // { "BVS", AM_REL },  // 70
-      IBRANCH( cpu->f_v );
+      IBRANCH(cpu->f_v);
       break;
 
     case 0x90: // { "BCC", AM_REL },  // 90
-      IBRANCH( !cpu->f_c );
+      IBRANCH(!cpu->f_c);
       break;
 
     case 0xB0: // { "BCS", AM_REL },  // B0
-      IBRANCH( cpu->f_c );
+      IBRANCH(cpu->f_c);
       break;
 
     case 0xD0: // { "BNE", AM_REL },  // D0
-      IBRANCH( !cpu->f_z );
+      IBRANCH(!cpu->f_z);
       break;
 
     case 0xF0: // { "BEQ", AM_REL },  // F0
-      IBRANCH( cpu->f_z );
+      IBRANCH(cpu->f_z);
       break;
 
     default:
@@ -991,7 +993,7 @@ SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg )
 }
 
 // Execute one 6502 instruction
-SDL_bool m6502_inst( struct m6502 *cpu )
+SDL_bool m6502_inst(struct m6502 *cpu)
 {
   unsigned char v;
   unsigned short r, t, baddr;
@@ -999,15 +1001,17 @@ SDL_bool m6502_inst( struct m6502 *cpu )
   // Make sure you call set_icycles before this routine!
   cpu->cycles += cpu->icycles;
 
-  if( cpu->calcint > 0 )
+  if(cpu->calcint > 0)
   {
-    PUSHW( cpu->pc );
-    PUSHB( MAKEFLAGSBC );
+    PUSHW(cpu->pc);
+    PUSHB(MAKEFLAGSBC);
     cpu->f_d = 0;
-    if( cpu->calcint == 2 )
+    if(cpu->calcint == 2)
     {
       cpu->nmi = SDL_FALSE;
-    } else {
+    }
+    else
+    {
       cpu->f_i = 1;
     }
   }
@@ -1018,14 +1022,14 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
   cpu->lastpc = cpu->pc = cpu->calcpc;
   cpu->pc++;
-  switch( cpu->calcop )
+  switch(cpu->calcop)
   {
     case 0x00: // { "BRK", AM_IMP },  // 00
-      PUSHW( (cpu->pc+1) );
-      PUSHB( MAKEFLAGS | (1<<4) );   // Set B on the stack
+      PUSHW((cpu->pc+1));
+      PUSHB(MAKEFLAGS | (1<<4));     // Set B on the stack
       cpu->f_i = 1;
       cpu->f_d = 0;
-      cpu->pc = (cpu->read( cpu, 0xffff )<<8) | cpu->read( cpu, 0xfffe );
+      cpu->pc = (cpu->read(cpu, 0xffff)<<8) | cpu->read(cpu, 0xfffe);
       break;
 
     case 0x01: // { "ORA", AM_ZIX },  // 01
@@ -1041,11 +1045,11 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x06: // { "ASL", AM_ZP  },  // 06
       KREAD_ZP;
       DO_ASL(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x08: // { "PHP", AM_IMP },  // 08
-      PUSHB( MAKEFLAGS );
+      PUSHB(MAKEFLAGS);
       break;
 
     case 0x09: // { "ORA", AM_IMM },  // 09
@@ -1065,15 +1069,15 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x0E: // { "ASL", AM_ABS },  // 0E
       KREAD_ABS;
       DO_ASL(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x10: // { "BPL", AM_REL },  // 10
-      BRANCH( !cpu->f_n );
+      BRANCH(!cpu->f_n);
       break;
 
     case 0x11: // { "ORA", AM_ZIY },  // 11
-      v = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      v = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc++;
       DO_ORA;
       break;
@@ -1086,7 +1090,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x16: // { "ASL", AM_ZPX },  // 16
       KREAD_ZPX;
       DO_ASL(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x18: // { "CLC", AM_IMP },  // 18
@@ -1095,7 +1099,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
     case 0x19: // { "ORA", AM_ABY },  // 19
     case 0x1D: // { "ORA", AM_ABX },  // 1D
-      v = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      v = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc+=2;
       DO_ORA;
       break;
@@ -1103,12 +1107,12 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x1E: // { "ASL", AM_ABX },  // 1E
       READ_ABX;
       DO_ASL(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x20: // { "JSR", AM_ABS },  // 20
-      baddr = (cpu->read( cpu, cpu->pc+1 )<<8) | cpu->read( cpu, cpu->pc );
-      PUSHW( (cpu->pc+1) );
+      baddr = (cpu->read(cpu, cpu->pc+1)<<8) | cpu->read(cpu, cpu->pc);
+      PUSHW((cpu->pc+1));
       cpu->pc = baddr;
       break;
 
@@ -1132,7 +1136,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x26: // { "ROL", AM_ZP  },  // 26
       KREAD_ZP;
       DO_ROL(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x28: // { "PLP", AM_IMP },  // 28
@@ -1164,15 +1168,15 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x2E: // { "ROL", AM_ABS },  // 2E
       KREAD_ABS;
       DO_ROL(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x30: // { "BMI", AM_REL },  // 30
-      BRANCH( cpu->f_n );
+      BRANCH(cpu->f_n);
       break;
 
     case 0x31: // { "AND", AM_ZIY },  // 31
-      v = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      v = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc++;
       DO_AND;
       break;
@@ -1185,7 +1189,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x36: // { "ROL", AM_ZPX },  // 36
       KREAD_ZPX;
       DO_ROL(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x38: // { "SEC", AM_IMP },  // 38
@@ -1194,7 +1198,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
     case 0x39: // { "AND", AM_ABY },  // 39
     case 0x3D: // { "AND", AM_ABX },  // 3D
-      v = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      v = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc+=2;
       DO_AND;
       break;
@@ -1202,13 +1206,13 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x3E: // { "ROL", AM_ABX },  // 3E
       READ_ABX;
       DO_ROL(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x40: // { "RTI", AM_IMP },  // 40
       v = POPB;
       SETFLAGS(v);
-      POPW( cpu->pc );
+      POPW(cpu->pc);
       break;
 
     case 0x41: // { "EOR", AM_ZIX },  // 41
@@ -1224,11 +1228,11 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x46: // { "LSR", AM_ZP  },  // 46
       KREAD_ZP;
       DO_LSR(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x48: // { "PHA", AM_IMP },  // 48
-      PUSHB( cpu->a );
+      PUSHB(cpu->a);
       break;
 
     case 0x49: // { "EOR", AM_IMM },  // 49
@@ -1241,7 +1245,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
       break;
 
     case 0x4C: // { "JMP", AM_ABS },  // 4C
-      cpu->pc = (cpu->read( cpu, cpu->pc+1 )<<8)|cpu->read( cpu, cpu->pc );
+      cpu->pc = (cpu->read(cpu, cpu->pc+1)<<8)|cpu->read(cpu, cpu->pc);
       break;
 
     case 0x4D: // { "EOR", AM_ABS },  // 4D
@@ -1252,15 +1256,15 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x4E: // { "LSR", AM_ABS },  // 4E
       KREAD_ABS;
       DO_LSR(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x50: // { "BVC", AM_REL },  // 50
-      BRANCH( !cpu->f_v );
+      BRANCH(!cpu->f_v);
       break;
 
     case 0x51: // { "EOR", AM_ZIY },  // 51
-      v = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      v = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc++;
       DO_EOR;
       break;
@@ -1273,7 +1277,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x56: // { "LSR", AM_ZPX },  // 56
       KREAD_ZPX;
       DO_LSR(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x58: // { "CLI", AM_IMP },  // 58
@@ -1282,7 +1286,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
     case 0x59: // { "EOR", AM_ABY },  // 59
     case 0x5D: // { "EOR", AM_ABX },  // 5D
-      v = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      v = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc+=2;
       DO_EOR;
       break;
@@ -1290,11 +1294,11 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x5E: // { "LSR", AM_ABX },  // 5E
       READ_ABX;
       DO_LSR(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x60: // { "RTS", AM_IMP },  // 60
-      POPW( cpu->pc );
+      POPW(cpu->pc);
       cpu->pc++;
       break;
 
@@ -1311,7 +1315,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x66: // { "ROR", AM_ZP  },  // 66
       KREAD_ZP;
       DO_ROR(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x68: // { "PLA", AM_IMP },  // 68
@@ -1329,8 +1333,8 @@ SDL_bool m6502_inst( struct m6502 *cpu )
       break;
 
     case 0x6C: // { "JMP", AM_IND },  // 6C
-      baddr = (cpu->read( cpu, cpu->pc+1 )<<8)|cpu->read( cpu, cpu->pc );
-      cpu->pc = (cpu->read( cpu, baddr+1 )<<8)|cpu->read( cpu, baddr );
+      baddr = (cpu->read(cpu, cpu->pc+1)<<8)|cpu->read(cpu, cpu->pc);
+      cpu->pc = (cpu->read(cpu, baddr+1)<<8)|cpu->read(cpu, baddr);
       break;
 
     case 0x6D: // { "ADC", AM_ABS },  // 6D
@@ -1341,15 +1345,15 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x6E: // { "ROR", AM_ABS },  // 6E
       KREAD_ABS;
       DO_ROR(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x70: // { "BVS", AM_REL },  // 70
-      BRANCH( cpu->f_v );
+      BRANCH(cpu->f_v);
       break;
 
     case 0x71: // { "ADC", AM_ZIY },  // 71
-      v = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      v = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc++;
       DO_ADC;
       break;
@@ -1362,7 +1366,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x76: // { "ROR", AM_ZPX },  // 76
       KREAD_ZPX;
       DO_ROR(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x78: // { "SEI", AM_IMP },  // 78
@@ -1371,7 +1375,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
     case 0x79: // { "ADC", AM_ABY },  // 79
     case 0x7D: // { "ADC", AM_ABX },  // 7D
-      v = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      v = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc+=2;
       DO_ADC;
       break;
@@ -1379,7 +1383,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
     case 0x7E: // { "ROR", AM_ABX },  // 7E
       READ_ABX;
       DO_ROR(v);
-      cpu->write( cpu, baddr, v );
+      cpu->write(cpu, baddr, v);
       break;
 
     case 0x81: // { "STA", AM_ZIX },  // 81
@@ -1421,7 +1425,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
       break;
 
     case 0x90: // { "BCC", AM_REL },  // 90
-      BRANCH( !cpu->f_c );
+      BRANCH(!cpu->f_c);
       break;
 
     case 0x91: // { "STA", AM_ZIY },  // 91
@@ -1528,11 +1532,11 @@ SDL_bool m6502_inst( struct m6502 *cpu )
       break;
 
     case 0xB0: // { "BCS", AM_REL },  // B0
-      BRANCH( cpu->f_c );
+      BRANCH(cpu->f_c);
       break;
 
     case 0xB1: // { "LDA", AM_ZIY },  // B1
-      cpu->a = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      cpu->a = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc++;
       FLAG_ZN(cpu->a);
       break;
@@ -1561,7 +1565,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
     case 0xB9: // { "LDA", AM_ABY },  // B9
     case 0xBD: // { "LDA", AM_ABX },  // BD
-      cpu->a = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      cpu->a = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc+=2;
       FLAG_ZN(cpu->a);
       break;
@@ -1572,13 +1576,13 @@ SDL_bool m6502_inst( struct m6502 *cpu )
       break;
 
     case 0xBC: // { "LDY", AM_ABX },  // BC
-      cpu->y = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      cpu->y = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc+=2;
       FLAG_ZN(cpu->y);
       break;
 
     case 0xBE: // { "LDX", AM_ABY },  // BE
-      cpu->x = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      cpu->x = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc+=2;
       FLAG_ZN(cpu->x);
       break;
@@ -1609,7 +1613,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
     case 0xC6: // { "DEC", AM_ZP  },  // C6
       KREAD_ZP;
-      cpu->write( cpu, baddr, --v );
+      cpu->write(cpu, baddr, --v);
       FLAG_ZN(v);
       break;
 
@@ -1643,16 +1647,16 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
     case 0xCE: // { "DEC", AM_ABS },  // CE
       KREAD_ABS;
-      cpu->write( cpu, baddr, --v );
+      cpu->write(cpu, baddr, --v);
       FLAG_ZN(v);
       break;
 
     case 0xD0: // { "BNE", AM_REL },  // D0
-      BRANCH( !cpu->f_z );
+      BRANCH(!cpu->f_z);
       break;
 
     case 0xD1: // { "CMP", AM_ZIY },  // D1
-      r = cpu->a-cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      r = cpu->a-cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc++;
       FLAG_SZCN(r);
       break;
@@ -1665,7 +1669,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
     case 0xD6: // { "DEC", AM_ZPX },  // D6
       KREAD_ZPX;
-      cpu->write( cpu, baddr, --v );
+      cpu->write(cpu, baddr, --v);
       FLAG_ZN(v);
       break;
 
@@ -1675,14 +1679,14 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
     case 0xD9: // { "CMP", AM_ABY },  // D9
     case 0xDD: // { "CMP", AM_ABX },  // DD
-      r = cpu->a - cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      r = cpu->a - cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc+=2;
       FLAG_SZCN(r);
       break;
 
     case 0xDE: // { "DEC", AM_ABX },  // DE
       READ_ABX;
-      cpu->write( cpu, baddr, --v );
+      cpu->write(cpu, baddr, --v);
       FLAG_ZN(v);
       break;
 
@@ -1710,7 +1714,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
     case 0xE6: // { "INC", AM_ZP  },  // E6
       KREAD_ZP;
-      cpu->write( cpu, baddr, ++v );
+      cpu->write(cpu, baddr, ++v);
       FLAG_ZN(v);
       break;
 
@@ -1723,7 +1727,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 #ifdef ILLEGALS
     case 0xEB: // { "SBC", AM_IMM },  // EB (illegal)
 #endif
-	  READ_IMM;
+      READ_IMM;
       DO_SBC;
       break;
 
@@ -1743,16 +1747,16 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
     case 0xEE: // { "INC", AM_ABS },  // EE
       KREAD_ABS;
-      cpu->write( cpu, baddr, ++v );
+      cpu->write(cpu, baddr, ++v);
       FLAG_ZN(v);
       break;
 
     case 0xF0: // { "BEQ", AM_REL },  // F0
-      BRANCH( cpu->f_z );
+      BRANCH(cpu->f_z);
       break;
 
     case 0xF1: // { "SBC", AM_ZIY },  // F1
-      v = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      v = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc++;
       DO_SBC;
       break;
@@ -1764,7 +1768,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
     case 0xF6: // { "INC", AM_ZPX },  // F6
       KREAD_ZPX;
-      cpu->write( cpu, baddr, ++v );
+      cpu->write(cpu, baddr, ++v);
       FLAG_ZN(v);
       break;
 
@@ -1774,18 +1778,18 @@ SDL_bool m6502_inst( struct m6502 *cpu )
 
     case 0xF9: // { "SBC", AM_ABY },  // F9
     case 0xFD: // { "SBC", AM_ABX },  // FD
-      v = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      v = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc+=2;
       DO_SBC;
       break;
 
     case 0xFE: // { "INC", AM_ABX },  // FE
       READ_ABX;
-      cpu->write( cpu, baddr, ++v );
+      cpu->write(cpu, baddr, ++v);
       FLAG_ZN(v);
       break;
 
-    // Illegal opcodes
+      // Illegal opcodes
 #ifdef ILLEGALS
     case 0x0B: // { "ANC", AM_IMM },  // 0B (illegal)
     case 0x2B: // { "ANC", AM_IMM },  // 2B (illegal)
@@ -1827,12 +1831,24 @@ SDL_bool m6502_inst( struct m6502 *cpu )
       cpu->a = (cpu->a&v)>>1;
       cpu->f_n = (cpu->a&0x80) != 0;
       cpu->f_z = cpu->a != 0;
-      switch (cpu->a&0x60)
+      switch(cpu->a&0x60)
       {
-        case 0x00: cpu->f_c=0; cpu->f_v=0; break;
-        case 0x20: cpu->f_c=0; cpu->f_v=1; break;
-        case 0x60: cpu->f_c=1; cpu->f_v=0; break;
-        case 0x40: cpu->f_c=1; cpu->f_v=1; break;
+        case 0x00:
+          cpu->f_c=0;
+          cpu->f_v=0;
+          break;
+        case 0x20:
+          cpu->f_c=0;
+          cpu->f_v=1;
+          break;
+        case 0x60:
+          cpu->f_c=1;
+          cpu->f_v=0;
+          break;
+        case 0x40:
+          cpu->f_c=1;
+          cpu->f_v=1;
+          break;
       }
       break;
 
@@ -1853,20 +1869,20 @@ SDL_bool m6502_inst( struct m6502 *cpu )
       r = cpu->x;
 
       // Instability 1 (sometimes, the &H drops off)
-      if ((cpu->cycles&7)>2) // pseudorandom 5 in 8 chance of &H
+      if((cpu->cycles&7)>2)  // pseudorandom 5 in 8 chance of &H
         r &= (cpu->pc>>8)+1;
 
       v = cpu->a & r;
 
       // Instability 2 (A is input and output, which leads to "bit fight",
       // but anywhere that X&H=1 will work)
-      if (((cpu->cycles>>8)&7)<2) // pseudorandom 2 in 8 chance of bit fight
+      if(((cpu->cycles>>8)&7)<2)  // pseudorandom 2 in 8 chance of bit fight
       {
         r = (r^0xff)&cpu->a; // inverse R now has 1 for each bit that we can mess with
         r &= cpu->cycles;    // Make some of them 0 (pseudorandomly)
         v |= r;
       }
-      if (cpu->calcop==0x9F)
+      if(cpu->calcop==0x9F)
       {
         WRITE_ABY(v);
       }
@@ -2048,7 +2064,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
       break;
 
     case 0xBB: // { "LAS", AM_ZIY },  // BB (illegal)
-      cpu->sp &= cpu->read( cpu, cpu->baddr );
+      cpu->sp &= cpu->read(cpu, cpu->baddr);
       cpu->pc++;
       cpu->a = cpu->sp;
       cpu->x = cpu->sp;
@@ -2077,7 +2093,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
       break;
 
     case 0xBF: // { "LAX", AM_ABY },  // BF (illegal)
-      cpu->a = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      cpu->a = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->pc+=2;
       cpu->x = cpu->a;
       FLAG_ZN(cpu->a);
@@ -2091,7 +2107,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
       break;
 
     case 0xB3: // { "LAX", AM_ZIY },  // B3 (illegal)
-      cpu->a = cpu->read( cpu, cpu->baddr );  // baddr is already calculated for this case
+      cpu->a = cpu->read(cpu, cpu->baddr);    // baddr is already calculated for this case
       cpu->x = cpu->a;
       cpu->pc++;
       FLAG_ZN(cpu->a);
@@ -2410,7 +2426,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
       v = cpu->x;
 
       // Instability (sometimes, the &H drops off)
-      if ((cpu->cycles&7)>2) // pseudorandom 5 in 8 chance of &H
+      if((cpu->cycles&7)>2)  // pseudorandom 5 in 8 chance of &H
         v &= (baddr>>8)+1;
 
       cpu->write(cpu, baddr, v);
@@ -2422,7 +2438,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
       v = cpu->y;
 
       // Instability (sometimes, the &H drops off)
-      if ((cpu->cycles&7)>2) // pseudorandom 5 in 8 chance of &H
+      if((cpu->cycles&7)>2)  // pseudorandom 5 in 8 chance of &H
         v &= (baddr>>8)+1;
 
       cpu->write(cpu, baddr, v);
@@ -2435,7 +2451,7 @@ SDL_bool m6502_inst( struct m6502 *cpu )
       cpu->a = cpu->x & v;
 
       // Instability
-      if ((cpu->cycles&7)>5) // pseudorandom 6 in 8 chance of instability
+      if((cpu->cycles&7)>5)  // pseudorandom 6 in 8 chance of instability
       {
         r = (cpu->x^0xff);
         r &= cpu->cycles;

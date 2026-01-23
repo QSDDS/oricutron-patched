@@ -61,13 +61,13 @@
 
 #else
 
-  #define PATHSEP '/'
-  #define PATHSEPSTR "/"
-  #define ROMPREFIX "roms"PATHSEPSTR
-  #define IMAGEPREFIX "images"PATHSEPSTR
+#define PATHSEP '/'
+#define PATHSEPSTR "/"
+#define ROMPREFIX "roms"PATHSEPSTR
+#define IMAGEPREFIX "images"PATHSEPSTR
 #endif
 
-const char *get_fileprefix();
+const char* get_fileprefix();
 
 /* SDL related stuff */
 #include "system_sdl.h"

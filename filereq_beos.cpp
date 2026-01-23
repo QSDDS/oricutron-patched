@@ -43,85 +43,93 @@ extern "C" {
 }
 
 
-class PanelLooper : public BLooper {
-public:
-							PanelLooper();
-	virtual					~PanelLooper();
-	virtual	void			MessageReceived(BMessage* message);
+class PanelLooper : public BLooper
+{
+  public:
+    PanelLooper();
+    virtual         ~PanelLooper();
+    virtual void      MessageReceived(BMessage* message);
 
-	void					Wait();
-	SDL_bool				DoIt() const { return fDoIt; };
-	void					GetRef(entry_ref &ref) const { ref = fRef; };
+    void          Wait();
+    SDL_bool        DoIt() const
+    {
+      return fDoIt;
+    };
+    void          GetRef(entry_ref &ref) const
+    {
+      ref = fRef;
+    };
 
-private:
-	sem_id		fSem;
-	entry_ref	fRef;
-	SDL_bool	fDoIt;
+  private:
+    sem_id    fSem;
+    entry_ref fRef;
+    SDL_bool  fDoIt;
 };
 
 
 PanelLooper::PanelLooper()
-	: BLooper("PanelLooper"),
-	fDoIt(SDL_FALSE)
+  : BLooper("PanelLooper"),
+    fDoIt(SDL_FALSE)
 {
-	fSem = create_sem(0, "PanelLooper lock");
+  fSem = create_sem(0, "PanelLooper lock");
 }
 
 
 PanelLooper::~PanelLooper()
 {
-	delete_sem(fSem);
+  delete_sem(fSem);
 }
 
 
 void
 PanelLooper::MessageReceived(BMessage* message)
 {
-	//message->PrintToStream();
-	switch (message->what) {
-		case B_SAVE_REQUESTED:
-			message->FindRef("refs", &fRef);
-			fDoIt = SDL_TRUE;
-			break;
-		case B_REFS_RECEIVED:
-			message->FindRef("refs", &fRef);
-			fDoIt = SDL_TRUE;
-			break;
-		case B_CANCEL:
-		default:
-			break;
-	}
-	release_sem(fSem);
+  //message->PrintToStream();
+  switch(message->what)
+  {
+    case B_SAVE_REQUESTED:
+      message->FindRef("refs", &fRef);
+      fDoIt = SDL_TRUE;
+      break;
+    case B_REFS_RECEIVED:
+      message->FindRef("refs", &fRef);
+      fDoIt = SDL_TRUE;
+      break;
+    case B_CANCEL:
+    default:
+      break;
+  }
+  release_sem(fSem);
 }
 
 
 void
 PanelLooper::Wait()
 {
-	acquire_sem(fSem);
+  acquire_sem(fSem);
 }
 
 
-SDL_bool init_filerequester( struct machine *oric )
+SDL_bool init_filerequester(struct machine *oric)
 {
   return SDL_TRUE;
 }
 
-void shut_filerequester( struct machine *oric )
+void shut_filerequester(struct machine *oric)
 {
 }
 
-SDL_bool filerequester( struct machine *oric, char *title, char *path, char *fname, int type )
+SDL_bool filerequester(struct machine *oric, char* title, char* path, char* fname, int type)
 {
-	BFilePanel *panel;
-	PanelLooper *looper = new PanelLooper();
-	looper->Run();
-	SDL_bool ret;
+  BFilePanel *panel;
+  PanelLooper *looper = new PanelLooper();
+  looper->Run();
+  SDL_bool ret;
 
-  char *pat;
+  char* pat;
   bool dosavemode = false;
-  
-  switch( type )
+
+  switch(type)
   {
     case FR_DISKSAVE:
       dosavemode = true;
@@ -136,7 +144,7 @@ SDL_bool filerequester( struct machine *oric, char *title, char *path, char *fna
     case FR_TAPELOAD:
       pat = "*.tap";
       break;
-    
+
     case FR_ROMS:
       pat = "*.rom";
       break;
@@ -146,42 +154,45 @@ SDL_bool filerequester( struct machine *oric, char *title, char *path, char *fna
     case FR_SNAPSHOTLOAD:
       pat = "*.sna";
       break;
-      
+
     case FR_KEYMAPPINGSAVE:
-    	dosavemode = true;
+      dosavemode = true;
     case FR_KEYMAPPINGLOAD:
-    	pat = "*.kma";
-        break;
- 
+      pat = "*.kma";
+      break;
+
     default:
       pat = NULL;
       break;
   }
 
-	//XXX: use RefFilter
+  //XXX: use RefFilter
 
-	panel = new BFilePanel(dosavemode ? B_SAVE_PANEL : B_OPEN_PANEL);
-	panel->SetTarget(BMessenger(looper));
+  panel = new BFilePanel(dosavemode ? B_SAVE_PANEL : B_OPEN_PANEL);
+  panel->SetTarget(BMessenger(looper));
 
-	if (path)
-		panel->SetPanelDirectory(path);
+  if(path)
+    panel->SetPanelDirectory(path);
 
-	panel->Show();
+  panel->Show();
 
-	looper->Wait();
-	ret = looper->DoIt();
-	entry_ref ref;
-	looper->GetRef(ref);
-	
-	delete panel;
-	looper->Lock();
-	looper->Quit();
-	
-  if (ret) {
+  looper->Wait();
+  ret = looper->DoIt();
+  entry_ref ref;
+  looper->GetRef(ref);
+
+  delete panel;
+  looper->Lock();
+  looper->Quit();
+
+  if(ret)
+  {
     BPath p(&ref);
-    strncpy( fname, p.Leaf(),   512  ); path[511]  = 0;
+    strncpy(fname, p.Leaf(),   512);
+    path[511]  = 0;
     p.GetParent(&p);
-    strncpy( path,  p.Path(), 4096 ); path[4095] = 0;
+    strncpy(path,  p.Path(), 4096);
+    path[4095] = 0;
   }
 
   return ret;

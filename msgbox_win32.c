@@ -38,38 +38,38 @@
 #include "machine.h"
 #include "msgbox.h"
 
-SDL_bool init_msgbox( struct machine *oric )
+SDL_bool init_msgbox(struct machine *oric)
 {
   return SDL_TRUE;
 }
 
-void shut_msgbox( struct machine *oric )
+void shut_msgbox(struct machine *oric)
 {
 }
 
-SDL_bool msgbox( struct machine *oric, int type, char *msg )
+SDL_bool msgbox(struct machine *oric, int type, char* msg)
 {
   SDL_SysWMinfo wmi;
   HWND hwnd;
 
   hwnd = NULL;
   SDL_VERSION(&wmi.version);
-  if(SDL_COMPAT_GetWMInfo( &wmi ) )
+  if(SDL_COMPAT_GetWMInfo(&wmi))
 #if SDL_MAJOR_VERSION == 1
     hwnd = (HWND)wmi.window;
 #else
     hwnd = (HWND)wmi.info.win.window;
 #endif
-  switch( type )
+  switch(type)
   {
     case MSGBOX_YES_NO:
-      return (MessageBoxA( hwnd, msg, "Oricutron Request", MB_YESNO ) == IDYES);
+      return (MessageBoxA(hwnd, msg, "Oricutron Request", MB_YESNO) == IDYES);
 
     case MSGBOX_OK_CANCEL:
-      return (MessageBoxA( hwnd, msg, "Oricutron Request", MB_OKCANCEL ) == IDOK);
-    
+      return (MessageBoxA(hwnd, msg, "Oricutron Request", MB_OKCANCEL) == IDOK);
+
     case MSGBOX_OK:
-      MessageBoxA( hwnd, msg, "Oricutron Request", MB_OK );
+      MessageBoxA(hwnd, msg, "Oricutron Request", MB_OK);
   }
 
   return SDL_TRUE;

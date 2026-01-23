@@ -94,15 +94,15 @@ struct m6502
   Sint32   breakpoints[16];
   Uint8    breakpoint_flags[16];
   struct membreakpoint membreakpoints[16];
-  void    *userdata;
+  void*    userdata;
 
   Uint8    a, x, y, sp;
   Uint8    f_c, f_z, f_i, f_d, f_b, f_v, f_n;
   Uint8    irq, nmicount, calcop;
 };
 
-void m6502_init( struct m6502 *cpu, void *userdata, SDL_bool nukebreakpoints );
-void m6502_reset( struct m6502 *cpu );
-SDL_bool m6502_inst( struct m6502 *cpu );
-SDL_bool m6502_set_icycles( struct m6502 *cpu, SDL_bool dobp, char *bpmsg );
+void m6502_init(struct m6502 *cpu, void* userdata, SDL_bool nukebreakpoints);
+void m6502_reset(struct m6502 *cpu);
+SDL_bool m6502_inst(struct m6502 *cpu);
+SDL_bool m6502_set_icycles(struct m6502 *cpu, SDL_bool dobp, char* bpmsg);
 

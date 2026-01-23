@@ -59,7 +59,7 @@ struct msym
   unsigned short flags;
   char sname[SNAME_LEN+1];   // Short name
   char ssname[SSNAME_LEN+1]; // Short short name
-  char *name;                // Full name
+  char* name;                // Full name
 };
 
 struct symboltable
@@ -68,28 +68,28 @@ struct symboltable
   struct msym *syms;
 };
 
-SDL_bool isws( char c );
-SDL_bool ishex( char c );
-int hexit( char c );
+SDL_bool isws(char c);
+SDL_bool ishex(char c);
+int hexit(char c);
 
-void mon_warminit( struct machine *oric );
-void mon_init( struct machine *oric );
-void mon_render( struct machine *oric );
-void mon_update_regs( struct machine *oric );
-void mon_update( struct machine *oric );
-SDL_bool mon_event( SDL_Event *ev, struct machine *oric, SDL_bool *needrender );
-void dbg_printf( char *fmt, ... );
-void mon_printf_above( char *fmt, ... );
-void mon_enter( struct machine *oric );
-void mon_shut( struct machine *oric );
-void mon_init_symtab( struct symboltable *stab );
-void mon_freesyms( struct symboltable *stab );
-SDL_bool mon_new_symbols( struct symboltable *stab, struct machine *oric, char *fname, unsigned short flags, SDL_bool above, SDL_bool verbose );
-SDL_bool mon_symsfromsnapshot( struct symboltable *stab, unsigned char *buffer, unsigned int len);
-void mon_state_reset( struct machine *oric );
-SDL_bool mon_getnum( struct machine *oric, unsigned int *num, char *buf, int *off, SDL_bool addrregs, SDL_bool nregs, SDL_bool viaregs, SDL_bool symbols );
-SDL_bool mon_do_cmd( char *cmd, struct machine *oric, SDL_bool *needrender );
-SDL_bool mon_cmd( char *cmd, struct machine *oric, SDL_bool *needrender );
+void mon_warminit(struct machine *oric);
+void mon_init(struct machine *oric);
+void mon_render(struct machine *oric);
+void mon_update_regs(struct machine *oric);
+void mon_update(struct machine *oric);
+SDL_bool mon_event(SDL_Event *ev, struct machine *oric, SDL_bool *needrender);
+void dbg_printf(char* fmt, ...);
+void mon_printf_above(char* fmt, ...);
+void mon_enter(struct machine *oric);
+void mon_shut(struct machine *oric);
+void mon_init_symtab(struct symboltable *stab);
+void mon_freesyms(struct symboltable *stab);
+SDL_bool mon_new_symbols(struct symboltable *stab, struct machine *oric, char* fname, unsigned short flags, SDL_bool above, SDL_bool verbose);
+SDL_bool mon_symsfromsnapshot(struct symboltable *stab, unsigned char* buffer, unsigned int len);
+void mon_state_reset(struct machine *oric);
+SDL_bool mon_getnum(struct machine *oric, unsigned int* num, char* buf, int* off, SDL_bool addrregs, SDL_bool nregs, SDL_bool viaregs, SDL_bool symbols);
+SDL_bool mon_do_cmd(char* cmd, struct machine *oric, SDL_bool *needrender);
+SDL_bool mon_cmd(char* cmd, struct machine *oric, SDL_bool *needrender);
 
 #if defined(DEBUG_CPU_TRACE) && DEBUG_CPU_TRACE > 0
 struct cpu_trace_entry

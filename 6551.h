@@ -126,25 +126,25 @@ struct acia
   SDL_bool echo;
 
   // back-end api functions
-  Uint8 (*stat)(Uint8 stat);
-  SDL_bool (*has_byte)(Uint8* data);
-  SDL_bool (*get_byte)(Uint8* data);
-  SDL_bool (*put_byte)(Uint8 data);
+  Uint8(*stat)(Uint8 stat);
+  SDL_bool(*has_byte)(Uint8* data);
+  SDL_bool(*get_byte)(Uint8* data);
+  SDL_bool(*put_byte)(Uint8 data);
   void (*done)(struct acia* acia);
 };
 
-void acia_init( struct acia *acia, struct machine *oric );
-void acia_clock( struct acia *acia, unsigned int cycles );
-void acia_write( struct acia *acia, Uint16 addr, Uint8 data );
-Uint8 acia_read( struct acia *acia, Uint16 addr );
+void acia_init(struct acia *acia, struct machine *oric);
+void acia_clock(struct acia *acia, unsigned int cycles);
+void acia_write(struct acia *acia, Uint16 addr, Uint8 data);
+Uint8 acia_read(struct acia *acia, Uint16 addr);
 
 // Back-end init functions
-SDL_bool acia_init_none( struct acia* acia );
-SDL_bool acia_init_loopback( struct acia* acia );
+SDL_bool acia_init_none(struct acia* acia);
+SDL_bool acia_init_loopback(struct acia* acia);
 #ifdef BACKEND_MODEM
-SDL_bool acia_init_modem( struct acia* acia );
+SDL_bool acia_init_modem(struct acia* acia);
 #endif
 #ifdef BACKEND_COM
-SDL_bool acia_init_com( struct acia* acia );
+SDL_bool acia_init_com(struct acia* acia);
 #endif
 

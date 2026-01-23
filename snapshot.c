@@ -48,14 +48,14 @@
 extern char diskpath[];
 
 #define MAX_BLOCK (262144)
-static unsigned char *buf;
+static unsigned char* buf;
 static int offs = 0;
 
 #define PUTU32(val) ok=putu32(ok, (Uint32)val)
 static SDL_bool putu32(SDL_bool stillok, Uint32 val)
 {
-  if (!stillok) return SDL_FALSE;
-  if ((offs+4) > MAX_BLOCK) return SDL_FALSE;
+  if(!stillok) return SDL_FALSE;
+  if((offs+4) > MAX_BLOCK) return SDL_FALSE;
   buf[offs++] = (val>>24)&0xff;
   buf[offs++] = (val>>16)&0xff;
   buf[offs++] = (val>>8)&0xff;
@@ -66,8 +66,8 @@ static SDL_bool putu32(SDL_bool stillok, Uint32 val)
 #define PUTU16(val) ok=putu16(ok, (Uint16)val)
 static SDL_bool putu16(SDL_bool stillok, Uint16 val)
 {
-  if (!stillok) return SDL_FALSE;
-  if ((offs+2) > MAX_BLOCK) return SDL_FALSE;
+  if(!stillok) return SDL_FALSE;
+  if((offs+2) > MAX_BLOCK) return SDL_FALSE;
   buf[offs++] = (val>>8)&0xff;
   buf[offs++] = val&0xff;
   return SDL_TRUE;
@@ -76,35 +76,35 @@ static SDL_bool putu16(SDL_bool stillok, Uint16 val)
 #define PUTU8(val) ok=putu8(ok, (Uint8)val)
 static SDL_bool putu8(SDL_bool stillok, Uint8 val)
 {
-  if (!stillok) return SDL_FALSE;
-  if (offs >= MAX_BLOCK) return SDL_FALSE;
+  if(!stillok) return SDL_FALSE;
+  if(offs >= MAX_BLOCK) return SDL_FALSE;
   buf[offs++] = val&0xff;
   return SDL_TRUE;
 }
 
 #define PUTDATA(data, size) ok=putdata(ok, data, size)
-static SDL_bool putdata(SDL_bool stillok, unsigned char *data, Uint32 size)
+static SDL_bool putdata(SDL_bool stillok, unsigned char* data, Uint32 size)
 {
-  if (!stillok) return SDL_FALSE;
-  if ((offs+size) > MAX_BLOCK) return SDL_FALSE;
-  memcpy( &buf[offs], data, size );
+  if(!stillok) return SDL_FALSE;
+  if((offs+size) > MAX_BLOCK) return SDL_FALSE;
+  memcpy(&buf[offs], data, size);
   offs += size;
   return SDL_TRUE;
 }
 
 #define PUTSTR(str) ok=putstr(ok, str)
-static SDL_bool putstr(SDL_bool stillok, char *str)
+static SDL_bool putstr(SDL_bool stillok, char* str)
 {
-  if (!stillok) return SDL_FALSE;
+  if(!stillok) return SDL_FALSE;
   stillok = putu32(stillok, (int)strlen(str)+1);
-  return putdata(stillok, (unsigned char *)str, (int)strlen(str)+1);
+  return putdata(stillok, (unsigned char*)str, (int)strlen(str)+1);
 }
 
 #define WRITEBLOCK() ok=writeblock(ok, f)
 static SDL_bool writeblock(SDL_bool stillok, FILE *f)
 {
-  if (!stillok) return SDL_FALSE;
-  if (offs <= 8) return SDL_TRUE; // No block to write
+  if(!stillok) return SDL_FALSE;
+  if(offs <= 8) return SDL_TRUE;  // No block to write
 
   buf[4] = ((offs-8)>>24)&0xff;
   buf[5] = ((offs-8)>>16)&0xff;
@@ -118,11 +118,11 @@ static SDL_bool writeblock(SDL_bool stillok, FILE *f)
 
 // ID must be 4 bytes long!
 #define NEWBLOCK(id) ok=newblock(ok, id, f)
-static SDL_bool newblock(SDL_bool stillok, char *id, FILE *f)
+static SDL_bool newblock(SDL_bool stillok, char* id, FILE *f)
 {
-  if (!stillok) return SDL_FALSE;
+  if(!stillok) return SDL_FALSE;
   // Got an old block?
-  if (!writeblock(stillok, f)) return SDL_FALSE;
+  if(!writeblock(stillok, f)) return SDL_FALSE;
 
   // Start a new one!
   memcpy(buf, id, 4);
@@ -131,14 +131,14 @@ static SDL_bool newblock(SDL_bool stillok, char *id, FILE *f)
 }
 
 #define DATABLOCK(data, len) ok = datablock(ok, data, len, f)
-static SDL_bool datablock(SDL_bool stillok, unsigned char *data, Uint32 len, FILE *f)
+static SDL_bool datablock(SDL_bool stillok, unsigned char* data, Uint32 len, FILE *f)
 {
   Uint32 lenbe = _BE32(len);
-  if (!stillok) return SDL_FALSE;
+  if(!stillok) return SDL_FALSE;
   // Anything to write?
-  if (len == 0) return SDL_TRUE;
+  if(len == 0) return SDL_TRUE;
   // Got an old block?
-  if (!writeblock(stillok, f)) return SDL_FALSE;
+  if(!writeblock(stillok, f)) return SDL_FALSE;
 
   stillok  = (fwrite("DATA", 4, 1, f) == 1);
   stillok &= (fwrite(&lenbe, 4, 1, f) == 1);
@@ -148,7 +148,7 @@ static SDL_bool datablock(SDL_bool stillok, unsigned char *data, Uint32 len, FIL
   return stillok;
 }
 
-SDL_bool save_snapshot(struct machine *oric, char *filename)
+SDL_bool save_snapshot(struct machine *oric, char* filename)
 {
   SDL_bool ok = SDL_TRUE;
   struct m6502 *cpu = &oric->cpu;
@@ -157,14 +157,14 @@ SDL_bool save_snapshot(struct machine *oric, char *filename)
   FILE *f = NULL;
 
   buf = malloc(MAX_BLOCK);
-  if (!buf)
+  if(!buf)
   {
     msgbox(oric, MSGBOX_OK, "Snapshot failed: out of memory (1)\n");
     return SDL_FALSE;
   }
 
   f = fopen(filename, "wb");
-  if (!f)
+  if(!f)
   {
     msgbox(oric, MSGBOX_OK, "Unable to create snapshot file (2)");
     free(buf);
@@ -252,24 +252,24 @@ SDL_bool save_snapshot(struct machine *oric, char *filename)
   PUTU8(oric->ay.bmode);
   PUTU8(oric->ay.creg);
   PUTDATA(&oric->ay.eregs[0], NUM_AY_REGS);
-  for (i=0; i<8; i++)
+  for(i=0; i<8; i++)
     PUTU8(oric->ay.keystates[i]);
-  for (i=0; i<3; i++)
+  for(i=0; i<3; i++)
     PUTU32(oric->ay.toneper[i]);
   PUTU32(oric->ay.noiseper);
   PUTU32(oric->ay.envper);
-  for (i=0; i<3; i++)
+  for(i=0; i<3; i++)
   {
     PUTU16(oric->ay.tonebit[i]);
     PUTU16(oric->ay.noisebit[i]);
     PUTU16(oric->ay.vol[i]);
   }
   PUTU16(oric->ay.newout);
-  for (i=0; i<3; i++)
+  for(i=0; i<3; i++)
     PUTU32(oric->ay.ct[i]);
   PUTU32(oric->ay.ctn);
   PUTU32(oric->ay.cte);
-  for (i=0; i<3; i++)
+  for(i=0; i<3; i++)
   {
     PUTU32(oric->ay.tonepos[i]);
     PUTU32(oric->ay.tonestep[i]);
@@ -319,7 +319,7 @@ SDL_bool save_snapshot(struct machine *oric, char *filename)
   PUTU32(oric->via.irqbit);
 
 
-  switch (oric->drivetype)
+  switch(oric->drivetype)
   {
     case DRV_JASMIN:
       NEWBLOCK("JSM\x00");
@@ -338,55 +338,55 @@ SDL_bool save_snapshot(struct machine *oric, char *filename)
       break;
 
     case DRV_PRAVETZ:
-    {
-      Uint8 tmp[PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE*2];
-      NEWBLOCK("PRV\x00");
-      PUTU8(oric->pravetz.olay); // 1
-      PUTU8(oric->pravetz.romdis); // 2
-      PUTU16(oric->pravetz.extension); // 4
-      PUTU8(oric->wddisk.c_drive); // 5
-      PUTU32(oric->wddisk.currentop); // 9
-
-      for (i=0; i<2; i++)
       {
-        PUTU8(oric->pravetz.drv[i].volume); // +1
-        PUTU8(oric->pravetz.drv[i].select); // +2
-        PUTU8(oric->pravetz.drv[i].motor_on); // +3
-        PUTU8(oric->pravetz.drv[i].write_ready); // +4
-        PUTU16(oric->pravetz.drv[i].byte); // +6
-        PUTU16(oric->pravetz.drv[i].half_track); // +8
-        PUTU8(oric->pravetz.drv[i].dirty); // +9
-        PUTU8(oric->pravetz.drv[i].prot); // +10
+        Uint8 tmp[PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE*2];
+        NEWBLOCK("PRV\x00");
+        PUTU8(oric->pravetz.olay); // 1
+        PUTU8(oric->pravetz.romdis); // 2
+        PUTU16(oric->pravetz.extension); // 4
+        PUTU8(oric->wddisk.c_drive); // 5
+        PUTU32(oric->wddisk.currentop); // 9
+
+        for(i=0; i<2; i++)
+        {
+          PUTU8(oric->pravetz.drv[i].volume); // +1
+          PUTU8(oric->pravetz.drv[i].select); // +2
+          PUTU8(oric->pravetz.drv[i].motor_on); // +3
+          PUTU8(oric->pravetz.drv[i].write_ready); // +4
+          PUTU16(oric->pravetz.drv[i].byte); // +6
+          PUTU16(oric->pravetz.drv[i].half_track); // +8
+          PUTU8(oric->pravetz.drv[i].dirty); // +9
+          PUTU8(oric->pravetz.drv[i].prot); // +10
+        }
+
+        /* Snapshot format is limited to one datablock per block, */
+        /* concatenate these into a temporary one... */
+        memcpy(tmp, &oric->pravetz.drv[0].image[0][0], PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE);
+        memcpy(&tmp[PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE], &oric->pravetz.drv[1].image[0][0], PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE);
+        DATABLOCK(tmp, PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE*2);
+
+        for(i=0; i<2; i++)
+        {
+          if((oric->pravetz.drv[i].pimg == NULL) ||
+              (oric->pravetz.drv[i].pimg->rawimage == NULL))
+            break;
+
+          NEWBLOCK("PVD\x00");
+          PUTU16(i);
+          PUTU32(oric->wddisk.disk[i]->rawimagelen);
+          /* Convert sector_ptr to an offset */
+          if((oric->pravetz.drv[i].sector_ptr == NULL) ||
+              (oric->pravetz.drv[i].pimg == NULL) ||
+              (oric->pravetz.drv[i].pimg->rawimage == NULL))
+            PUTU32(0xffffffff);
+          else
+            PUTU32((Uint32)(oric->pravetz.drv[i].sector_ptr - oric->pravetz.drv[i].pimg->rawimage));
+          DATABLOCK(oric->wddisk.disk[i]->rawimage, oric->wddisk.disk[i]->rawimagelen);
+        }
       }
-
-      /* Snapshot format is limited to one datablock per block, */
-      /* concatenate these into a temporary one... */
-      memcpy(tmp, &oric->pravetz.drv[0].image[0][0], PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE);
-      memcpy(&tmp[PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE], &oric->pravetz.drv[1].image[0][0], PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE);
-      DATABLOCK(tmp, PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE*2);
-
-      for (i=0; i<2; i++)
-      {
-        if ((oric->pravetz.drv[i].pimg == NULL) ||
-            (oric->pravetz.drv[i].pimg->rawimage == NULL))
-          break;
-
-        NEWBLOCK("PVD\x00");
-        PUTU16(i);
-        PUTU32(oric->wddisk.disk[i]->rawimagelen);
-        /* Convert sector_ptr to an offset */
-        if ((oric->pravetz.drv[i].sector_ptr == NULL) ||
-            (oric->pravetz.drv[i].pimg == NULL) ||
-            (oric->pravetz.drv[i].pimg->rawimage == NULL))
-          PUTU32(0xffffffff);
-        else
-          PUTU32((Uint32)(oric->pravetz.drv[i].sector_ptr - oric->pravetz.drv[i].pimg->rawimage));
-        DATABLOCK(oric->wddisk.disk[i]->rawimage, oric->wddisk.disk[i]->rawimagelen);
-      }
-    }
   }
 
-  if( do_wd17xx )
+  if(do_wd17xx)
   {
     NEWBLOCK("WDD\x00");
     PUTU8(oric->wddisk.r_status);
@@ -407,9 +407,9 @@ SDL_bool save_snapshot(struct machine *oric, char *filename)
     PUTU32(oric->wddisk.ddstatus);
     PUTU32(oric->wddisk.crc);
 
-    for (i=0; i<4; i++)
+    for(i=0; i<4; i++)
     {
-      if( oric->wddisk.disk[i] )
+      if(oric->wddisk.disk[i])
       {
         NEWBLOCK("DSK\x00");
         PUTU16(oric->wddisk.disk[i]->drivenum);
@@ -424,11 +424,11 @@ SDL_bool save_snapshot(struct machine *oric, char *filename)
     }
   }
 
-  if (oric->type == MACH_TELESTRAT)
+  if(oric->type == MACH_TELESTRAT)
   {
     // Bank info
     NEWBLOCK("BNK\x00");
-    for (i=0; i<8; i++)
+    for(i=0; i<8; i++)
       PUTU8(oric->tele_bank[i].type);
     PUTU8(oric->tele_currbank);
 
@@ -474,10 +474,10 @@ SDL_bool save_snapshot(struct machine *oric, char *filename)
   }
 
   // Symbols
-  if (oric->romsyms.numsyms)
+  if(oric->romsyms.numsyms)
   {
     NEWBLOCK("SYR\x00");
-    for (i=0; i<oric->romsyms.numsyms; i++)
+    for(i=0; i<oric->romsyms.numsyms; i++)
     {
       PUTSTR(oric->romsyms.syms[i].name);
       PUTU16(oric->romsyms.syms[i].addr);
@@ -485,10 +485,10 @@ SDL_bool save_snapshot(struct machine *oric, char *filename)
     }
   }
 
-  if (oric->usersyms.numsyms)
+  if(oric->usersyms.numsyms)
   {
     NEWBLOCK("SYU\x00");
-    for (i=0; i<oric->usersyms.numsyms; i++)
+    for(i=0; i<oric->usersyms.numsyms; i++)
     {
       PUTSTR(oric->usersyms.syms[i].name);
       PUTU16(oric->usersyms.syms[i].addr);
@@ -496,16 +496,16 @@ SDL_bool save_snapshot(struct machine *oric, char *filename)
     }
   }
 
-  if (oric->type == MACH_TELESTRAT)
+  if(oric->type == MACH_TELESTRAT)
   {
-    for (j=0; j<8; j++)
+    for(j=0; j<8; j++)
     {
-      if (oric->tele_banksyms[j].numsyms)
+      if(oric->tele_banksyms[j].numsyms)
       {
         char name[8];
         sprintf(name, "SY%d%c", j, 0);
         NEWBLOCK(name);
-        for (i=0; i<oric->tele_banksyms[j].numsyms; i++)
+        for(i=0; i<oric->tele_banksyms[j].numsyms; i++)
         {
           PUTSTR(oric->tele_banksyms[j].syms[i].name);
           PUTU16(oric->romsyms.syms[i].addr);
@@ -516,12 +516,12 @@ SDL_bool save_snapshot(struct machine *oric, char *filename)
   }
 
   // Breakpoints
-  if ((cpu->anybp) || (cpu->anymbp))
+  if((cpu->anybp) || (cpu->anymbp))
   {
     NEWBLOCK("BKP\x00");
-    for (i=0; i<16; i++)
+    for(i=0; i<16; i++)
       PUTU32(cpu->breakpoints[i]);
-    for (i=0; i<16; i++)
+    for(i=0; i<16; i++)
     {
       PUTU8(cpu->membreakpoints[i].flags);
       PUTU8(cpu->membreakpoints[i].lastval);
@@ -533,16 +533,17 @@ SDL_bool save_snapshot(struct machine *oric, char *filename)
   fclose(f);
   free(buf);
 
-  if (!ok)
+  if(!ok)
     msgbox(oric, MSGBOX_OK, "Snapshot failed! (3)");
 
 #ifdef WWW
   // sync from memory state to persisted
-    EM_ASM(
-        FS.syncfs(function (err) {
-          assert(!err);
-        });
-    );
+  EM_ASM(
+    FS.syncfs(function(err)
+  {
+    assert(!err);
+  });
+  );
 #endif
 
   return ok;
@@ -555,7 +556,7 @@ struct blockheader
   unsigned char       id[4];
   unsigned int        offset;
   unsigned int        size;
-  unsigned char      *buf;
+  unsigned char*      buf;
   struct blockheader *datablock;
   int                 offs;
 };
@@ -577,9 +578,9 @@ static SDL_bool getheaders(struct machine *oric, FILE *f)
   /* and make sure the file structure is sane. */
   offset = 0;
   numhdrs = 0;
-  while (offset < filesize)
+  while(offset < filesize)
   {
-    if (fread(hdr, 8, 1, f) != 1)
+    if(fread(hdr, 8, 1, f) != 1)
     {
       msgbox(oric, MSGBOX_OK, "Snapshot load failed: Read error (4)");
       numhdrs = 0;
@@ -587,7 +588,7 @@ static SDL_bool getheaders(struct machine *oric, FILE *f)
     }
 
     size = (hdr[4]<<24)|(hdr[5]<<16)|(hdr[6]<<8)|hdr[7];
-    if ((size == 0) || ((offset+size) > filesize))
+    if((size == 0) || ((offset+size) > filesize))
     {
       msgbox(oric, MSGBOX_OK, "Snapshot load failed: Invalid file structure (5)");
       numhdrs = 0;
@@ -601,7 +602,7 @@ static SDL_bool getheaders(struct machine *oric, FILE *f)
 
   /* Allocate memory to store all the block headers */
   bkh = (struct blockheader *)malloc(numhdrs*sizeof(struct blockheader));
-  if (!bkh)
+  if(!bkh)
   {
     msgbox(oric, MSGBOX_OK, "Snapshot load failed: Out of memory (6)");
     numhdrs = 0;
@@ -613,9 +614,9 @@ static SDL_bool getheaders(struct machine *oric, FILE *f)
   fseek(f, 0, SEEK_SET);
   offset = 0;
   i = 0;
-  while (offset < filesize)
+  while(offset < filesize)
   {
-    if (fread(hdr, 8, 1, f) != 1)
+    if(fread(hdr, 8, 1, f) != 1)
     {
       msgbox(oric, MSGBOX_OK, "Snapshot load failed: Read error (7)");
       free(bkh);
@@ -625,7 +626,7 @@ static SDL_bool getheaders(struct machine *oric, FILE *f)
     }
 
     size = (hdr[4]<<24)|(hdr[5]<<16)|(hdr[6]<<8)|hdr[7];
-    if ((size == 0) || ((offset+size) > filesize))
+    if((size == 0) || ((offset+size) > filesize))
     {
       msgbox(oric, MSGBOX_OK, "Snapshot load failed: Invalid file structure (8)");
       free(bkh);
@@ -640,7 +641,7 @@ static SDL_bool getheaders(struct machine *oric, FILE *f)
     bkh[i].size   = size;
 
     //printf("Block: %c%c%c%c (@ %d, size %d)\n", bkh[i].id[0], bkh[i].id[1], (bkh[i].id[2]>31)?bkh[i].id[2]:'.', (bkh[i].id[3]>31)?bkh[i].id[3]:'.', bkh[i].offset, bkh[i].size);
-    if ((i>0) && (memcmp(bkh[i].id, "DATA", 4)==0))
+    if((i>0) && (memcmp(bkh[i].id, "DATA", 4)==0))
     {
       bkh[i-1].datablock = &bkh[i];
     }
@@ -655,7 +656,7 @@ static SDL_bool getheaders(struct machine *oric, FILE *f)
 
 static void free_block(struct blockheader *blk)
 {
-  if ((!blk)||(!blk->buf)) return;
+  if((!blk)||(!blk->buf)) return;
   free(blk->buf);
   blk->buf = NULL;
 }
@@ -664,63 +665,63 @@ static void free_blockheaders(void)
 {
   int i;
 
-  if (!bkh) return;
+  if(!bkh) return;
 
-  for (i=0; i<numhdrs; i++)
+  for(i=0; i<numhdrs; i++)
   {
-    if (bkh[i].buf) free(bkh[i].buf);
+    if(bkh[i].buf) free(bkh[i].buf);
   }
   free(bkh);
 }
 
-static struct blockheader *load_block(struct machine *oric, char *id, FILE *f, SDL_bool required, int expectedsize, SDL_bool datarequired)
+static struct blockheader *load_block(struct machine *oric, char* id, FILE *f, SDL_bool required, int expectedsize, SDL_bool datarequired)
 {
   int i;
 
-  for (i=0; i<numhdrs; i++)
+  for(i=0; i<numhdrs; i++)
   {
-    if (memcmp(bkh[i].id, id, 4) == 0)
+    if(memcmp(bkh[i].id, id, 4) == 0)
       break;
   }
 
-  if (i==numhdrs)
+  if(i==numhdrs)
   {
     //printf("Unable to find %c%c%c%c\n", id[0], id[1], (id[2]>31)?id[2]:'.', (id[3]>31)?id[3]:'.');
-    if (required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Invalid file (9)");
+    if(required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Invalid file (9)");
     return NULL;
   }
 
-  if ((datarequired) && (bkh[i].datablock == NULL))
+  if((datarequired) && (bkh[i].datablock == NULL))
   {
-    if (required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Invalid file (10)");
+    if(required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Invalid file (10)");
     return NULL;
   }
 
-  if ((expectedsize != -1) && (bkh[i].size != expectedsize))
+  if((expectedsize != -1) && (bkh[i].size != expectedsize))
   {
     //printf("Size for %c%c%c%c is %d, expected %d\n", id[0], id[1], (id[2]>31)?id[2]:'.', (id[3]>31)?id[3]:'.', bkh[i].size, expectedsize);
-    if (required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Invalid file (11)");
+    if(required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Invalid file (11)");
     return NULL;
   }
 
   /* Already loaded it?! */
-  if (bkh[i].buf)
+  if(bkh[i].buf)
   {
     bkh[i].offs = 0;
     return &bkh[i];
   }
 
   bkh[i].buf = malloc(bkh[i].size);
-  if (!bkh[i].buf)
+  if(!bkh[i].buf)
   {
-    if (required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Out of memory (12)");
+    if(required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Out of memory (12)");
     return NULL;
   }
 
   fseek(f, bkh[i].offset, SEEK_SET);
-  if (fread(bkh[i].buf, bkh[i].size, 1, f) != 1)
+  if(fread(bkh[i].buf, bkh[i].size, 1, f) != 1)
   {
-    if (required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Read error (13)");
+    if(required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Read error (13)");
     return NULL;
   }
 
@@ -728,24 +729,24 @@ static struct blockheader *load_block(struct machine *oric, char *id, FILE *f, S
   return &bkh[i];
 }
 
-static SDL_bool read_block(struct machine *oric, struct blockheader *blk, FILE *f, SDL_bool required, unsigned char *destbuf)
+static SDL_bool read_block(struct machine *oric, struct blockheader *blk, FILE *f, SDL_bool required, unsigned char* destbuf)
 {
-  if (!blk)
+  if(!blk)
   {
-    if (required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Internal error (14)");
+    if(required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Internal error (14)");
     return SDL_FALSE;
   }
 
-  if (blk->buf)
+  if(blk->buf)
   {
     memcpy(destbuf, blk->buf, blk->size);
     return SDL_TRUE;
   }
 
   fseek(f, blk->offset, SEEK_SET);
-  if (fread(destbuf, blk->size, 1, f) != 1)
+  if(fread(destbuf, blk->size, 1, f) != 1)
   {
-    if (required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Read error (15)");
+    if(required) msgbox(oric, MSGBOX_OK, "Snapshot load failed: Read error (15)");
     return SDL_FALSE;
   }
 
@@ -787,13 +788,13 @@ static Uint8 getu8(struct blockheader *blk)
   return blk->buf[blk->offs++];
 }
 
-static void getdata(struct blockheader *blk, unsigned char *dest, unsigned int size)
+static void getdata(struct blockheader *blk, unsigned char* dest, unsigned int size)
 {
   memcpy(dest, &blk->buf[blk->offs], size);
   blk->offs += size;
 }
 
-SDL_bool load_snapshot(struct machine *oric, char *filename)
+SDL_bool load_snapshot(struct machine *oric, char* filename)
 {
   struct m6502 *cpu = &oric->cpu;
   int i;
@@ -803,7 +804,7 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
   struct blockheader *blk = NULL;
 
   f = fopen(filename, "rb");
-  if (!f)
+  if(!f)
   {
     msgbox(oric, MSGBOX_OK, "Unable to open snapshot file (16)");
     return SDL_FALSE;
@@ -817,7 +818,7 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
 
   /* Get the main block */
   blk = load_block(oric, "OSN\x00", f, SDL_TRUE, 21, SDL_TRUE);
-  if (!blk)
+  if(!blk)
   {
     free_blockheaders();
     fclose(f);
@@ -828,7 +829,7 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
   type      = blk->buf[0];
   drivetype = blk->buf[14];
 
-  if (type >= MACH_LAST)
+  if(type >= MACH_LAST)
   {
     msgbox(oric, MSGBOX_OK, "Snapshot load failed: Invalid file (17)");
     free_blockheaders();
@@ -840,27 +841,27 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
 
   /* Perform some validation */
   if((oric->drivetype != drivetype) ||             // Unrecognised or invalid drive type
-     (oric->memsize   != blk->datablock->size))    // Memsize incorrect for type
+      (oric->memsize   != blk->datablock->size))    // Memsize incorrect for type
   {
     msgbox(oric, MSGBOX_OK, "Snapshot load failed: Invalid file (18)");
     free_blockheaders();
     fclose(f);
-    if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+    if(back2mon) setemumode(oric, NULL, EM_DEBUG);
     return SDL_FALSE;
   }
 
   /* Read in the memory */
-  if (!read_block(oric, blk->datablock, f, SDL_TRUE, oric->mem))
+  if(!read_block(oric, blk->datablock, f, SDL_TRUE, oric->mem))
   {
     free_blockheaders();
     fclose(f);
-    if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+    if(back2mon) setemumode(oric, NULL, EM_DEBUG);
     return SDL_FALSE;
   }
 
   /* Clear things that will get replaced */
-  clear_patches( oric );
-  if (oric->tapebuf)
+  clear_patches(oric);
+  if(oric->tapebuf)
   {
     free(oric->tapebuf);
     oric->tapebuf = NULL;
@@ -871,35 +872,37 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
   oric->overclockmult  = getu32(blk);
   oric->overclockshift = getu32(blk);
   oric->vsync          = getu16(blk);
-  oric->romdis         = getu8 (blk);
-  oric->romon          = getu8 (blk);
-  oric->vsynchack      = getu8 (blk);
+  oric->romdis         = getu8(blk);
+  oric->romon          = getu8(blk);
+  oric->vsynchack      = getu8(blk);
   blk->offs++; // Skip drivetype (already got it)
-  oric->tapeturbo      = getu8 (blk);
-  oric->vid_mode       = getu8 (blk);
+  oric->tapeturbo      = getu8(blk);
+  oric->vid_mode       = getu8(blk);
   oric->keymap         = getu32(blk);
 
   // Finished with this one
   free_block(blk);
 
   oric->vid_freq = oric->vid_mode&2;
-  if( oric->vid_mode & 4 )
+  if(oric->vid_mode & 4)
   {
     oric->vid_addr = oric->vidbases[0];
     oric->vid_ch_base = &oric->mem[oric->vidbases[1]];
-  } else {
+  }
+  else
+  {
     oric->vid_addr = oric->vidbases[2];
     oric->vid_ch_base = &oric->mem[oric->vidbases[3]];
   }
 
   /* Get the CPU block */
   blk = load_block(oric, "CPU\x00", f, SDL_TRUE, 21, SDL_FALSE);
-  if (!blk)
+  if(!blk)
   {
     free_blockheaders();
     fclose(f);
-    setmenutoggles( oric );
-    if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+    setmenutoggles(oric);
+    if(back2mon) setemumode(oric, NULL, EM_DEBUG);
     return SDL_FALSE;
   }
 
@@ -908,28 +911,28 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
   cpu->lastpc   = getu16(blk);
   cpu->calcpc   = getu16(blk);
   cpu->calcint  = getu16(blk);
-  cpu->nmi      = getu8 (blk);
-  cpu->a        = getu8 (blk);
-  cpu->x        = getu8 (blk);
-  cpu->y        = getu8 (blk);
-  cpu->sp       = getu8 (blk);
-  i             = getu8 (blk);
+  cpu->nmi      = getu8(blk);
+  cpu->a        = getu8(blk);
+  cpu->x        = getu8(blk);
+  cpu->y        = getu8(blk);
+  cpu->sp       = getu8(blk);
+  i             = getu8(blk);
   SETFLAGS(i);
-  cpu->irq      = getu8 (blk);
-  cpu->nmicount = getu8 (blk);
-  cpu->calcop   = getu8 (blk);
+  cpu->irq      = getu8(blk);
+  cpu->nmicount = getu8(blk);
+  cpu->calcop   = getu8(blk);
 
   // Finished with this one
   free_block(blk);
 
   /* Get the AY block */
   blk = load_block(oric, "AY\x00\x00", f, SDL_TRUE, 153, SDL_FALSE);
-  if (!blk)
+  if(!blk)
   {
     free_blockheaders();
     fclose(f);
-    setmenutoggles( oric );
-    if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+    setmenutoggles(oric);
+    if(back2mon) setemumode(oric, NULL, EM_DEBUG);
     return SDL_FALSE;
   }
 
@@ -937,24 +940,24 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
   oric->ay.creg         = getu8(blk);
   getdata(blk, &oric->ay.eregs[0], NUM_AY_REGS);
   memcpy(&oric->ay.regs[0], &oric->ay.eregs[0], NUM_AY_REGS);
-  for (i=0; i<8; i++)
+  for(i=0; i<8; i++)
     oric->ay.keystates[i] = getu8(blk);
-  for (i=0; i<3; i++)
+  for(i=0; i<3; i++)
     oric->ay.toneper[i] = getu32(blk);
   oric->ay.noiseper     = getu32(blk);
   oric->ay.envper       = getu32(blk);
-  for (i=0; i<3; i++)
+  for(i=0; i<3; i++)
   {
     oric->ay.tonebit[i]  = getu16(blk);
     oric->ay.noisebit[i] = getu16(blk);
     oric->ay.vol[i]      = getu16(blk);
   }
   oric->ay.newout = getu16(blk);
-  for (i=0; i<3; i++)
+  for(i=0; i<3; i++)
     oric->ay.ct[i]      = getu32(blk);
   oric->ay.ctn          = getu32(blk);
   oric->ay.cte          = getu32(blk);
-  for (i=0; i<3; i++)
+  for(i=0; i<3; i++)
   {
     oric->ay.tonepos[i]  = getu32(blk);
     oric->ay.tonestep[i] = getu32(blk);
@@ -972,47 +975,47 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
 
   /* Get the VIA block */
   blk = load_block(oric, "VIA\x00", f, SDL_TRUE, 39, SDL_FALSE);
-  if (!blk)
+  if(!blk)
   {
     free_blockheaders();
     fclose(f);
-    setmenutoggles( oric );
-    if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+    setmenutoggles(oric);
+    if(back2mon) setemumode(oric, NULL, EM_DEBUG);
     return SDL_FALSE;
   }
 
-  oric->via.ifr      = getu8 (blk);
-  oric->via.irb      = getu8 (blk);
-  oric->via.orb      = getu8 (blk);
-  oric->via.irbl     = getu8 (blk);
-  oric->via.ira      = getu8 (blk);
-  oric->via.ora      = getu8 (blk);
-  oric->via.iral     = getu8 (blk);
-  oric->via.ddra     = getu8 (blk);
-  oric->via.ddrb     = getu8 (blk);
-  oric->via.t1l_l    = getu8 (blk);
-  oric->via.t1l_h    = getu8 (blk);
+  oric->via.ifr      = getu8(blk);
+  oric->via.irb      = getu8(blk);
+  oric->via.orb      = getu8(blk);
+  oric->via.irbl     = getu8(blk);
+  oric->via.ira      = getu8(blk);
+  oric->via.ora      = getu8(blk);
+  oric->via.iral     = getu8(blk);
+  oric->via.ddra     = getu8(blk);
+  oric->via.ddrb     = getu8(blk);
+  oric->via.t1l_l    = getu8(blk);
+  oric->via.t1l_h    = getu8(blk);
   oric->via.t1c      = getu16(blk);
-  oric->via.t2l_l    = getu8 (blk);
-  oric->via.t2l_h    = getu8 (blk);
+  oric->via.t2l_l    = getu8(blk);
+  oric->via.t2l_h    = getu8(blk);
   oric->via.t2c      = getu16(blk);
-  oric->via.sr       = getu8 (blk);
-  oric->via.acr      = getu8 (blk);
-  oric->via.pcr      = getu8 (blk);
-  oric->via.ier      = getu8 (blk);
-  oric->via.ca1      = getu8 (blk);
-  oric->via.ca2      = getu8 (blk);
-  oric->via.cb1      = getu8 (blk);
-  oric->via.cb2      = getu8 (blk);
-  oric->via.srcount  = getu8 (blk);
-  oric->via.t1reload = getu8 (blk);
-  oric->via.t2reload = getu8 (blk);
+  oric->via.sr       = getu8(blk);
+  oric->via.acr      = getu8(blk);
+  oric->via.pcr      = getu8(blk);
+  oric->via.ier      = getu8(blk);
+  oric->via.ca1      = getu8(blk);
+  oric->via.ca2      = getu8(blk);
+  oric->via.cb1      = getu8(blk);
+  oric->via.cb2      = getu8(blk);
+  oric->via.srcount  = getu8(blk);
+  oric->via.t1reload = getu8(blk);
+  oric->via.t2reload = getu8(blk);
   oric->via.srtime   = getu16(blk);
-  oric->via.t1run    = getu8 (blk);
-  oric->via.t2run    = getu8 (blk);
-  oric->via.ca2pulse = getu8 (blk);
-  oric->via.cb2pulse = getu8 (blk);
-  oric->via.srtrigger= getu8 (blk);
+  oric->via.t1run    = getu8(blk);
+  oric->via.t2run    = getu8(blk);
+  oric->via.ca2pulse = getu8(blk);
+  oric->via.cb2pulse = getu8(blk);
+  oric->via.srtrigger= getu8(blk);
   oric->via.irqbit   = getu32(blk);
 
   // Finished with this one
@@ -1020,18 +1023,18 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
 
   /* Get the tape block */
   blk = load_block(oric, "TAP\x00", f, SDL_TRUE, 46, SDL_FALSE);
-  if (!blk)
+  if(!blk)
   {
     free_blockheaders();
     fclose(f);
-    setmenutoggles( oric );
-    if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+    setmenutoggles(oric);
+    if(back2mon) setemumode(oric, NULL, EM_DEBUG);
     return SDL_FALSE;
   }
 
-  oric->tapebit     = getu8 (blk);
-  oric->tapeout     = getu8 (blk);
-  oric->tapeparity  = getu8 (blk);
+  oric->tapebit     = getu8(blk);
+  oric->tapeout     = getu8(blk);
+  oric->tapeparity  = getu8(blk);
   oric->tapelen     = getu32(blk);
   oric->tapeoffs    = getu32(blk);
   oric->tapecount   = getu32(blk);
@@ -1039,14 +1042,14 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
   oric->tapedupbytes= getu32(blk);
   oric->tapehdrend  = getu32(blk);
   oric->tapedelay   = getu32(blk);
-  oric->tapemotor   = getu8 (blk);
+  oric->tapemotor   = getu8(blk);
   oric->tapeturbo_forceoff= getu8(blk);
-  oric->rawtape     = getu8 (blk);
+  oric->rawtape     = getu8(blk);
   oric->nonrawend   = getu32(blk);
   oric->tapehitend  = getu32(blk);
   oric->tapeturbo_syncstack = getu32(blk);
 
-  if (!blk->datablock)
+  if(!blk->datablock)
   {
     oric->tapelen = 0;
     oric->tapeoffs = 0;
@@ -1054,22 +1057,22 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
   else
   {
     oric->tapebuf = malloc(blk->datablock->size);
-    if (!oric->tapebuf)
+    if(!oric->tapebuf)
     {
       msgbox(oric, MSGBOX_OK, "Snapshot load failed: Out of memory (19)");
       free_blockheaders();
       fclose(f);
-      setmenutoggles( oric );
-      if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+      setmenutoggles(oric);
+      if(back2mon) setemumode(oric, NULL, EM_DEBUG);
       return SDL_FALSE;
     }
 
-    if (!read_block(oric, blk->datablock, f, SDL_TRUE, oric->tapebuf))
+    if(!read_block(oric, blk->datablock, f, SDL_TRUE, oric->tapebuf))
     {
       free_blockheaders();
       fclose(f);
-      setmenutoggles( oric );
-      if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+      setmenutoggles(oric);
+      if(back2mon) setemumode(oric, NULL, EM_DEBUG);
       return SDL_FALSE;
     }
   }
@@ -1078,7 +1081,7 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
   free_block(blk);
 
   /* Get the patch block */
-  if ((blk = load_block(oric, "PCH\x00", f, SDL_FALSE, 76, SDL_FALSE)))
+  if((blk = load_block(oric, "PCH\x00", f, SDL_FALSE, 76, SDL_FALSE)))
   {
     oric->pch_fd_cload_getname_pc        = getu32(blk);
     oric->pch_fd_csave_getname_pc        = getu32(blk);
@@ -1099,25 +1102,25 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
     oric->pch_tt_store_end_pc            = getu32(blk);
     oric->pch_tt_writeleader_pc          = getu32(blk);
     oric->pch_tt_writeleader_end_pc      = getu32(blk);
-    oric->pch_tt_readbyte_setcarry       = getu8 (blk);
-    oric->pch_tt_available               = getu8 (blk);
-    oric->pch_tt_save_available          = getu8 (blk);
+    oric->pch_tt_readbyte_setcarry       = getu8(blk);
+    oric->pch_tt_available               = getu8(blk);
+    oric->pch_tt_save_available          = getu8(blk);
 
     // Finished with this one
     free_block(blk);
   }
 
-  switch (oric->drivetype)
+  switch(oric->drivetype)
   {
     case DRV_JASMIN:
       /* Get the jasmin block */
       blk = load_block(oric, "JSM\x00", f, SDL_TRUE, 2, SDL_FALSE);
-      if (!blk)
+      if(!blk)
       {
         free_blockheaders();
         fclose(f);
-        setmenutoggles( oric );
-        if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+        setmenutoggles(oric);
+        if(back2mon) setemumode(oric, NULL, EM_DEBUG);
         return SDL_FALSE;
       }
 
@@ -1133,12 +1136,12 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
     case DRV_MICRODISC:
       /* Get the microdisc block */
       blk = load_block(oric, "MDC\x00", f, SDL_TRUE, 4, SDL_FALSE);
-      if (!blk)
+      if(!blk)
       {
         free_blockheaders();
         fclose(f);
-        setmenutoggles( oric );
-        if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+        setmenutoggles(oric);
+        if(back2mon) setemumode(oric, NULL, EM_DEBUG);
         return SDL_FALSE;
       }
 
@@ -1154,155 +1157,155 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
       break;
 
     case DRV_PRAVETZ:
-    {
-      Uint8 tmp[PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE*2];
-      Uint32 offs_;
-
-      /* Get the pravetz block */
-      blk = load_block(oric, "PRV\x00", f, SDL_TRUE, 9+2*10, SDL_TRUE);
-      if (!blk)
       {
-        free_blockheaders();
-        fclose(f);
-        setmenutoggles( oric );
-        if (back2mon) setemumode(oric, NULL, EM_DEBUG);
-        return SDL_FALSE;
-      }
+        Uint8 tmp[PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE*2];
+        Uint32 offs_;
 
-      oric->pravetz.olay        = getu8(blk);
-      oric->pravetz.romdis      = getu8(blk);
-      oric->pravetz.extension   = getu16(blk);
-      oric->wddisk.c_drive      = getu8(blk);
-      oric->wddisk.currentop    = getu32(blk);
-
-      for (i=0; i<2; i++)
-      {
-        oric->pravetz.drv[i].volume      = getu8(blk);
-        oric->pravetz.drv[i].select      = getu8(blk);
-        oric->pravetz.drv[i].motor_on    = getu8(blk);
-        oric->pravetz.drv[i].write_ready = getu8(blk);
-        oric->pravetz.drv[i].byte        = getu16(blk);
-        oric->pravetz.drv[i].half_track  = getu16(blk);
-        oric->pravetz.drv[i].dirty       = getu8(blk);
-        oric->pravetz.drv[i].prot        = getu8(blk);
-      }
-
-      if (!read_block(oric, blk->datablock, f, SDL_TRUE, tmp))
-      {
-        free_blockheaders();
-        fclose(f);
-        setmenutoggles( oric );
-        if (back2mon) setemumode(oric, NULL, EM_DEBUG);
-        return SDL_FALSE;
-      }
-
-      memcpy(&oric->pravetz.drv[0].image[0][0], tmp, PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE);
-      memcpy(&oric->pravetz.drv[1].image[0][0], &tmp[PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE], PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE);
-
-      free_block(blk);
-
-      // Get the disk images
-      while ((blk = load_block(oric, "PVD\x00", f, SDL_FALSE, -1, SDL_FALSE)))
-      {
-        // Get the drive associated with this disk image
-        i = getu16(blk);
-        if ((i<0) || (i>1) || (oric->wddisk.disk[i] != NULL) || (!blk->datablock) || (blk->size != 10))
+        /* Get the pravetz block */
+        blk = load_block(oric, "PRV\x00", f, SDL_TRUE, 9+2*10, SDL_TRUE);
+        if(!blk)
         {
-          msgbox(oric, MSGBOX_OK, "Snapshot load failed: Invalid file (PVD1)");
           free_blockheaders();
           fclose(f);
-          setmenutoggles( oric );
-          if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+          setmenutoggles(oric);
+          if(back2mon) setemumode(oric, NULL, EM_DEBUG);
           return SDL_FALSE;
         }
 
-        // Allocate a diskimage header
-        oric->wddisk.disk[i] = (struct diskimage *)malloc(sizeof(struct diskimage));
-        if (!oric->wddisk.disk[i])
-        {
-          msgbox(oric, MSGBOX_OK, "Snapshot load failed: Out of memory (PVD2)");
-          free_blockheaders();
-          fclose(f);
-          setmenutoggles( oric );
-          if (back2mon) setemumode(oric, NULL, EM_DEBUG);
-          return SDL_FALSE;
-        }
-        memset(oric->wddisk.disk[i], 0, sizeof(struct diskimage));
+        oric->pravetz.olay        = getu8(blk);
+        oric->pravetz.romdis      = getu8(blk);
+        oric->pravetz.extension   = getu16(blk);
+        oric->wddisk.c_drive      = getu8(blk);
+        oric->wddisk.currentop    = getu32(blk);
 
-        // Allocate space for the disk image
-        oric->wddisk.disk[i]->rawimage = malloc(blk->datablock->size);
-        if (!oric->wddisk.disk[i])
+        for(i=0; i<2; i++)
         {
-          free(oric->wddisk.disk[i]);
-          oric->wddisk.disk[i] = NULL;
-          msgbox(oric, MSGBOX_OK, "Snapshot load failed: Out of memory (PVD3)");
-          free_blockheaders();
-          fclose(f);
-          setmenutoggles( oric );
-          if (back2mon) setemumode(oric, NULL, EM_DEBUG);
-          return SDL_FALSE;
+          oric->pravetz.drv[i].volume      = getu8(blk);
+          oric->pravetz.drv[i].select      = getu8(blk);
+          oric->pravetz.drv[i].motor_on    = getu8(blk);
+          oric->pravetz.drv[i].write_ready = getu8(blk);
+          oric->pravetz.drv[i].byte        = getu16(blk);
+          oric->pravetz.drv[i].half_track  = getu16(blk);
+          oric->pravetz.drv[i].dirty       = getu8(blk);
+          oric->pravetz.drv[i].prot        = getu8(blk);
         }
 
-        // Read in the disk image
-        if (!read_block(oric, blk->datablock, f, SDL_TRUE, oric->wddisk.disk[i]->rawimage))
+        if(!read_block(oric, blk->datablock, f, SDL_TRUE, tmp))
         {
-          free(oric->wddisk.disk[i]->rawimage);
-          free(oric->wddisk.disk[i]);
-          oric->wddisk.disk[i] = NULL;
           free_blockheaders();
           fclose(f);
-          setmenutoggles( oric );
-          if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+          setmenutoggles(oric);
+          if(back2mon) setemumode(oric, NULL, EM_DEBUG);
           return SDL_FALSE;
         }
 
-        oric->wddisk.disk[i]->cachedtrack = -1;
-        oric->wddisk.disk[i]->cachedside  = -1;
+        memcpy(&oric->pravetz.drv[0].image[0][0], tmp, PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE);
+        memcpy(&oric->pravetz.drv[1].image[0][0], &tmp[PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE], PRAV_TRACKS_PER_DISK*PRAV_RAW_TRACK_SIZE);
 
-        // Fill out the disk image header
-        oric->wddisk.disk[i]->drivenum    = i;
-        oric->wddisk.disk[i]->rawimagelen = getu32(blk);
-
-        sprintf(oric->wddisk.disk[i]->filename, "%s%cSNAPDISK%d.DSK", diskpath, PATHSEP, i);
-
-        offs_ = getu32(blk);
-        oric->pravetz.drv[i].pimg = oric->wddisk.disk[i];
-        if (offs_ == 0xffffffff)
-          oric->pravetz.drv[i].sector_ptr = NULL;
-        else
-          oric->pravetz.drv[i].sector_ptr = &oric->pravetz.drv[i].pimg->rawimage[offs_];
-
-        blk->id[0] = 0; // Don't find this one again
         free_block(blk);
+
+        // Get the disk images
+        while((blk = load_block(oric, "PVD\x00", f, SDL_FALSE, -1, SDL_FALSE)))
+        {
+          // Get the drive associated with this disk image
+          i = getu16(blk);
+          if((i<0) || (i>1) || (oric->wddisk.disk[i] != NULL) || (!blk->datablock) || (blk->size != 10))
+          {
+            msgbox(oric, MSGBOX_OK, "Snapshot load failed: Invalid file (PVD1)");
+            free_blockheaders();
+            fclose(f);
+            setmenutoggles(oric);
+            if(back2mon) setemumode(oric, NULL, EM_DEBUG);
+            return SDL_FALSE;
+          }
+
+          // Allocate a diskimage header
+          oric->wddisk.disk[i] = (struct diskimage *)malloc(sizeof(struct diskimage));
+          if(!oric->wddisk.disk[i])
+          {
+            msgbox(oric, MSGBOX_OK, "Snapshot load failed: Out of memory (PVD2)");
+            free_blockheaders();
+            fclose(f);
+            setmenutoggles(oric);
+            if(back2mon) setemumode(oric, NULL, EM_DEBUG);
+            return SDL_FALSE;
+          }
+          memset(oric->wddisk.disk[i], 0, sizeof(struct diskimage));
+
+          // Allocate space for the disk image
+          oric->wddisk.disk[i]->rawimage = malloc(blk->datablock->size);
+          if(!oric->wddisk.disk[i])
+          {
+            free(oric->wddisk.disk[i]);
+            oric->wddisk.disk[i] = NULL;
+            msgbox(oric, MSGBOX_OK, "Snapshot load failed: Out of memory (PVD3)");
+            free_blockheaders();
+            fclose(f);
+            setmenutoggles(oric);
+            if(back2mon) setemumode(oric, NULL, EM_DEBUG);
+            return SDL_FALSE;
+          }
+
+          // Read in the disk image
+          if(!read_block(oric, blk->datablock, f, SDL_TRUE, oric->wddisk.disk[i]->rawimage))
+          {
+            free(oric->wddisk.disk[i]->rawimage);
+            free(oric->wddisk.disk[i]);
+            oric->wddisk.disk[i] = NULL;
+            free_blockheaders();
+            fclose(f);
+            setmenutoggles(oric);
+            if(back2mon) setemumode(oric, NULL, EM_DEBUG);
+            return SDL_FALSE;
+          }
+
+          oric->wddisk.disk[i]->cachedtrack = -1;
+          oric->wddisk.disk[i]->cachedside  = -1;
+
+          // Fill out the disk image header
+          oric->wddisk.disk[i]->drivenum    = i;
+          oric->wddisk.disk[i]->rawimagelen = getu32(blk);
+
+          sprintf(oric->wddisk.disk[i]->filename, "%s%cSNAPDISK%d.DSK", diskpath, PATHSEP, i);
+
+          offs_ = getu32(blk);
+          oric->pravetz.drv[i].pimg = oric->wddisk.disk[i];
+          if(offs_ == 0xffffffff)
+            oric->pravetz.drv[i].sector_ptr = NULL;
+          else
+            oric->pravetz.drv[i].sector_ptr = &oric->pravetz.drv[i].pimg->rawimage[offs_];
+
+          blk->id[0] = 0; // Don't find this one again
+          free_block(blk);
+        }
       }
-    }
   }
 
-  if (do_wd17xx)
+  if(do_wd17xx)
   {
     Uint8 disks[4];
 
     /* Get the wd17xx block */
     blk = load_block(oric, "WDD\x00", f, SDL_TRUE, 38, SDL_FALSE);
-    if (!blk)
+    if(!blk)
     {
       free_blockheaders();
       fclose(f);
-      setmenutoggles( oric );
-      if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+      setmenutoggles(oric);
+      if(back2mon) setemumode(oric, NULL, EM_DEBUG);
       return SDL_FALSE;
     }
 
-    oric->wddisk.r_status     = getu8 (blk);
-    oric->wddisk.r_track      = getu8 (blk);
-    oric->wddisk.r_sector     = getu8 (blk);
-    oric->wddisk.r_data       = getu8 (blk);
-    oric->wddisk.c_drive      = getu8 (blk);
-    oric->wddisk.c_side       = getu8 (blk);
-    oric->wddisk.c_track      = getu8 (blk);
-    oric->wddisk.c_sector     = getu8 (blk);
-    oric->wddisk.sectype      = getu8 (blk);
-    oric->wddisk.last_step_in = getu8 (blk);
+    oric->wddisk.r_status     = getu8(blk);
+    oric->wddisk.r_track      = getu8(blk);
+    oric->wddisk.r_sector     = getu8(blk);
+    oric->wddisk.r_data       = getu8(blk);
+    oric->wddisk.c_drive      = getu8(blk);
+    oric->wddisk.c_side       = getu8(blk);
+    oric->wddisk.c_track      = getu8(blk);
+    oric->wddisk.c_sector     = getu8(blk);
+    oric->wddisk.sectype      = getu8(blk);
+    oric->wddisk.last_step_in = getu8(blk);
     getdata(blk, disks, 4);
     oric->wddisk.currentop    = getu32(blk);
     oric->wddisk.curroffs     = getu32(blk);
@@ -1316,59 +1319,59 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
     free_block(blk);
 
     // Get the disk images
-    while ((blk = load_block(oric, "DSK\x00", f, SDL_FALSE, -1, SDL_FALSE)))
+    while((blk = load_block(oric, "DSK\x00", f, SDL_FALSE, -1, SDL_FALSE)))
     {
       int track_to_cache=-1, side_to_cache=-1;
 
       // Get the drive associated with this disk image
       i = getu16(blk);
-      if ((i<0) || (i>3) || (oric->wddisk.disk[i] != NULL) || (!blk->datablock) || (blk->size != 16))
+      if((i<0) || (i>3) || (oric->wddisk.disk[i] != NULL) || (!blk->datablock) || (blk->size != 16))
       {
         msgbox(oric, MSGBOX_OK, "Snapshot load failed: Invalid file (20)");
         free_blockheaders();
         fclose(f);
-        setmenutoggles( oric );
-        if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+        setmenutoggles(oric);
+        if(back2mon) setemumode(oric, NULL, EM_DEBUG);
         return SDL_FALSE;
       }
 
       // Allocate a diskimage header
       oric->wddisk.disk[i] = (struct diskimage *)malloc(sizeof(struct diskimage));
-      if (!oric->wddisk.disk[i])
+      if(!oric->wddisk.disk[i])
       {
         msgbox(oric, MSGBOX_OK, "Snapshot load failed: Out of memory (21)");
         free_blockheaders();
         fclose(f);
-        setmenutoggles( oric );
-        if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+        setmenutoggles(oric);
+        if(back2mon) setemumode(oric, NULL, EM_DEBUG);
         return SDL_FALSE;
       }
       memset(oric->wddisk.disk[i], 0, sizeof(struct diskimage));
 
       // Allocate space for the disk image
       oric->wddisk.disk[i]->rawimage = malloc(blk->datablock->size);
-      if (!oric->wddisk.disk[i])
+      if(!oric->wddisk.disk[i])
       {
         free(oric->wddisk.disk[i]);
         oric->wddisk.disk[i] = NULL;
         msgbox(oric, MSGBOX_OK, "Snapshot load failed: Out of memory (22)");
         free_blockheaders();
         fclose(f);
-        setmenutoggles( oric );
-        if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+        setmenutoggles(oric);
+        if(back2mon) setemumode(oric, NULL, EM_DEBUG);
         return SDL_FALSE;
       }
 
       // Read in the disk image
-      if (!read_block(oric, blk->datablock, f, SDL_TRUE, oric->wddisk.disk[i]->rawimage))
+      if(!read_block(oric, blk->datablock, f, SDL_TRUE, oric->wddisk.disk[i]->rawimage))
       {
         free(oric->wddisk.disk[i]->rawimage);
         free(oric->wddisk.disk[i]);
         oric->wddisk.disk[i] = NULL;
         free_blockheaders();
         fclose(f);
-        setmenutoggles( oric );
-        if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+        setmenutoggles(oric);
+        if(back2mon) setemumode(oric, NULL, EM_DEBUG);
         return SDL_FALSE;
       }
 
@@ -1384,10 +1387,10 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
       side_to_cache                     = gets16(blk);
       oric->wddisk.disk[i]->rawimagelen = getu32(blk);
 
-      if ((track_to_cache != -1) && (side_to_cache != -1))
+      if((track_to_cache != -1) && (side_to_cache != -1))
         diskimage_cachetrack(oric->wddisk.disk[i], track_to_cache, side_to_cache);
 
-      if (oric->wddisk.c_drive == i)
+      if(oric->wddisk.c_drive == i)
         oric->wddisk.currsector = wd17xx_find_sector(&oric->wddisk, oric->wddisk.r_sector);
 
       sprintf(oric->wddisk.disk[i]->filename, "%s%cSNAPDISK%d.DSK", diskpath, PATHSEP, i);
@@ -1397,20 +1400,20 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
     }
   }
 
-  if (oric->type == MACH_TELESTRAT)
+  if(oric->type == MACH_TELESTRAT)
   {
     /* Get the bank information block */
     blk = load_block(oric, "BNK\x00", f, SDL_TRUE, 9, SDL_FALSE);
-    if (!blk)
+    if(!blk)
     {
       free_blockheaders();
       fclose(f);
-      setmenutoggles( oric );
-      if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+      setmenutoggles(oric);
+      if(back2mon) setemumode(oric, NULL, EM_DEBUG);
       return SDL_FALSE;
     }
 
-    for (i=0; i<8; i++)
+    for(i=0; i<8; i++)
       oric->tele_bank[i].type = getu8(blk);
     oric->tele_currbank = getu8(blk);
 
@@ -1419,12 +1422,12 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
 
     /* Get the ACIA block */
     blk = load_block(oric, "ACI\x00", f, SDL_TRUE, ACIA_LAST, SDL_FALSE);
-    if (!blk)
+    if(!blk)
     {
       free_blockheaders();
       fclose(f);
-      setmenutoggles( oric );
-      if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+      setmenutoggles(oric);
+      if(back2mon) setemumode(oric, NULL, EM_DEBUG);
       return SDL_FALSE;
     }
 
@@ -1435,12 +1438,12 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
 
     /* Get the AUX ACIA block */
     blk = load_block(oric, "AUX\x00", f, SDL_TRUE, ACIA_LAST, SDL_FALSE);
-    if (!blk)
+    if(!blk)
     {
       free_blockheaders();
       fclose(f);
-      setmenutoggles( oric );
-      if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+      setmenutoggles(oric);
+      if(back2mon) setemumode(oric, NULL, EM_DEBUG);
       return SDL_FALSE;
     }
 
@@ -1449,47 +1452,47 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
 
     /* Get the VIA block */
     blk = load_block(oric, "TVA\x00", f, SDL_TRUE, 39, SDL_FALSE);
-    if (!blk)
+    if(!blk)
     {
       free_blockheaders();
       fclose(f);
-      setmenutoggles( oric );
-      if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+      setmenutoggles(oric);
+      if(back2mon) setemumode(oric, NULL, EM_DEBUG);
       return SDL_FALSE;
     }
 
-    oric->tele_via.ifr      = getu8 (blk);
-    oric->tele_via.irb      = getu8 (blk);
-    oric->tele_via.orb      = getu8 (blk);
-    oric->tele_via.irbl     = getu8 (blk);
-    oric->tele_via.ira      = getu8 (blk);
-    oric->tele_via.ora      = getu8 (blk);
-    oric->tele_via.iral     = getu8 (blk);
-    oric->tele_via.ddra     = getu8 (blk);
-    oric->tele_via.ddrb     = getu8 (blk);
-    oric->tele_via.t1l_l    = getu8 (blk);
-    oric->tele_via.t1l_h    = getu8 (blk);
+    oric->tele_via.ifr      = getu8(blk);
+    oric->tele_via.irb      = getu8(blk);
+    oric->tele_via.orb      = getu8(blk);
+    oric->tele_via.irbl     = getu8(blk);
+    oric->tele_via.ira      = getu8(blk);
+    oric->tele_via.ora      = getu8(blk);
+    oric->tele_via.iral     = getu8(blk);
+    oric->tele_via.ddra     = getu8(blk);
+    oric->tele_via.ddrb     = getu8(blk);
+    oric->tele_via.t1l_l    = getu8(blk);
+    oric->tele_via.t1l_h    = getu8(blk);
     oric->tele_via.t1c      = getu16(blk);
-    oric->tele_via.t2l_l    = getu8 (blk);
-    oric->tele_via.t2l_h    = getu8 (blk);
+    oric->tele_via.t2l_l    = getu8(blk);
+    oric->tele_via.t2l_h    = getu8(blk);
     oric->tele_via.t2c      = getu16(blk);
-    oric->tele_via.sr       = getu8 (blk);
-    oric->tele_via.acr      = getu8 (blk);
-    oric->tele_via.pcr      = getu8 (blk);
-    oric->tele_via.ier      = getu8 (blk);
-    oric->tele_via.ca1      = getu8 (blk);
-    oric->tele_via.ca2      = getu8 (blk);
-    oric->tele_via.cb1      = getu8 (blk);
-    oric->tele_via.cb2      = getu8 (blk);
-    oric->tele_via.srcount  = getu8 (blk);
-    oric->tele_via.t1reload = getu8 (blk);
-    oric->tele_via.t2reload = getu8 (blk);
+    oric->tele_via.sr       = getu8(blk);
+    oric->tele_via.acr      = getu8(blk);
+    oric->tele_via.pcr      = getu8(blk);
+    oric->tele_via.ier      = getu8(blk);
+    oric->tele_via.ca1      = getu8(blk);
+    oric->tele_via.ca2      = getu8(blk);
+    oric->tele_via.cb1      = getu8(blk);
+    oric->tele_via.cb2      = getu8(blk);
+    oric->tele_via.srcount  = getu8(blk);
+    oric->tele_via.t1reload = getu8(blk);
+    oric->tele_via.t2reload = getu8(blk);
     oric->tele_via.srtime   = getu16(blk);
-    oric->tele_via.t1run    = getu8 (blk);
-    oric->tele_via.t2run    = getu8 (blk);
-    oric->tele_via.ca2pulse = getu8 (blk);
-    oric->tele_via.cb2pulse = getu8 (blk);
-    oric->tele_via.srtrigger= getu8 (blk);
+    oric->tele_via.t1run    = getu8(blk);
+    oric->tele_via.t2run    = getu8(blk);
+    oric->tele_via.ca2pulse = getu8(blk);
+    oric->tele_via.cb2pulse = getu8(blk);
+    oric->tele_via.srtrigger= getu8(blk);
     oric->tele_via.irqbit   = getu32(blk);
 
     // Finished with this one
@@ -1498,26 +1501,26 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
 
 #ifdef WWW_MONITOR
   /* Get the rom symbols block */
-  if ((blk = load_block(oric, "SYR\x00", f, SDL_FALSE, -1, SDL_FALSE)))
+  if((blk = load_block(oric, "SYR\x00", f, SDL_FALSE, -1, SDL_FALSE)))
   {
     mon_symsfromsnapshot(&oric->romsyms, blk->buf, blk->size);
     free_block(blk);
   }
 
   /* Get the user symbols block */
-  if ((blk = load_block(oric, "SYU\x00", f, SDL_FALSE, -1, SDL_FALSE)))
+  if((blk = load_block(oric, "SYU\x00", f, SDL_FALSE, -1, SDL_FALSE)))
   {
     mon_symsfromsnapshot(&oric->usersyms, blk->buf, blk->size);
     free_block(blk);
   }
 
-  if (oric->type == MACH_TELESTRAT)
+  if(oric->type == MACH_TELESTRAT)
   {
-    for (i=0; i<8; i++)
+    for(i=0; i<8; i++)
     {
       char name[8];
       sprintf(name, "SY%d%c", i, 0);
-      if ((blk = load_block(oric, name, f, SDL_FALSE, -1, SDL_FALSE)))
+      if((blk = load_block(oric, name, f, SDL_FALSE, -1, SDL_FALSE)))
       {
         mon_symsfromsnapshot(&oric->tele_banksyms[i], blk->buf, blk->size);
         free_block(blk);
@@ -1526,23 +1529,23 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
   }
 
   /* ... and finally, breakpoints! */
-  if ((blk = load_block(oric, "BKP\x00", f, SDL_FALSE, -1, SDL_FALSE)))
+  if((blk = load_block(oric, "BKP\x00", f, SDL_FALSE, -1, SDL_FALSE)))
   {
     cpu->anybp = SDL_FALSE;
     cpu->anymbp = SDL_FALSE;
 
-    for (i=0; i<16; i++)
+    for(i=0; i<16; i++)
     {
       cpu->breakpoints[i] = gets32(blk);
-      if (cpu->breakpoints[i] != -1) cpu->anybp = SDL_TRUE;
+      if(cpu->breakpoints[i] != -1) cpu->anybp = SDL_TRUE;
     }
 
-    for (i=0; i<16; i++)
+    for(i=0; i<16; i++)
     {
       cpu->membreakpoints[i].flags   = getu8(blk);
       cpu->membreakpoints[i].lastval = getu8(blk);
       cpu->membreakpoints[i].addr    = getu16(blk);
-      if (cpu->membreakpoints[i].flags) cpu->anymbp = SDL_TRUE;
+      if(cpu->membreakpoints[i].flags) cpu->anymbp = SDL_TRUE;
     }
 
     free_block(blk);
@@ -1551,8 +1554,8 @@ SDL_bool load_snapshot(struct machine *oric, char *filename)
 
   free_blockheaders();
   fclose(f);
-  setmenutoggles( oric );
-  if (back2mon) setemumode(oric, NULL, EM_DEBUG);
+  setmenutoggles(oric);
+  if(back2mon) setemumode(oric, NULL, EM_DEBUG);
   return SDL_TRUE;
 }
 

@@ -54,7 +54,7 @@ extern SDL_bool soundavailable, soundon, warpspeed;
 
 // Variables used by the queuekeys function
 // (only works for ROM routines)
-static char *keyqueue = NULL;
+static char* keyqueue = NULL;
 static int keysqueued = 0, kqoffs = 0;
 
 // Volume levels
@@ -72,7 +72,7 @@ unsigned char eshapeC[] = {  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15, 128
 unsigned char eshapeD[] = {  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15, 128+15 };
 unsigned char eshapeE[] = {  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 128+0 };
 
-unsigned char *eshapes[] = { eshape0, // 0000
+unsigned char* eshapes[] = { eshape0, // 0000
                              eshape0, // 0001
                              eshape0, // 0010
                              eshape0, // 0011
@@ -87,50 +87,54 @@ unsigned char *eshapes[] = { eshape0, // 0000
                              eshapeC, // 1100
                              eshapeD, // 1101
                              eshapeE, // 1110
-                             eshape4 };//1111
+                             eshape4
+                           };//1111
 
 
 static SDL_COMPAT_KEY *keytab;
 
 // Oric keymap (QWERTY)
 //                                FE           FD           FB           F7           EF           DF           BF           7F
-static SDL_COMPAT_KEY qwktab[] = { '7'        , 'n'        , '5'        , 'v'        , SDLK_RCTRL , '1'        , 'x'        , '3'        ,
-                                   'j'        , 't'        , 'r'        , 'f'        , 0          , SDLK_ESCAPE, 'q'        , 'd'        ,
-                                   'm'        , '6'        , 'b'        , '4'        , SDLK_LCTRL , 'z'        , '2'        , 'c'        ,
-                                   'k'        , '9'        , ';'        , '-'        , '#'        , 0          , '\\'       , '\''       ,
-                                   SDLK_SPACE , ','        , '.'        , SDLK_UP    , SDLK_LSHIFT, SDLK_LEFT  , SDLK_DOWN  , SDLK_RIGHT ,
-                                   'u'        , 'i'        , 'o'        , 'p'        , SDLK_LALT  , SDLK_BACKSPACE, ']'     , '['        ,
-                                   'y'        , 'h'        , 'g'        , 'e'        , SDLK_RALT  , 'a'        , 's'        , 'w'        ,
-                                   '8'        , 'l'        , '0'        , '/'        , SDLK_RSHIFT, SDLK_RETURN, '`'        , SDLK_EQUALS };
+static SDL_COMPAT_KEY qwktab[] = { '7', 'n', '5', 'v', SDLK_RCTRL, '1', 'x', '3',
+                                   'j', 't', 'r', 'f', 0, SDLK_ESCAPE, 'q', 'd',
+                                   'm', '6', 'b', '4', SDLK_LCTRL, 'z', '2', 'c',
+                                   'k', '9', ';', '-', '#', 0, '\\', '\'',
+                                   SDLK_SPACE, ',', '.', SDLK_UP, SDLK_LSHIFT, SDLK_LEFT, SDLK_DOWN, SDLK_RIGHT,
+                                   'u', 'i', 'o', 'p', SDLK_LALT, SDLK_BACKSPACE, ']', '[',
+                                   'y', 'h', 'g', 'e', SDLK_RALT, 'a', 's', 'w',
+                                   '8', 'l', '0', '/', SDLK_RSHIFT, SDLK_RETURN, '`', SDLK_EQUALS
+                                 };
 
 // AZERTY
-static SDL_COMPAT_KEY azktab[] = { '7'        , 'n'        , '5'        , 'v'        , SDLK_RCTRL , '1'        , 'x'        , '3'        ,
-                                   'j'        , 't'        , 'r'        , 'f'        , 0          , SDLK_ESCAPE, 'a'        , 'd'        ,
-                                   'm'        , '6'        , 'b'        , '4'        , SDLK_LCTRL , 'w'        , '2'        , 'c'        ,
-                                   'k'        , '9'        , ';'        , '-'        , '#'        , 0          , '\\'       , '\''       ,
-                                   SDLK_SPACE , ','        , '.'        , SDLK_UP    , SDLK_LSHIFT, SDLK_LEFT  , SDLK_DOWN  , SDLK_RIGHT ,
-                                   'u'        , 'i'        , 'o'        , 'p'        , SDLK_LALT  , SDLK_BACKSPACE, ']'     , '['        ,
-                                   'y'        , 'h'        , 'g'        , 'e'        , SDLK_RALT  , 'q'        , 's'        , 'z'        ,
-                                   '8'        , 'l'        , '0'        , '/'        , SDLK_RSHIFT, SDLK_RETURN, '`'        , SDLK_EQUALS };
+static SDL_COMPAT_KEY azktab[] = { '7', 'n', '5', 'v', SDLK_RCTRL, '1', 'x', '3',
+                                   'j', 't', 'r', 'f', 0, SDLK_ESCAPE, 'a', 'd',
+                                   'm', '6', 'b', '4', SDLK_LCTRL, 'w', '2', 'c',
+                                   'k', '9', ';', '-', '#', 0, '\\', '\'',
+                                   SDLK_SPACE, ',', '.', SDLK_UP, SDLK_LSHIFT, SDLK_LEFT, SDLK_DOWN, SDLK_RIGHT,
+                                   'u', 'i', 'o', 'p', SDLK_LALT, SDLK_BACKSPACE, ']', '[',
+                                   'y', 'h', 'g', 'e', SDLK_RALT, 'q', 's', 'z',
+                                   '8', 'l', '0', '/', SDLK_RSHIFT, SDLK_RETURN, '`', SDLK_EQUALS
+                                 };
 
 // QWERTZ
-static SDL_COMPAT_KEY qzktab[] = { '7'        , 'n'        , '5'        , 'v'        , SDLK_RCTRL , '1'        , 'x'        , '3'        ,
-                                   'j'        , 't'        , 'r'        , 'f'        , 0          , SDLK_ESCAPE, 'q'        , 'd'        ,
-                                   'm'        , '6'        , 'b'        , '4'        , SDLK_LCTRL , 'y'        , '2'        , 'c'        ,
-                                   'k'        , '9'        , ';'        , '-'        , '#'        , 0          , '\\'       , '\''       ,
-                                   SDLK_SPACE , ','        , '.'        , SDLK_UP    , SDLK_LSHIFT, SDLK_LEFT  , SDLK_DOWN  , SDLK_RIGHT ,
-                                   'u'        , 'i'        , 'o'        , 'p'        , SDLK_LALT  , SDLK_BACKSPACE, ']'     , '['        ,
-                                   'z'        , 'h'        , 'g'        , 'e'        , SDLK_RALT  , 'a'        , 's'        , 'w'        ,
-                                   '8'        , 'l'        , '0'        , '/'        , SDLK_RSHIFT, SDLK_RETURN, '`'        , SDLK_EQUALS };
+static SDL_COMPAT_KEY qzktab[] = { '7', 'n', '5', 'v', SDLK_RCTRL, '1', 'x', '3',
+                                   'j', 't', 'r', 'f', 0, SDLK_ESCAPE, 'q', 'd',
+                                   'm', '6', 'b', '4', SDLK_LCTRL, 'y', '2', 'c',
+                                   'k', '9', ';', '-', '#', 0, '\\', '\'',
+                                   SDLK_SPACE, ',', '.', SDLK_UP, SDLK_LSHIFT, SDLK_LEFT, SDLK_DOWN, SDLK_RIGHT,
+                                   'u', 'i', 'o', 'p', SDLK_LALT, SDLK_BACKSPACE, ']', '[',
+                                   'z', 'h', 'g', 'e', SDLK_RALT, 'a', 's', 'w',
+                                   '8', 'l', '0', '/', SDLK_RSHIFT, SDLK_RETURN, '`', SDLK_EQUALS
+                                 };
 
 // Queue up some key presses. These key presses
 // are only detected by the standard ROM routines.
-void queuekeys( char *str )
+void queuekeys(char* str)
 {
-  if( str )
+  if(str)
   {
-    int len = (int)strlen( str );
-    if( keyqueue )
+    int len = (int)strlen(str);
+    if(keyqueue)
     {
       keyqueue = realloc(keyqueue, strlen(keyqueue) + len + 1);
       strcat(keyqueue, str);
@@ -138,7 +142,7 @@ void queuekeys( char *str )
     }
     else
     {
-      keyqueue   = strdup( str );
+      keyqueue   = strdup(str);
       keysqueued = len;
       kqoffs     = 0;
     }
@@ -148,26 +152,26 @@ void queuekeys( char *str )
 /*
 ** RNG for the AY noise generator
 */
-static Uint32 ayrand( struct ay8912 *ay )
+static Uint32 ayrand(struct ay8912 *ay)
 {
   Uint32 rbit = (ay->rndrack&1) ^ ((ay->rndrack>>2)&1);
   ay->rndrack = (ay->rndrack>>1)|(rbit<<16);
   return rbit&1;
 }
 
-void ay_audioticktock( struct ay8912 *ay, Uint32 cycles )
+void ay_audioticktock(struct ay8912 *ay, Uint32 cycles)
 {
   Sint32 t, i, sum = 0;
   Sint32 output;
 
   // For each clock cycle...
-  for( t=0; t<cycles; t++ )
+  for(t=0; t<cycles; t++)
   {
     // Count for the noise cycle counter
-    if( (++ay->ctn) >= ay->noiseper )
+    if((++ay->ctn) >= ay->noiseper)
     {
       // Noise counter expired, calculate the next noise output level
-      ay->currnoise ^= ayrand( ay );
+      ay->currnoise ^= ayrand(ay);
 
       // Reset the noise counter
       ay->ctn = 0;
@@ -177,11 +181,11 @@ void ay_audioticktock( struct ay8912 *ay, Uint32 cycles )
     }
 
     // For each audio channel...
-    for( i=0; i<3; i++ )
+    for(i=0; i<3; i++)
     {
-      if( !ay->toneper[i] )
+      if(!ay->toneper[i])
       {
-        if( !ay->sign[i] )
+        if(!ay->sign[i])
         {
           ay->sign[i] = 1;
           ay->newout |= (1<<i);
@@ -190,7 +194,7 @@ void ay_audioticktock( struct ay8912 *ay, Uint32 cycles )
       }
 
       // Count for the square wave counter
-      if( (++ay->ct[i]) >= ay->toneper[i] )
+      if((++ay->ct[i]) >= ay->toneper[i])
       {
         // Square wave counter expired, reset it...
         ay->ct[i] = 0;
@@ -204,12 +208,12 @@ void ay_audioticktock( struct ay8912 *ay, Uint32 cycles )
 
       // If this channel is mixed with noise, and the noise changed,
       // then so did this channel.
-      if( ( ay->newnoise ) && ( !ay->noisebit[i] ) )
+      if((ay->newnoise) && (!ay->noisebit[i]))
         ay->newout |= (1<<i);
     }
 
     // Count down the envelope cycle counter
-    if( (++ay->cte) >= ay->envper )
+    if((++ay->cte) >= ay->envper)
     {
       // Counter expired, so reset it
       ay->cte = 0;
@@ -218,14 +222,14 @@ void ay_audioticktock( struct ay8912 *ay, Uint32 cycles )
       ay->envpos++;
 
       // Reached the end of the envelope?
-      if( ay->envtab[ay->envpos]&0x80 )
+      if(ay->envtab[ay->envpos]&0x80)
         ay->envpos = ay->envtab[ay->envpos]&0x7f;
 
       // For each channel...
-      for( i=0; i<3; i++ )
+      for(i=0; i<3; i++)
       {
         // If the channel is using the envelope generator...
-        if( ay->regs[AY_CHA_AMP+i]&0x10 )
+        if(ay->regs[AY_CHA_AMP+i]&0x10)
         {
           // Recalculate its output volume
           ay->vol[i] = voltab[ay->envtab[ay->envpos]];
@@ -237,10 +241,10 @@ void ay_audioticktock( struct ay8912 *ay, Uint32 cycles )
     }
 
     // Loop through the channels
-    for( i=0; i<3; i++ )
+    for(i=0; i<3; i++)
     {
       // Yep, calculate the squarewave signal...
-      if( ay->newout & (1<<i) )
+      if(ay->newout & (1<<i))
         ay->out[i] = ((ay->tonebit[i]|ay->sign[i])&(ay->noisebit[i]|ay->currnoise)) * ay->vol[i];
 
       // Mix in the output of this channel
@@ -249,22 +253,22 @@ void ay_audioticktock( struct ay8912 *ay, Uint32 cycles )
     ay->newout = 0;
   }
 
-  if( !cycles ) return; // avoid div by zero
+  if(!cycles) return;   // avoid div by zero
 
   // Reduce aliasing by averaging over the cycles in the sample interval
   output = soundsilence + sum/cycles;
 
   // Clamp the output
-  if( output > 32767 ) output = 32767;
-//  if( output < -32768 ) output = -32768;
+  if(output > 32767) output = 32767;
+  //  if( output < -32768 ) output = -32768;
   ay->output = output;
 }
 
-void ay_dowrite( struct ay8912 *ay, struct aywrite *aw )
+void ay_dowrite(struct ay8912 *ay, struct aywrite *aw)
 {
   Sint32 i;
 
-  switch( aw->reg )
+  switch(aw->reg)
   {
     case AY_CHA_PER_L:   // Channel A period
     case AY_CHA_PER_H:
@@ -319,14 +323,14 @@ void ay_dowrite( struct ay8912 *ay, struct aywrite *aw )
       break;
 
     case AY_ENV_CYCLE:
-      if( aw->val != 0xff )
+      if(aw->val != 0xff)
       {
         ay->regs[aw->reg] = aw->val;
         ay->envtab = eshapes[aw->val&0xf];
         ay->envpos = 0;
-        for( i=0; i<3; i++ )
+        for(i=0; i<3; i++)
         {
-          if( ay->regs[AY_CHA_AMP+i]&0x10 )
+          if(ay->regs[AY_CHA_AMP+i]&0x10)
           {
             ay->vol[i] = voltab[ay->envtab[ay->envpos]];
             ay->newout |= (1<<i);
@@ -337,12 +341,12 @@ void ay_dowrite( struct ay8912 *ay, struct aywrite *aw )
   }
 }
 
-void ay_flushlog( struct ay8912 *ay )
+void ay_flushlog(struct ay8912 *ay)
 {
   int i;
 
-  for (i=0; i<ay->logged; i++)
-    ay_dowrite( ay, &ay->writelog[i] );
+  for(i=0; i<ay->logged; i++)
+    ay_dowrite(ay, &ay->writelog[i]);
   ay->logged = 0;
 }
 
@@ -350,7 +354,7 @@ void ay_flushlog( struct ay8912 *ay )
 ** This is the SDL audio callback. It is called by SDL
 ** when it needs a sound buffer to be filled.
 */
-void ay_callback( void *dummy, Sint8 *stream, int length )
+void ay_callback(void* dummy, Sint8 *stream, int length)
 {
   Uint16 *out;
   Sint16 fout;
@@ -367,7 +371,7 @@ void ay_callback( void *dummy, Sint8 *stream, int length )
 
   tapenoise = ay->soundloopon || (ay->oric->tapenoise && ((!ay->oric->tapeturbo)||(ay->oric->rawtape)));
 
-  if( !tapenoise ) ay->tapeout = 0;
+  if(!tapenoise) ay->tapeout = 0;
 
   out = (Uint16 *)stream;
   cvt.buf = (Uint8 *)stream;
@@ -376,31 +380,31 @@ void ay_callback( void *dummy, Sint8 *stream, int length )
   actual_length = (actual_length < AUDIO_BUFLEN)? actual_length : AUDIO_BUFLEN;
   actual_length = (actual_length < obtained.samples)? actual_length : obtained.samples;
 
-  for( i=0,j=0; i<actual_length; i++ )
+  for(i=0,j=0; i<actual_length; i++)
   {
     ay->ccyc = ay->ccycle>>FPBITS;
 
-    while( ( logc < ay->logged ) && ( ay->ccyc >= ay->writelog[logc].cycle ) )
-      ay_dowrite( ay, &ay->writelog[logc++] );
+    while((logc < ay->logged) && (ay->ccyc >= ay->writelog[logc].cycle))
+      ay_dowrite(ay, &ay->writelog[logc++]);
 
-    if( tapenoise )
+    if(tapenoise)
     {
-      while( ( tlogc < ay->tlogged ) && ( ay->ccyc >= ay->tapelog[tlogc].cycle ) )
+      while((tlogc < ay->tlogged) && (ay->ccyc >= ay->tapelog[tlogc].cycle))
         ay->tapeout = ay->tapelog[tlogc++].val * 8192;
     }
 
-    if( ay->ccyc > ay->lastcyc )
+    if(ay->ccyc > ay->lastcyc)
     {
-      ay_audioticktock( ay, ay->ccyc-ay->lastcyc );
+      ay_audioticktock(ay, ay->ccyc-ay->lastcyc);
       ay->lastcyc = ay->ccyc;
     }
 
     fout = ay->output + ay->tapeout;
     out[j++] = fout;
     out[j++] = fout;
-    if( vidcap ) audiocapbuf[i] = fout;
+    if(vidcap) audiocapbuf[i] = fout;
 
-    if( fout > dcadjustmax ) dcadjustmax = fout;
+    if(fout > dcadjustmax) dcadjustmax = fout;
     dcadjustave += fout;
 
     ay->ccycle += cyclespersample;
@@ -408,47 +412,47 @@ void ay_callback( void *dummy, Sint8 *stream, int length )
 
   dcadjustave /= (length/4);
 
-  if( (dcadjustmax-dcadjustave) > 32767 )
+  if((dcadjustmax-dcadjustave) > 32767)
     dcadjustave = -(32767-dcadjustmax);
 
-  if( ay->oric->dcadjust && dcadjustave )
+  if(ay->oric->dcadjust && dcadjustave)
   {
-    for( i=0, j=0; i<actual_length; i++ )
+    for(i=0, j=0; i<actual_length; i++)
     {
       out[j++] -= dcadjustave;
       out[j++] -= dcadjustave;
-      if( vidcap ) audiocapbuf[i] -= dcadjustave;
+      if(vidcap) audiocapbuf[i] -= dcadjustave;
     }
   }
 
-  if( vidcap )
+  if(vidcap)
   {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    for( i=0; i<(length/4); i++ )
-      audiocapbuf[i] = SDL_Swap16( audiocapbuf[i] );
+    for(i=0; i<(length/4); i++)
+      audiocapbuf[i] = SDL_Swap16(audiocapbuf[i]);
 #endif
-    avi_addaudio( &vidcap, audiocapbuf, length/2 );
+    avi_addaudio(&vidcap, audiocapbuf, length/2);
   }
 
-  if (ay->logged > logc)
+  if(ay->logged > logc)
   {
     memmove(&ay->writelog[0], &ay->writelog[logc], (ay->logged-logc) * sizeof(ay->writelog[0]));
     ay->logged -= logc;
-    for (i=0; i<ay->logged; i++)
+    for(i=0; i<ay->logged; i++)
       ay->writelog[i].cycle -= ay->lastcyc;
 
     /* Got out of sync? */
-    if (ay->logged > 150)
-      ay_flushlog( ay );
+    if(ay->logged > 150)
+      ay_flushlog(ay);
   }
   else
   {
     ay->logged = 0;
   }
 
-  if( tapenoise )
+  if(tapenoise)
   {
-    while( tlogc < ay->tlogged )
+    while(tlogc < ay->tlogged)
       ay->tapeout = ay->tapelog[tlogc++].val * 8192;
   }
 
@@ -458,7 +462,7 @@ void ay_callback( void *dummy, Sint8 *stream, int length )
   ay->lastcyc = 0;
   ay->newlogcycle = ay->ccycle>>FPBITS;
   ay->do_logcycle_reset = SDL_TRUE;
-//  ay->logged   = 0;
+  //  ay->logged   = 0;
   ay->tlogged  = 0;
 }
 
@@ -466,41 +470,43 @@ void ay_callback( void *dummy, Sint8 *stream, int length )
 ** Emulate the AY for some clock cycles
 ** Output is cycle-exact.
 */
-void ay_ticktock( struct ay8912 *ay, int cycles )
+void ay_ticktock(struct ay8912 *ay, int cycles)
 {
   // Need to do queued keys?
-  if( ( keyqueue ) && ( keysqueued ) && (!ay->oric->cpu.irq) )
+  if((keyqueue) && (keysqueued) && (!ay->oric->cpu.irq))
   {
-    if( kqoffs >= keysqueued )
+    if(kqoffs >= keysqueued)
     {
       free(keyqueue);
       keyqueue = NULL;
       keysqueued = 0;
       kqoffs = 0;
-    } else {
-      switch( ay->oric->type )
+    }
+    else
+    {
+      switch(ay->oric->type)
       {
         case MACH_ATMOS:
         case MACH_PRAVETZ:
-          if( ( ay->oric->cpu.pc == 0xeb78 ) && ( ay->oric->romon ) )
+          if((ay->oric->cpu.pc == 0xeb78) && (ay->oric->romon))
           {
             ay->oric->cpu.a = keyqueue[kqoffs++];
-            ay->oric->cpu.write( &ay->oric->cpu, 0x2df, 0 );
+            ay->oric->cpu.write(&ay->oric->cpu, 0x2df, 0);
             ay->oric->cpu.f_n = 1;
             ay->oric->cpu.calcpc = 0xeb88;
-            ay->oric->cpu.calcop = ay->oric->cpu.read( &ay->oric->cpu, ay->oric->cpu.calcpc );
+            ay->oric->cpu.calcop = ay->oric->cpu.read(&ay->oric->cpu, ay->oric->cpu.calcpc);
           }
           break;
 
         case MACH_ORIC1:
         case MACH_ORIC1_16K:
-          if( ( ay->oric->cpu.pc == 0xe905 ) && ( ay->oric->romon ) )
+          if((ay->oric->cpu.pc == 0xe905) && (ay->oric->romon))
           {
             ay->oric->cpu.a = keyqueue[kqoffs++];
-            ay->oric->cpu.write( &ay->oric->cpu, 0x2df, 0 );
+            ay->oric->cpu.write(&ay->oric->cpu, 0x2df, 0);
             ay->oric->cpu.f_n = 1;
             ay->oric->cpu.calcpc = 0xe915;
-            ay->oric->cpu.calcop = ay->oric->cpu.read( &ay->oric->cpu, ay->oric->cpu.calcpc );
+            ay->oric->cpu.calcop = ay->oric->cpu.read(&ay->oric->cpu, ay->oric->cpu.calcpc);
           }
           break;
       }
@@ -508,34 +514,34 @@ void ay_ticktock( struct ay8912 *ay, int cycles )
   }
 
   // Also use the queuekey location to do the jasmin auto reset
-  if( ay->oric->auto_jasmin_reset )
+  if(ay->oric->auto_jasmin_reset)
   {
-    if (ay->oric->drivetype == DRV_JASMIN)
+    if(ay->oric->drivetype == DRV_JASMIN)
     {
-      switch( ay->oric->type )
+      switch(ay->oric->type)
       {
         case MACH_ATMOS:
         case MACH_PRAVETZ:
-          if( ( ay->oric->cpu.pc == 0xeb78 ) && ( ay->oric->romon ) )
+          if((ay->oric->cpu.pc == 0xeb78) && (ay->oric->romon))
           {
-            ay->oric->cpu.write( &ay->oric->cpu, 0x3fb, 1 ); // ROMDIS
-            setromon( ay->oric );
-            m6502_reset( &ay->oric->cpu );
-            m6502_set_icycles( &ay->oric->cpu, SDL_FALSE, NULL );
-            via_init( &ay->oric->via, ay->oric, VIA_MAIN );
+            ay->oric->cpu.write(&ay->oric->cpu, 0x3fb, 1);   // ROMDIS
+            setromon(ay->oric);
+            m6502_reset(&ay->oric->cpu);
+            m6502_set_icycles(&ay->oric->cpu, SDL_FALSE, NULL);
+            via_init(&ay->oric->via, ay->oric, VIA_MAIN);
             ay->oric->auto_jasmin_reset = SDL_FALSE;
           }
           break;
 
         case MACH_ORIC1:
         case MACH_ORIC1_16K:
-          if( ( ay->oric->cpu.pc == 0xe905 ) && ( ay->oric->romon ) )
+          if((ay->oric->cpu.pc == 0xe905) && (ay->oric->romon))
           {
-            ay->oric->cpu.write( &ay->oric->cpu, 0x3fb, 1 ); // ROMDIS
-            setromon( ay->oric );
-            m6502_reset( &ay->oric->cpu );
-            m6502_set_icycles( &ay->oric->cpu, SDL_FALSE, NULL );
-            via_init( &ay->oric->via, ay->oric, VIA_MAIN );
+            ay->oric->cpu.write(&ay->oric->cpu, 0x3fb, 1);   // ROMDIS
+            setromon(ay->oric);
+            m6502_reset(&ay->oric->cpu);
+            m6502_set_icycles(&ay->oric->cpu, SDL_FALSE, NULL);
+            via_init(&ay->oric->via, ay->oric, VIA_MAIN);
             ay->oric->auto_jasmin_reset = SDL_FALSE;
           }
           break;
@@ -547,18 +553,20 @@ void ay_ticktock( struct ay8912 *ay, int cycles )
     }
   }
 
-  if( ay->keybitdelay > 0 )
+  if(ay->keybitdelay > 0)
   {
-    if( cycles >= ay->keybitdelay )
+    if(cycles >= ay->keybitdelay)
     {
       ay->keybitdelay = 0;
-      ay_update_keybits( ay );
-    } else {
+      ay_update_keybits(ay);
+    }
+    else
+    {
       ay->keybitdelay -= cycles;
     }
   }
 
-  if( ay->do_logcycle_reset )
+  if(ay->do_logcycle_reset)
   {
     ay->logcycle = ay->newlogcycle;
     ay->do_logcycle_reset = SDL_FALSE;
@@ -566,17 +574,17 @@ void ay_ticktock( struct ay8912 *ay, int cycles )
   ay->logcycle += cycles;
 }
 
-void ay_lockaudio( struct ay8912 *ay )
+void ay_lockaudio(struct ay8912 *ay)
 {
-  if( ay->audiolocked ) return;
-  if( ( ay->oric->emu_mode != EM_RUNNING ) || ( !soundon ) || ( warpspeed ) ) return;
+  if(ay->audiolocked) return;
+  if((ay->oric->emu_mode != EM_RUNNING) || (!soundon) || (warpspeed)) return;
   SDL_LockAudio();
   ay->audiolocked = SDL_TRUE;
 }
 
-void ay_unlockaudio( struct ay8912 *ay )
+void ay_unlockaudio(struct ay8912 *ay)
 {
-  if( !ay->audiolocked ) return;
+  if(!ay->audiolocked) return;
   SDL_UnlockAudio();
   ay->audiolocked = SDL_FALSE;
 }
@@ -585,27 +593,33 @@ void ay_unlockaudio( struct ay8912 *ay )
 ** Initialise the AY emulation
 ** (... and oric keyboard)
 */
-SDL_bool ay_init( struct ay8912 *ay, struct machine *oric )
+SDL_bool ay_init(struct ay8912 *ay, struct machine *oric)
 {
   int i;
 
-  switch( oric->keymap )
+  switch(oric->keymap)
   {
-    case KMAP_AZERTY: keytab = azktab; break;
-    case KMAP_QWERTZ: keytab = qzktab; break;
-    default:          keytab = qwktab; break;
+    case KMAP_AZERTY:
+      keytab = azktab;
+      break;
+    case KMAP_QWERTZ:
+      keytab = qzktab;
+      break;
+    default:
+      keytab = qwktab;
+      break;
   }
 
   // No oric keys pressed
-  for( i=0; i<8; i++ )
+  for(i=0; i<8; i++)
     ay->keystates[i] = SDL_FALSE;
 
   // Reset all regs to 0
-  for( i=0; i<NUM_AY_REGS; i++ )
+  for(i=0; i<NUM_AY_REGS; i++)
     ay->regs[i] = 0;
 
   // Reset the three audio channels
-  for( i=0; i<3; i++ )
+  for(i=0; i<3; i++)
   {
     ay->ct[i]       = 0;     // Cycle counter to zero
     ay->out[i]      = 0;     // 0v output for each channel
@@ -640,8 +654,8 @@ SDL_bool ay_init( struct ay8912 *ay, struct machine *oric )
   ay->tapeout = 0;
   ay->keybitdelay = 0;
   ay->audiolocked = SDL_FALSE;
-  if( soundavailable )
-    SDL_PauseAudio( 0 );
+  if(soundavailable)
+    SDL_PauseAudio(0);
 
   // initialize audio conversion system for SDL2
   SDL_BuildAudioCVT(&cvt, AUDIO_S16SYS, 2, AUDIO_FREQ, obtained.format, obtained.channels, obtained.freq);
@@ -654,91 +668,91 @@ SDL_bool ay_init( struct ay8912 *ay, struct machine *oric )
 /*
 ** Update the VIA bits when key states change
 */
-void ay_update_keybits( struct ay8912 *ay )
+void ay_update_keybits(struct ay8912 *ay)
 {
-  ay->currkeyoffs = ay->oric->via.read_port_b( &ay->oric->via ) & 0x7;
+  ay->currkeyoffs = ay->oric->via.read_port_b(&ay->oric->via) & 0x7;
 
-  if( (ay->eregs[AY_STATUS]&0x40) == 0 )
+  if((ay->eregs[AY_STATUS]&0x40) == 0)
   {
-    ay->oric->via.write_port_b( &ay->oric->via, 0x08, 0x00 );
+    ay->oric->via.write_port_b(&ay->oric->via, 0x08, 0x00);
     return;
   }
 
-  if( ay->keystates[ay->currkeyoffs] & (ay->eregs[AY_PORT_A]^0xff) )
-    ay->oric->via.write_port_b( &ay->oric->via, 0x08, 0x08 );
+  if(ay->keystates[ay->currkeyoffs] & (ay->eregs[AY_PORT_A]^0xff))
+    ay->oric->via.write_port_b(&ay->oric->via, 0x08, 0x08);
   else
-    ay->oric->via.write_port_b( &ay->oric->via, 0x08, 0x00 );
+    ay->oric->via.write_port_b(&ay->oric->via, 0x08, 0x00);
 }
 
 /*
 ** Handle a key press
 */
-void ay_keypress( struct ay8912 *ay, SDL_COMPAT_KEY key, SDL_bool down )
+void ay_keypress(struct ay8912 *ay, SDL_COMPAT_KEY key, SDL_bool down)
 {
   int i;
 
   // No key?
-  if( key == 0 ) return;
+  if(key == 0) return;
 
   // Does this key exist on the Oric?
-  for( i=0; i<64; i++ )
-    if( keytab[i] == key ) break;
+  for(i=0; i<64; i++)
+    if(keytab[i] == key) break;
 
   // No...
-  if( i == 64 ) return;
+  if(i == 64) return;
 
   // Key down event, or key up event?
-  if( down )
+  if(down)
     ay->keystates[i>>3] |= (1<<(i&7));          // Down, so set the corresponding bit
   else
     ay->keystates[i>>3] &= ~(1<<(i&7));         // Up, so clear it
 
   // Maybe update the VIA
-  if( ay->currkeyoffs == (i>>3) )
+  if(ay->currkeyoffs == (i>>3))
   {
-    if( ay->keystates[ay->currkeyoffs] & (ay->eregs[AY_PORT_A]^0xff) )
-      ay->oric->via.write_port_b( &ay->oric->via, 0x08, 0x08 );
+    if(ay->keystates[ay->currkeyoffs] & (ay->eregs[AY_PORT_A]^0xff))
+      ay->oric->via.write_port_b(&ay->oric->via, 0x08, 0x08);
     else
-      ay->oric->via.write_port_b( &ay->oric->via, 0x08, 0x00 );
+      ay->oric->via.write_port_b(&ay->oric->via, 0x08, 0x00);
   }
 }
 
 /*
 ** GI addressing
 */
-void ay_modeset( struct ay8912 *ay )
+void ay_modeset(struct ay8912 *ay)
 {
   unsigned char v, lasts6=0;
 
-  if( (ay->bmode != AYBMF_BC1) && (ay->oric->porta_ay != 0xff) )
+  if((ay->bmode != AYBMF_BC1) && (ay->oric->porta_ay != 0xff))
   {
     ay->oric->porta_ay = 0xff;
-    if( ay->oric->porta_is_ay )
-      ay->oric->via.write_port_a( &ay->oric->via, 0xff, 0xff );
+    if(ay->oric->porta_is_ay)
+      ay->oric->via.write_port_a(&ay->oric->via, 0xff, 0xff);
   }
 
-  switch( ay->bmode )
+  switch(ay->bmode)
   {
     case AYBMF_BC1: // Read AY register
       ay->oric->porta_ay = (ay->creg>=NUM_AY_REGS) ? 0 : ay->eregs[ay->creg];
-      ay->oric->via.write_port_a( &ay->oric->via, 0xff, ay->oric->porta_ay );
+      ay->oric->via.write_port_a(&ay->oric->via, 0xff, ay->oric->porta_ay);
       ay->oric->porta_is_ay = SDL_TRUE;
       break;
 
     case AYBMF_BDIR: // Write AY register
-      if( ay->creg >= NUM_AY_REGS ) break;
-      v = ay->oric->via.read_port_a( &ay->oric->via );
+      if(ay->creg >= NUM_AY_REGS) break;
+      v = ay->oric->via.read_port_a(&ay->oric->via);
 
-      if( ay->creg == AY_STATUS )
+      if(ay->creg == AY_STATUS)
         lasts6 = ay->eregs[AY_STATUS] & 0x40;
 
-      if( ( ay->creg != AY_ENV_CYCLE ) || ( v != 0xff ) )
+      if((ay->creg != AY_ENV_CYCLE) || (v != 0xff))
         ay->eregs[ay->creg] = v;
 
-      switch( ay->creg )
+      switch(ay->creg)
       {
         case AY_STATUS:
-          if( (ay->eregs[AY_STATUS]&0x40) != lasts6 )
+          if((ay->eregs[AY_STATUS]&0x40) != lasts6)
           {
             ay->keybitdelay = 3;
           }
@@ -755,28 +769,28 @@ void ay_modeset( struct ay8912 *ay )
         case AY_ENV_PER_L:
         case AY_ENV_PER_H:
         case AY_ENV_CYCLE:
-          if( ( !soundon ) || ( warpspeed ) )
+          if((!soundon) || (warpspeed))
           {
             struct aywrite writenow;
 
-            ay_flushlog( ay );
+            ay_flushlog(ay);
             writenow.cycle = 0;
             writenow.reg   = ay->creg;
             writenow.val   = v;
-            ay_dowrite( ay, &writenow );
+            ay_dowrite(ay, &writenow);
             break;
           }
 
-          ay_lockaudio( ay );  // Gets unlocked at the end of each frame
+          ay_lockaudio(ay);    // Gets unlocked at the end of each frame
 
-          if( ay->do_logcycle_reset )
+          if(ay->do_logcycle_reset)
           {
             ay->logcycle = ay->newlogcycle;
             ay->do_logcycle_reset = SDL_FALSE;
           }
 
-          if( ay->logged >= WRITELOG_SIZE )
-            ay_flushlog( ay );
+          if(ay->logged >= WRITELOG_SIZE)
+            ay_flushlog(ay);
 
           ay->writelog[ay->logged  ].cycle = ay->logcycle;
           ay->writelog[ay->logged  ].reg   = ay->creg;
@@ -790,47 +804,47 @@ void ay_modeset( struct ay8912 *ay )
       break;
 
     case AYBMF_BDIR|AYBMF_BC1: // Set register
-      ay->creg = ay->oric->via.read_port_a( &ay->oric->via );
+      ay->creg = ay->oric->via.read_port_a(&ay->oric->via);
       break;
   }
 }
 
-void ay_set_bcmode( struct ay8912 *ay, unsigned char bc1, unsigned char bdir )
+void ay_set_bcmode(struct ay8912 *ay, unsigned char bc1, unsigned char bdir)
 {
   ay->bmode = (bc1?AYBMF_BC1:0)|(bdir?AYBMF_BDIR:0);
-  ay_modeset( ay );
+  ay_modeset(ay);
 }
 
-void ay_set_bc1( struct ay8912 *ay, unsigned char state )
+void ay_set_bc1(struct ay8912 *ay, unsigned char state)
 {
-  if( state )
+  if(state)
     ay->bmode |= AYBMF_BC1;
   else
     ay->bmode &= ~AYBMF_BC1;
-  ay_modeset( ay );
+  ay_modeset(ay);
 }
 
-void ay_set_bdir( struct ay8912 *ay, unsigned char state )
+void ay_set_bdir(struct ay8912 *ay, unsigned char state)
 {
-  if( state )
+  if(state)
     ay->bmode |= AYBMF_BDIR;
   else
     ay->bmode &= ~AYBMF_BDIR;
-  ay_modeset( ay );
+  ay_modeset(ay);
 }
 
-void ay_soundloop( struct ay8912 *ay, unsigned char oldval, unsigned char newval)
+void ay_soundloop(struct ay8912 *ay, unsigned char oldval, unsigned char newval)
 {
-  if( !ay->soundloopon )
+  if(!ay->soundloopon)
     return;
 
   oldval &= 0x80;
   newval &= 0x80;
 
-  if( oldval == newval )
+  if(oldval == newval)
     return;
 
-  ay_lockaudio( ay );
+  ay_lockaudio(ay);
   if(ay->do_logcycle_reset)
   {
     ay->logcycle = ay->newlogcycle;
@@ -841,5 +855,5 @@ void ay_soundloop( struct ay8912 *ay, unsigned char oldval, unsigned char newval
     ay->tapelog[ay->tlogged].cycle = ay->logcycle;
     ay->tapelog[ay->tlogged++].val = newval? 1 : 0;
   }
-  ay_unlockaudio( ay );
+  ay_unlockaudio(ay);
 }

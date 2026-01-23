@@ -34,7 +34,7 @@ enum
   FR_OTHER
 };
 
-SDL_bool init_filerequester( struct machine *oric );
-void shut_filerequester( struct machine *oric );
-SDL_bool filerequester( struct machine *oric, char *title, char *path, char *fname, int type );
+SDL_bool init_filerequester(struct machine *oric);
+void shut_filerequester(struct machine *oric);
+SDL_bool filerequester(struct machine *oric, char* title, char* path, char* fname, int type);
 

@@ -81,7 +81,7 @@ enum
 struct telebankinfo
 {
   unsigned char type;
-  unsigned char *ptr;
+  unsigned char* ptr;
 };
 
 struct machine
@@ -91,8 +91,8 @@ struct machine
   struct via via;
   struct ay8912 ay;
   unsigned int memsize;
-  unsigned char *mem;
-  unsigned char *rom;
+  unsigned char* mem;
+  unsigned char* rom;
   int emu_mode;
 
   struct symboltable romsyms;
@@ -128,7 +128,7 @@ struct machine
   int vid_chline;
   int frames;
   SDL_bool vid_dirty[224];
-  void (*vid_block_func)( struct machine *, SDL_bool, int, int );
+  void (*vid_block_func)(struct machine *, SDL_bool, int, int);
 
   int overclockmult, overclockshift;
 
@@ -140,8 +140,8 @@ struct machine
   SDL_bool vsynchack;
 
   unsigned short vid_addr;
-  unsigned char *vid_ch_data;
-  unsigned char *vid_ch_base;
+  unsigned char* vid_ch_data;
+  unsigned char* vid_ch_base;
 
   Uint8  *scrpt;
   Uint8  *scr;
@@ -163,7 +163,7 @@ struct machine
 
   unsigned char tapebit, tapeout, tapeparity;
   int tapelen, tapeoffs, tapecount, tapetime, tapedupbytes, tapehdrend, tapedelay;
-  unsigned char *tapebuf;
+  unsigned char* tapebuf;
   SDL_bool tapemotor, tapenoise, tapeturbo, autorewind, autoinsert;
   SDL_bool tapeturbo_forceoff;
   SDL_bool symbolsautoload, symbolscase;
@@ -216,14 +216,14 @@ struct machine
   void (*render_textzone_alloc)(struct machine *, int);
   void (*render_textzone_free)(struct machine *, int);
   void (*render_textzone)(struct machine *, int);
-  void (*render_clear_area)( int, int, int, int );
+  void (*render_clear_area)(int, int, int, int);
   void (*render_gimg)(int, Sint32, Sint32);
   void (*render_gimgpart)(int, Sint32, Sint32, Sint32, Sint32, Sint32, Sint32);
   void (*render_alloc_textzone)(struct machine *, struct textzone *);
   void (*render_free_textzone)(struct machine *, struct textzone *);
   void (*render_video)(struct machine *, SDL_bool);
-  SDL_bool (*render_togglefullscreen)(struct machine *oric);
-  SDL_bool (*init_render)(struct machine *);
+  SDL_bool(*render_togglefullscreen)(struct machine *oric);
+  SDL_bool(*init_render)(struct machine *);
   void (*shut_render)(struct machine *);
 
   char popupstr[40];
@@ -271,21 +271,21 @@ struct machine
   char aciabackendname[ACIA_BACKEND_NAME_LEN];
 };
 
-void setromon( struct machine *oric );
-void setemumode( struct machine *oric, struct osdmenuitem *mitem, int mode );
-void video_show( struct machine *oric );
-SDL_bool emu_event( SDL_Event *ev, struct machine *oric, SDL_bool *needrender );
+void setromon(struct machine *oric);
+void setemumode(struct machine *oric, struct osdmenuitem *mitem, int mode);
+void video_show(struct machine *oric);
+SDL_bool emu_event(SDL_Event *ev, struct machine *oric, SDL_bool *needrender);
 
-void preinit_machine( struct machine *oric );
-void load_diskroms( struct machine *oric );
-SDL_bool init_machine( struct machine *oric, int type, SDL_bool nukebreakpoints );
-void shut_machine( struct machine *oric );
-void setdrivetype( struct machine *oric, struct osdmenuitem *mitem, int type );
-void swapmach( struct machine *oric, struct osdmenuitem *mitem, int which );
-SDL_bool isram( struct machine *oric, unsigned short addr );
+void preinit_machine(struct machine *oric);
+void load_diskroms(struct machine *oric);
+SDL_bool init_machine(struct machine *oric, int type, SDL_bool nukebreakpoints);
+void shut_machine(struct machine *oric);
+void setdrivetype(struct machine *oric, struct osdmenuitem *mitem, int type);
+void swapmach(struct machine *oric, struct osdmenuitem *mitem, int which);
+SDL_bool isram(struct machine *oric, unsigned short addr);
 
-void clear_patches( struct machine *oric );
+void clear_patches(struct machine *oric);
 
-unsigned char lightpen_read( struct m6502 *cpu, unsigned short addr );
+unsigned char lightpen_read(struct m6502 *cpu, unsigned short addr);
 
-int detect_image_type(char *filename);
+int detect_image_type(char* filename);

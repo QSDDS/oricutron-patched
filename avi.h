@@ -18,12 +18,12 @@
 **
 */
 
-#define 	AVIF_HASINDEX         0x00000010
-#define 	AVIF_MUSTUSEINDEX     0x00000020
-#define 	AVIF_ISINTERLEAVED    0x00000100
-#define 	AVIF_TRUSTCKTYPE      0x00000800
-#define 	AVIF_WASCAPTUREFILE   0x00010000
-#define 	AVIF_COPYRIGHTED      0x00020000
+#define   AVIF_HASINDEX         0x00000010
+#define   AVIF_MUSTUSEINDEX     0x00000020
+#define   AVIF_ISINTERLEAVED    0x00000100
+#define   AVIF_TRUSTCKTYPE      0x00000800
+#define   AVIF_WASCAPTUREFILE   0x00010000
+#define   AVIF_COPYRIGHTED      0x00020000
 
 struct avi_handle
 {
@@ -53,8 +53,8 @@ struct avi_handle
   int is50hz;
 };
 
-struct avi_handle *avi_open( char *filename, Uint8 *pal, SDL_bool dosound, int is50hz );
-SDL_bool avi_addframe( struct avi_handle **ah, Uint8 *srcdata );
-SDL_bool avi_addaudio( struct avi_handle **ah, Sint16 *audiodata, Uint32 audiosize );
-void avi_close( struct avi_handle **ah );
+struct avi_handle *avi_open(char* filename, Uint8 *pal, SDL_bool dosound, int is50hz);
+SDL_bool avi_addframe(struct avi_handle **ah, Uint8 *srcdata);
+SDL_bool avi_addaudio(struct avi_handle **ah, Sint16 *audiodata, Uint32 audiosize);
+void avi_close(struct avi_handle **ah);
 

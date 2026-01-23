@@ -49,54 +49,54 @@ struct Library *RequesterBase = NULL;
 struct IntuitionIFace *IIntuition = NULL;
 struct RequesterIFace *IRequester = NULL;
 
-SDL_bool init_msgbox( struct machine *oric )
+SDL_bool init_msgbox(struct machine *oric)
 {
-  IntuitionBase = IExec->OpenLibrary( "intuition.library", 51 );
-  if( !IntuitionBase )
+  IntuitionBase = IExec->OpenLibrary("intuition.library", 51);
+  if(!IntuitionBase)
   {
-    printf( "Unable to open intuition.library v51+\n" );
+    printf("Unable to open intuition.library v51+\n");
     return SDL_FALSE;
   }
 
-  IIntuition = (struct IntuitionIFace *)IExec->GetInterface( IntuitionBase, "main", 1, NULL );
-  if( !IIntuition )
+  IIntuition = (struct IntuitionIFace *)IExec->GetInterface(IntuitionBase, "main", 1, NULL);
+  if(!IIntuition)
   {
-    printf( "Unable to obtain main interface for intuition.library\n" );
+    printf("Unable to obtain main interface for intuition.library\n");
     return SDL_FALSE;
   }
 
-  RequesterBase = IExec->OpenLibrary( "requester.class", 51 );
-  if( !RequesterBase )
+  RequesterBase = IExec->OpenLibrary("requester.class", 51);
+  if(!RequesterBase)
   {
-    printf( "Unable to open requester.class v51+\n" );
+    printf("Unable to open requester.class v51+\n");
     return SDL_FALSE;
   }
 
-  IRequester = (struct RequesterIFace *)IExec->GetInterface( RequesterBase, "main", 1, NULL );
-  if( !IRequester )
+  IRequester = (struct RequesterIFace *)IExec->GetInterface(RequesterBase, "main", 1, NULL);
+  if(!IRequester)
   {
-    printf( "Unable to obtain main interface for requester.library\n" );
+    printf("Unable to obtain main interface for requester.library\n");
     return SDL_FALSE;
   }
 
   return SDL_TRUE;
 }
 
-void shut_msgbox( struct machine *oric )
+void shut_msgbox(struct machine *oric)
 {
-  if( IRequester ) IExec->DropInterface( (struct Interface *)IRequester );
-  if( RequesterBase ) IExec->CloseLibrary( RequesterBase );
-  if( IIntuition ) IExec->DropInterface( (struct Interface *)IIntuition );
-  if( IntuitionBase ) IExec->CloseLibrary( IntuitionBase );
+  if(IRequester) IExec->DropInterface((struct Interface *)IRequester);
+  if(RequesterBase) IExec->CloseLibrary(RequesterBase);
+  if(IIntuition) IExec->DropInterface((struct Interface *)IIntuition);
+  if(IntuitionBase) IExec->CloseLibrary(IntuitionBase);
 }
 
-SDL_bool msgbox( struct machine *oric, int type, char *msg )
+SDL_bool msgbox(struct machine *oric, int type, char* msg)
 {
   Object *req_obj;
   int32 result, imgtype=REQIMAGE_INFO;
   STRPTR btns = "huh?!";
 
-  switch( type )
+  switch(type)
   {
     case MSGBOX_YES_NO:
       btns = "Yes|No";
@@ -107,26 +107,26 @@ SDL_bool msgbox( struct machine *oric, int type, char *msg )
       btns = "OK|Cancel";
       imgtype = REQIMAGE_QUESTION;
       break;
-    
+
     case MSGBOX_OK:
       btns = "OK";
       imgtype = REQIMAGE_INFO;
       break;
   }
 
-  req_obj = (Object *)IIntuition->NewObject( IRequester->REQUESTER_GetClass(), NULL,
-    REQ_TitleText,  "Oricutron Request",
-    REQ_BodyText,   msg,
-    REQ_GadgetText, btns,
-    REQ_Image,      imgtype,
-    TAG_DONE );
+  req_obj = (Object *)IIntuition->NewObject(IRequester->REQUESTER_GetClass(), NULL,
+            REQ_TitleText,  "Oricutron Request",
+            REQ_BodyText,   msg,
+            REQ_GadgetText, btns,
+            REQ_Image,      imgtype,
+            TAG_DONE);
 
-  if( !req_obj ) return SDL_TRUE; // Oh well
+  if(!req_obj) return SDL_TRUE;   // Oh well
 
-  result = IIntuition->IDoMethod( req_obj, RM_OPENREQ, NULL, NULL, NULL );
-  IIntuition->DisposeObject( req_obj );
+  result = IIntuition->IDoMethod(req_obj, RM_OPENREQ, NULL, NULL, NULL);
+  IIntuition->DisposeObject(req_obj);
 
-  if( type == MSGBOX_OK ) return SDL_TRUE;
+  if(type == MSGBOX_OK) return SDL_TRUE;
 
   return result ? SDL_TRUE : SDL_FALSE;
 }
