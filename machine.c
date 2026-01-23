@@ -1174,13 +1174,14 @@ void preinit_machine( struct machine *oric )
   oric->kbjoy1[4] = SDLK_KP_ENTER;
   oric->kbjoy1[5] = SDLK_KP_PLUS;
   oric->kbjoy1[6] = SDLK_KP_MINUS;
-  oric->kbjoy2[0] = 'w';
-  oric->kbjoy2[1] = 's';
-  oric->kbjoy2[2] = 'a';
-  oric->kbjoy2[3] = 'd';
-  oric->kbjoy2[4] = SDLK_SPACE;
-  oric->kbjoy2[5] = 'n';
-  oric->kbjoy2[5] = SDLK_LALT;
+
+  oric->kbjoy2[0] = 0;
+  oric->kbjoy2[1] = 0;
+  oric->kbjoy2[2] = 0;
+  oric->kbjoy2[3] = 0;
+  oric->kbjoy2[4] = 0;
+  oric->kbjoy2[5] = 0;
+  oric->kbjoy2[6] = 0;
 
   oric->drivetype = DRV_NONE;
   for( i=0; i<MAX_DRIVES; i++ )
@@ -1687,7 +1688,7 @@ void load_patches( struct machine *oric, char *fname )
   sprintf( tmpname, "%s.pch", fname );
 
   f = fopen( tmpname, "r" );
-  free( tmpname );
+      free( tmpname );
   if( !f ) return;
 
   while( !feof( f ) )
