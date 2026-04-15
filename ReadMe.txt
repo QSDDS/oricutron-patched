@@ -11,6 +11,8 @@ mkdir build && cd build
 cmake ..
 make -j$(nproc)
 
+cp Oricutron ..
+
 # Lancer
 ./Oricutron
 
