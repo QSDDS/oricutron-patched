@@ -1,7 +1,9 @@
 # de l'oeuvre originale de Pete Gordon, avec l'aimable concourt de l'I.A. "deepseek" et accessoirement moi (initier/copier/coller/contrôler).
 
 ########  PROCEDURE D'INSTALLATION PAR LE TERMINAL POUR CERTAINS LINUX  ########
-########             TESTÉ SUR DEBIAN BOOKWORM X86_64 lxqt              ########
+########  TESTÉ en local sur DEBIAN BOOKWORM X86_64 lxqt marche         ########
+########  TESTÉ en local sur un live de lubuntu jammy,   marche pas     ########
+######## l'effiscience ########
 # 1-4 Installer les dépendances (Debian/Ubuntu)
 sudo apt install cmake build-essential libsdl2-dev libgtk-3-dev pkg-config
 
