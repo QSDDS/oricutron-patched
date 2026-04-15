@@ -1,12 +1,21 @@
 # de l'oeuvre originale de Pete Gordon, avec l'aimable concourt de l'I.A. "deepseek" et accessoirement moi (initier/copier/coller/contrôler).
 
-########  PROCEDURE D'INSTALLATION POUR CERTAINS LINUX, TESTÉ SUR DEBIAN BOOKWORM X86_64  ########
-# Installer les dépendances (Debian/Ubuntu)
+########  PROCEDURE D'INSTALLATION PAR LE TERMINAL POUR CERTAINS LINUX  ########
+########             TESTÉ SUR DEBIAN BOOKWORM X86_64 lxqt              ########
+# 1-4 Installer les dépendances (Debian/Ubuntu)
 sudo apt install cmake build-essential libsdl2-dev libgtk-3-dev pkg-config
 
-# Cloner et compiler
+# 2-4 Cloner
 git clone https://github.com/QSDDS/oricutron-patched.git
 cd oricutron-patched
+
+## facultatif
+# F11 copie de l'écran texte (option par défaut)
+cp gui_x11-f11-ecran.txt gui_x11.c
+# F11 copie du listing basic
+cp gui_x11-f11-listing.txt gui_x11.c
+
+# 3-4 Compiler
 mkdir build && cd build
 cmake ..
 make -j$(nproc)
@@ -14,7 +23,7 @@ make -j$(nproc)
 cp Oricutron ..
 cd ..
 
-# Lancer
+# 4-4 Ignition
 ./Oricutron
 
 ########################
