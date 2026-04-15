@@ -12,6 +12,7 @@ cmake ..
 make -j$(nproc)
 
 cp Oricutron ..
+cd ..
 
 # Lancer
 ./Oricutron
