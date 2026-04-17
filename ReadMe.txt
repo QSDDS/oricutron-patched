@@ -3,7 +3,7 @@
 ########  PROCEDURE D'INSTALLATION PAR LE TERMINAL POUR CERTAINS LINUX  ########
 ########  TESTÉ en local sur DEBIAN BOOKWORM X86_64 lxqt marche         ########
 ########  TESTÉ en local sur un live de lubuntu jammy,   marche pas     ########
-######## l'effiscience ########
+
 # 1-4 Installer les dépendances (Debian/Ubuntu)
 sudo apt install cmake build-essential libsdl2-dev libgtk-3-dev pkg-config
 
